@@ -1,0 +1,11 @@
+{
+  "ethereum": {
+    "network": "rinkeby"
+  },
+  "contract": {
+    "LendPoolAddressesProvider": {
+      "address": "0x41a35266cb7912614CC78A335377EFbc29F77A35",
+      "startBlock": 9617969
+    }
+  }
+}

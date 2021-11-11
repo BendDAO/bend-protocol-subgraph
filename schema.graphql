@@ -1,0 +1,367 @@
+# Basic
+type Pool @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  LendPoolAddress: Bytes!
+  LendPoolConfiguratorAddress: Bytes!
+  PoolAdminAddress: Bytes!
+  EmergencyAdminAddress: Bytes!
+  ReserveOracleAddress: Bytes!
+  NFTOracleAddress: Bytes!
+  BendOracleAddress: Bytes!
+  LendPoolLoanAddress: Bytes!
+  BNFTRegistryAddress: Bytes!
+
+  isPaused: Boolean!
+}
+
+type User @entity {
+  id: ID! # user address
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  # Incentives
+  unclaimedRewards: BigInt!
+  lifetimeRewards: BigInt!
+  incentivesUpdatedAt: Int!
+}
+
+type BToken @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  underlyingAssetAddress: Bytes!
+  underlyingAssetDecimals: Int!
+  tokenContractImplAddress: Bytes!
+}
+
+type VToken @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  underlyingAssetAddress: Bytes!
+  underlyingAssetDecimals: Int!
+  tokenContractImplAddress: Bytes!
+}
+
+type Reserve @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+
+  # Asset info
+  underlyingAssetAddress: Bytes!
+  underlyingAssetSymbol: String!
+  underlyingAssetName: String!
+  underlyingAssetDecimals: Int!
+
+  # Price
+  price: ReservePrice!
+
+  # Status
+  isActive: Boolean!
+  isFrozen: Boolean!
+
+  # Rate Strategy
+  rateStrategyAddress: Bytes!
+  optimalUtilizationRate: BigInt!
+  baseVariableBorrowRate: BigInt!
+  variableRateSlope1: BigInt!
+  variableRateSlope2: BigInt!
+
+  # Stats
+  liquidityRate: BigInt!
+  liquidityIndex: BigInt!
+
+  variableBorrowRate: BigInt!
+  variableBorrowIndex: BigInt!
+
+  reserveFactor: BigInt!
+
+  totalBTokenSupply: BigInt!
+  totalDeposits: BigInt!
+
+  totalScaledVariableDebt: BigInt!
+  totalCurrentVariableDebt: BigInt!
+
+  bToken: BToken!
+  vToken: VToken!
+
+  # Incentives
+  bEmissionPerSecond: BigInt!
+  vEmissionPerSecond: BigInt!
+  bTokenIncentivesIndex: BigInt!
+  vTokenIncentivesIndex: BigInt!
+  bIncentivesLastUpdateTimestamp: Int!
+  vIncentivesLastUpdateTimestamp: Int!
+
+  # Relation
+  userReserve: [UserReserve!]! @derivedFrom(field: "reserve")
+  # History
+  depositHistory: [Deposit!] @derivedFrom(field: "reserve")
+  withdrawHistory: [Withdraw!] @derivedFrom(field: "reserve")
+  borrowHistory: [Borrow!] @derivedFrom(field: "reserve")
+  repayHistory: [Repay!] @derivedFrom(field: "reserve")
+  liquidateHistory: [Liquidate!] @derivedFrom(field: "reserve")
+}
+
+type ReservePrice @entity {
+  id: ID! # underlying asset address
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  priceInEth: BigInt!
+  priceHistory: [ReservePriceHistoryItem!]! @derivedFrom(field: "reservePrice")
+}
+
+type UserReserve @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  user: User!
+  reserve: Reserve!
+
+  scaledBTokenBalance: BigInt!
+  currentBTokenBalance: BigInt!
+
+  scaledVariableDebt: BigInt!
+  currentVariableDebt: BigInt!
+  variableBorrowIndex: BigInt!
+
+  liquidityRate: BigInt!
+
+  # Incentives
+  bTokenIncentivesUserIndex: BigInt!
+  vTokenIncentivesUserIndex: BigInt!
+  bIncentivesUpdatedAtBlock: Int!
+  bIncentivesUpdatedAtTimestamp: Int!
+  vIncentivesUpdatedAtBlock: Int!
+  vIncentivesUpdatedAtTimestamp: Int!
+}
+
+type NFT @entity {
+  id: ID! # nft address
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+
+  price: NFTPrice!
+
+  isActive: Boolean!
+  isFrozen: Boolean!
+}
+
+type NFTPrice @entity {
+  id: ID! # underlying nft address
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  priceInEth: BigInt!
+  priceHistory: [NFTPriceHistoryItem!]! @derivedFrom(field: "nftPrice")
+}
+
+enum LoanState {
+  DUMMY_DO_NOT_USE
+  Created
+  Active
+  Repaid
+  Defaulted
+}
+
+type Loan @entity {
+  id: ID! # loan id
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  user: User!
+  state: LoanState!
+  nft: NFT!
+  nftTokenId: BigInt!
+  reserve: Reserve!
+  userReserve: UserReserve!
+
+  scaledAmount: BigInt!
+
+  borrow: [Borrow!]! @derivedFrom(field: "loan")
+  repay: [Repay!]! @derivedFrom(field: "loan")
+  liquidate: Liquidate!
+}
+
+# Transaction
+interface UserTransaction @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  user: User!
+}
+
+type Referrer @entity {
+  id: ID!
+  deposits: [Deposit!]! @derivedFrom(field: "referrer")
+  borrows: [Borrow!]! @derivedFrom(field: "referrer")
+}
+
+type Deposit implements UserTransaction @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  user: User!
+
+  onBehalfOf: User!
+  reserve: Reserve!
+  userReserve: UserReserve!
+
+  amount: BigInt!
+  referrer: Referrer!
+}
+
+type Withdraw implements UserTransaction @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  user: User!
+
+  reserve: Reserve!
+  userReserve: UserReserve!
+
+  to: User!
+  amount: BigInt!
+}
+
+type Borrow implements UserTransaction @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  user: User!
+
+  onBehalfOf: User!
+  reserve: Reserve!
+  userReserve: UserReserve!
+
+  amount: BigInt!
+  referrer: Referrer!
+
+  borrowRate: BigInt!
+  variableTokenDebt: BigInt!
+
+  nft: NFT!
+  nftTokenId: BigInt!
+
+  loan: Loan!
+}
+
+type Repay implements UserTransaction @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  user: User!
+
+  onBehalfOf: User!
+  reserve: Reserve!
+  userReserve: UserReserve!
+
+  amount: BigInt!
+
+  nft: NFT!
+  nftTokenId: BigInt!
+
+  loan: Loan!
+}
+
+type Liquidate implements UserTransaction @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  pool: Pool!
+  user: User!
+
+  onBehalfOf: User!
+  reserve: Reserve!
+  userReserve: UserReserve!
+
+  amount: BigInt!
+
+  nft: NFT!
+  nftTokenId: BigInt!
+
+  loan: Loan!
+
+  liquidatorAddress: Bytes!
+}
+
+# History
+type ReservePriceHistoryItem @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  reservePrice: ReservePrice!
+  priceInETH: BigInt!
+}
+
+type NFTPriceHistoryItem @entity {
+  id: ID!
+  createdAtBlock: Int!
+  createdAtTimestamp: Int!
+  updatedAtBlock: Int!
+  updatedAtTimeStamp: Int!
+
+  nftPrice: NFTPrice!
+  priceInETH: BigInt!
+}

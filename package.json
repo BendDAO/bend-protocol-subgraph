@@ -1,0 +1,19 @@
+{
+  "name": "@bend/bend-subgraph",
+  "version": "0.0.0",
+  "description": "Subgraph of bend protocol",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qlcchain/bend-subgraph"
+  },
+  "scripts": {
+    "prepare:subgraph": "mustache ./config/${NETWORK:-local}.json subgraph.template.yaml > subgraph.yaml && rm -rf generated && npm run subgraph:codegen",
+    "subgraph:codegen": "graph codegen"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.23.2",
+    "@graphprotocol/graph-ts": "^0.23.1",
+    "mustache": "^4.2.0",
+    "typescript": "^4.4.4"
+  }
+}
