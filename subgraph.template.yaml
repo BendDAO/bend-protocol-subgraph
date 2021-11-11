@@ -1,0 +1,27 @@
+specVersion: 0.0.4
+description: Subgraph of bend protocol
+repository: https://github.com/qlcchain/bend-subgraph
+schema:
+  file: ./schema.graphql
+dataSources: []
+templates:
+  - kind: ethereum/contract
+    name: LendPool
+    network: {{ network }}
+    source:
+      abi: LendPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - User
+        - Reserve
+        - UserReserve
+      abis:
+        - name: LendPool
+          file: ./abis/protocol/LendPool.sol/LendPool.json
+      eventHandlers:
+        - event: Deposit(indexed address,address,indexed address,uint256,indexed uint16)
+          handler: handleDeposit
+      file: src/mappings/lend-pool.ts
