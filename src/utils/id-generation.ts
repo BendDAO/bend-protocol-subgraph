@@ -28,10 +28,6 @@ export function getNftId(underlyingAsset: Address, poolId: string): string {
   return underlyingAsset.toHexString() + poolId;
 }
 
-export function getNftTokenItemId(underlyingAsset: Address, tokenId: string): string {
-  return underlyingAsset.toHexString() + tokenId;
-}
-
 export function getLoanId(loanId: BigInt, poolId: string): string {
   return loanId.toString() + poolId;
 }
@@ -50,4 +46,16 @@ export function getBTokenId(bTokenAddress: Address): string {
 
 export function getDebtTokenId(dTokenAddress: Address): string {
   return dTokenAddress.toHexString();
+}
+
+export function getBNftId(bNftAddress: Address): string {
+  return bNftAddress.toHexString();
+}
+
+export function getNftAssetId(nftAsset: Address): string {
+  return nftAsset.toHexString();
+}
+
+export function getNftTokenItemId(nftAsset: Address, tokenId: BigInt): string {
+  return nftAsset.toHexString() + tokenId.toString();
 }

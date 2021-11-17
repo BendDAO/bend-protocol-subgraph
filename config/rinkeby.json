@@ -1,9 +1,15 @@
 {
   "network": "rinkeby",
+  "CryptoPunksMarketAddress": "0x0000000000000000000000000000000000000000",
+  "CryptoPunksMarketStartBlock": 9649515,
+  "BoredApeYachtClubAddress": "0x0000000000000000000000000000000000000000",
+  "BoredApeYachtClubStartBlock": 9649515,
   "LendPoolAddressesProviderRegistryAddress": "0x0000000000000000000000000000000000000000",
   "LendPoolAddressesProviderRegistryStartBlock": 9649515,
   "ReserveOracleAddress": "0x0000000000000000000000000000000000000000",
   "ReserveOracleStartBlock": 9649515,
   "NFTOracleAddress": "0x0000000000000000000000000000000000000000",
-  "NFTOracleStartBlock": 9649515
+  "NFTOracleStartBlock": 9649515,
+  "BNFTRegistryAddress": "0x0000000000000000000000000000000000000000",
+  "BNFTRegistryStartBlock": 9649515
 }

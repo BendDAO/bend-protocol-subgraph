@@ -36,6 +36,7 @@ import {
 } from "../helpers/initializers";
 import { Reserve, NFT } from "../../generated/schema";
 import { zeroAddress, zeroBI } from "../utils/converters";
+import { IERC721Detailed } from "../../generated/templates/BNFT/IERC721Detailed";
 
 export function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   let timestamp = event.block.timestamp.toI32();
@@ -115,27 +116,21 @@ export function handleReserveInitialized(event: ReserveInitialized): void {
 export function handleNftInitialized(event: NftInitialized): void {
   let underlyingAssetAddress = event.params.asset; //_nft;
   let nft = getOrInitNft(underlyingAssetAddress, event);
+  let bNft = getOrInitBNFT(event.params.bNft);
 
-  let ERC20BNftContract = IERC20Detailed.bind(event.params.bNft);
-  let ERC20ReserveContract = IERC20Detailed.bind(underlyingAssetAddress);
+  let ERC721BNftContract = IERC721Detailed.bind(event.params.bNft);
+  let ERC721Contract = IERC721Detailed.bind(underlyingAssetAddress);
 
-  let nameStringCall = ERC20ReserveContract.try_name();
+  let nameStringCall = ERC721Contract.try_name();
   if (nameStringCall.reverted) {
     nft.name = "";
   } else {
     nft.name = nameStringCall.value;
   }
 
-  nft.symbol = ERC20BNftContract.symbol().slice(1);
+  nft.symbol = ERC721BNftContract.symbol().slice(1);
 
-  BNFTContract.create(event.params.bNft);
-  createMapContractToPool(event.params.bNft, nft.pool);
-  let bNft = getOrInitBNFT(event.params.bNft);
-  bNft.underlyingAssetAddress = nft.underlyingAsset;
-  bNft.pool = nft.pool;
-  bNft.save();
-
-  nft.bBNFT = bNft.id;
+  nft.bnft = bNft.id;
   nft.isActive = true;
   saveNft(nft, event);
 }

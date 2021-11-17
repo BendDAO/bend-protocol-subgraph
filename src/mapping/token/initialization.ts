@@ -11,10 +11,6 @@ export {
   handleDebtTokenBurn,
   handleDebtTokenMint,
 } from "./reserve";
-export {
-  handleBNftMint,
-  handleBNftBurn,
-} from "./nft";
 
 function createIncentivesController(
   asset: Address,

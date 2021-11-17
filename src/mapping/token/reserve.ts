@@ -3,16 +3,8 @@ import {
   Mint as BTokenMint,
   Burn as BTokenBurn,
 } from "../../../generated/templates/BToken/BToken";
-import {
-  Mint as DebtTokenMint,
-  Burn as DebtTokenBurn,
-} from "../../../generated/templates/DebtToken/DebtToken";
-import {
-  BTokenBalanceHistoryItem,
-  DebtTokenBalanceHistoryItem,
-  UserReserve,
-  Reserve,
-} from "../../../generated/schema";
+import { Mint as DebtTokenMint, Burn as DebtTokenBurn } from "../../../generated/templates/DebtToken/DebtToken";
+import { BTokenBalanceHistoryItem, DebtTokenBalanceHistoryItem, UserReserve, Reserve } from "../../../generated/schema";
 import {
   getOrInitBToken,
   getOrInitReserve,
@@ -119,7 +111,7 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   // Check if we are minting to treasury for mainnet
   if (
     from.toHexString() != "0x707D1a914ea67855617557bd700F01537353a74E" &&
-    from.toHexString() != "0x7734280a4337f37fbf4651073db7c28c80b339e9"
+    from.toHexString() != "0x2" //TODO
   ) {
     let userReserve = getOrInitUserReserve(from, bToken.underlyingAssetAddress as Address, event);
     let calculatedAmount = rayDiv(value, index);
