@@ -1,0 +1,289 @@
+specVersion: 0.0.1
+description: Bend Protocol subgraph
+repository: https://github.com/qlcchain/bend-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  # --------------------------------------
+  #           CONFIGURATIONS
+  # --------------------------------------
+  - kind: ethereum/contract
+    name: LendPoolAddressesProviderRegistry
+    network: {{network}}
+    source:
+      address: '{{LendPoolAddressesProviderRegistryAddress}}'
+      abi: LendPoolAddressesProviderRegistry
+      startBlock: {{LendPoolAddressesProviderRegistryStartBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - LendPoolAddressesProvider
+      abis:
+        - name: LendPoolAddressesProviderRegistry
+          file: ./abis/LendPoolAddressesProviderRegistry.json
+      eventHandlers:
+        - event: AddressesProviderRegistered(indexed address)
+          handler: handleAddressesProviderRegistered
+        - event: AddressesProviderUnregistered(indexed address)
+          handler: handleAddressesProviderUnregistered
+      file: src/mapping/address-provider-registry.ts
+templates:
+  # --------------------------------------
+  #       CONFIGURATIONS
+  # --------------------------------------
+  - kind: ethereum/contract
+    name: LendPoolAddressesProvider
+    network: {{network}}
+    source:
+      abi: LendPoolAddressesProvider
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - LendPoolAddressesProvider
+      abis:
+        - name: LendPoolAddressesProvider
+          file: ./abis/LendPoolAddressesProvider.json
+      eventHandlers:
+        - event: ProxyCreated(bytes32,indexed address)
+          handler: handleProxyCreated
+        - event: ReserveOracleUpdated(indexed address)
+          handler: handleReserveOracleUpdated
+        - event: NftOracleUpdated(indexed address)
+          handler: handleNFTOracleUpdated
+        - event: LendPoolUpdated(indexed address)
+          handler: handleLendPoolUpdated
+        - event: LendPoolConfiguratorUpdated(indexed address)
+          handler: handleLendPoolConfiguratorUpdated
+        - event: LendPoolLoanUpdated(indexed address)
+          handler: handleLendPoolLoanUpdated
+        - event: BNFTRegistryUpdated(indexed address)
+          handler: handleBNFTRegistryUpdated
+        - event: ConfigurationAdminUpdated(indexed address)
+          handler: handleConfigurationAdminUpdated
+        - event: EmergencyAdminUpdated(indexed address)
+          handler: handleEmergencyAdminUpdated
+        - event: AddressSet(bytes32,indexed address,bool)
+          handler: handleAddressSet
+      file: src/mapping/lend-pool-address-provider.ts
+
+  - kind: ethereum/contract
+    name: LendPoolConfigurator
+    network: {{network}}
+    source:
+      abi: LendPoolConfigurator
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - Reserve
+      abis:
+        - name: LendPoolConfigurator
+          file: ./abis/LendPoolConfigurator.json
+        - name: IERC20Detailed
+          file: ./abis/IERC20Detailed.json
+        - name: InterestRate
+          file: ./abis/InterestRate.json
+      eventHandlers:
+        - event: ReserveInitialized(indexed address,indexed address,address,address)
+          handler: handleReserveInitialized
+        - event: BorrowingEnabledOnReserve(indexed address)
+          handler: handleBorrowingEnabledOnReserve
+        - event: BorrowingDisabledOnReserve(indexed address)
+          handler: handleBorrowingDisabledOnReserve
+        - event: ReserveActivated(indexed address)
+          handler: handleReserveActivated
+        - event: ReserveDeactivated(indexed address)
+          handler: handleReserveDeactivated
+        - event: ReserveFrozen(indexed address)
+          handler: handleReserveFreezed
+        - event: ReserveUnfrozen(indexed address)
+          handler: handleReserveUnfreezed
+        - event: ReserveFactorChanged(indexed address,uint256)
+          handler: handleReserveFactorChanged
+        - event: ReserveDecimalsChanged(indexed address,uint256)
+          handler: handleReserveDecimalsChanged
+        - event: ReserveInterestRateChanged(indexed address,address)
+          handler: handleReserveInterestRateStrategyChanged
+        - event: NftInitialized(indexed address,indexed address)
+          handler: handleNftInitialized
+        - event: NftConfigurationChanged(indexed address,uint256,uint256,uint256)
+          handler: handleNftConfigurationChanged
+        - event: NftActivated(indexed address)
+          handler: handleNftActivated
+        - event: NftDeactivated(indexed address)
+          handler: handleNftDeactivated
+        - event: NftFrozen(indexed address)
+          handler: handleNftFreezed
+        - event: NftUnfrozen(indexed address)
+          handler: handleNftUnfreezed
+        - event: BTokenUpgraded(indexed address,indexed address,indexed address)
+          handler: handleBTokenUpgraded
+        - event: DebtTokenUpgraded(indexed address,indexed address,indexed address)
+          handler: handleDebtTokenUpgraded
+      file: src/mapping/lend-pool-configurator.ts
+
+  # --------------------------------------
+  #      BToken / DebtToken
+  # --------------------------------------
+  - kind: ethereum/contract
+    name: BToken
+    network: {{network}}
+    source:
+      abi: BToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - BToken
+        - UserReserve
+      abis:
+        - name: BToken
+          file: ./abis/BToken.json
+        - name: IERC20Detailed
+          file: ./abis/IERC20Detailed.json
+        - name: IncentivesController
+          file: ./constant-abis/IncentivesController.json
+      eventHandlers:
+        - event: Burn(indexed address,indexed address,uint256,uint256)
+          handler: handleBTokenBurn
+        - event: BalanceTransfer(indexed address,indexed address,uint256,uint256)
+          handler: handleBTokenTransfer
+        - event: Mint(indexed address,uint256,uint256)
+          handler: handleBTokenMint
+        - event: Initialized(indexed address,indexed address,address,address,bytes)
+          handler: handleBTokenInitialized
+      file: src/mapping/token/initialization.ts
+  - kind: ethereum/contract
+    name: DebtToken
+    network: {{network}}
+    source:
+      abi: DebtToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - DebtToken
+        - UserReserve
+      abis:
+        - name: DebtToken
+          file: ./abis/DebtToken.json
+        - name: IERC20Detailed
+          file: ./abis/IERC20Detailed.json
+        - name: IncentivesController
+          file: ./constant-abis/IncentivesController.json
+      eventHandlers:
+        - event: Burn(indexed address,uint256,uint256)
+          handler: handleDebtTokenBurn
+        - event: Mint(indexed address,uint256,uint256)
+          handler: handleDebtTokenMint
+        - event: Initialized(indexed address,indexed address,address,uint8,string,string,bytes)
+          handler: handleDebtTokenInitialized
+      file: src/mapping/token/initialization.ts
+
+  # --------------------------------------
+  #      BNFT
+  # --------------------------------------
+  - kind: ethereum/contract
+    name: BNFT
+    network: {{network}}
+    source:
+      abi: BNFT
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - BNFT
+        - UserReserve
+      abis:
+        - name: BNFT
+          file: ./abis/BNFT.json
+        - name: IERC721Detailed
+          file: ./abis/IERC721Detailed.json
+      eventHandlers:
+        - event: Burn(indexed address,indexed address,uint256,indexed address)
+          handler: handleBNftBurn
+        - event: Mint(indexed address,indexed address,uint256,indexed address)
+          handler: handleBNftMint
+        #- event: FlashLoan(indexed address,indexed address,indexed address,uint256)
+        #  handler: handleBNftFlashLoan
+        - event: Initialized(indexed address,bytes)
+          handler: handleBNftInitialized
+      file: src/mapping/token/initialization.ts
+
+  # --------------------------------------
+  #       SERVICES
+  # --------------------------------------
+  - kind: ethereum/contract
+    name: LendPool
+    network: {{network}}
+    source:
+      abi: LendPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - ReserveOperation
+        - InterestRateHistory
+        - Reserve
+        - UserReserve
+        - User
+      abis:
+        - name: LendPool
+          file: ./abis/LendPool.json
+      eventHandlers:
+        - event: Deposit(indexed address,address,indexed address,uint256,indexed uint16)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,indexed address,indexed address,uint256)
+          handler: handleWithdraw
+        - event: Borrow(indexed address,address,indexed address,uint256,address,uint256,uint256,uint256,indexed uint16)
+          handler: handleBorrow
+        - event: Repay(indexed address,uint256,indexed address,indexed address,address,uint256,uint256)
+          handler: handleRepay
+        - event: Liquidate(indexed address,uint256,indexed address,indexed address,uint256,uint256,address,address,uint256)
+          handler: handleLiquidate
+        - event: Paused()
+          handler: handlePaused
+        - event: Unpaused()
+          handler: handleUnpaused
+        - event: ReserveDataUpdated(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleReserveDataUpdated
+      file: src/mapping/lend-pool.ts
+  - kind: ethereum/contract
+    name: LendPoolLoan
+    network: {{network}}
+    source:
+      abi: LendPoolLoan
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - ReserveOperation
+        - InterestRateHistory
+        - Reserve
+        - UserReserve
+        - User
+      abis:
+        - name: LendPoolLoan
+          file: ./abis/LendPoolLoan.json
+      eventHandlers:
+        - event: Initialized(indexed address)
+          handler: handleInitialized
+        - event: LoanCreated(indexed address,indexed address,indexed uint256,address,uint256,address,uint256,uint256)
+          handler: handleLoanCreated
+        - event: LoanUpdated(indexed address,indexed uint256,address,uint256,uint256,uint256)
+          handler: handleLoanUpdated
+        - event: LoanRepaid(indexed address,indexed uint256,address,uint256,address,uint256)
+          handler: handleLoanRepaid
+        - event: LoanLiquidated(indexed address,indexed uint256,address,uint256,address,uint256)
+          handler: handleLoanLiquidated
+      file: src/mapping/lend-pool-loan.ts

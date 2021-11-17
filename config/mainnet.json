@@ -1,9 +1,9 @@
 {
-  "network": "rinkeby",
+  "network": "mainnet",
   "LendPoolAddressesProviderRegistryAddress": "0x0000000000000000000000000000000000000000",
-  "LendPoolAddressesProviderRegistryStartBlock": 9649515,
+  "LendPoolAddressesProviderRegistryStartBlock": 13623705,
   "ReserveOracleAddress": "0x0000000000000000000000000000000000000000",
-  "ReserveOracleStartBlock": 9649515,
+  "ReserveOracleStartBlock": 13623705,
   "NFTOracleAddress": "0x0000000000000000000000000000000000000000",
-  "NFTOracleStartBlock": 9649515
+  "NFTOracleStartBlock": 13623705
 }

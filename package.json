@@ -1,19 +1,43 @@
 {
-  "name": "@bend/bend-subgraph",
-  "version": "0.0.0",
-  "description": "Subgraph of bend protocol",
+  "name": "bend-subgraph",
+  "version": "1.0.0",
+  "description": "This package contains subgraph of the bend protocol",
+  "scripts": {
+    "prettier:abis": "prettier --write 'constant-abis/**/*.json' 'abis/**/*.json'",
+    "prettier:write": "prettier --write 'config/**/*.json' 'constant-abis/**/*.json' 'scripts/**/*.js' 'src/**/*.ts'",
+    "prepare:subgraph": "mustache ./config/${NETWORK:-dev}.json ${BLOCKCHAIN:-ethereum}.subgraph.template.yaml > subgraph.yaml && rm -rf generated && npm run subgraph:codegen",
+    "subgraph:codegen": "graph codegen --output-dir ./generated",
+    "subgraph:build": "graph build",
+    "subgraph:create:local": "graph create bend/bend-protocol --node http://localhost:8020",
+    "subgraph:create:self-hosted:rinkeby": "graph create bend/bend-protocol-rinkeby --node https://adm-thegraph.bendfinance.org",
+    "subgraph:create:self-hosted:mainnet": "graph create bend/bend-protocol --node https://adm-thegraph.bendfinance.org",
+    "subgraph:deploy:local": "graph deploy bend/bend-protocol --ipfs http://localhost:5001 --node http://localhost:8020",
+    "subgraph:deploy:self-hosted": "graph deploy $SLUG --ipfs https://ipfs-thegraph.bendfinance.org --node https://adm-thegraph.bendfinance.org",
+    "subgraph:deploy:hosted": "graph deploy $SLUG --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --access-token $ACCESS_TOKEN",
+    "deploy-stack:local": "npm run prepare:all && npm run subgraph:local",
+    "deploy:hosted:rinkeby": "BLOCKCHAIN=ethereum NETWORK=rinkeby env-cmd npm run prepare:subgraph && SLUG=bend/bend-protocol-rinkeby env-cmd npm run subgraph:deploy:hosted",
+    "deploy:hosted:mainnet": "BLOCKCHAIN=ethereum NETWORK=mainnet env-cmd npm run prepare:subgraph && SLUG=bend/bend-protocol env-cmd npm run subgraph:deploy:hosted",
+    "deploy:self-hosted:rinkeby": "BLOCKCHAIN=ethereum NETWORK=rinkeby npm run prepare:subgraph && SLUG=bend/bend-protocol-rinkeby npm run subgraph:deploy:self-hosted",
+    "deploy:self-hosted:mainnet": "BLOCKCHAIN=ethereum NETWORK=mainnet npm run prepare:subgraph && SLUG=bend/bend-protocol npm run subgraph:deploy:self-hosted"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/qlcchain/bend-subgraph"
   },
-  "scripts": {
-    "prepare:subgraph": "mustache ./config/${NETWORK:-local}.json subgraph.template.yaml > subgraph.yaml && rm -rf generated && npm run subgraph:codegen",
-    "subgraph:codegen": "graph codegen"
-  },
-  "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.23.2",
-    "@graphprotocol/graph-ts": "^0.23.1",
-    "mustache": "^4.2.0",
-    "typescript": "^4.4.4"
+  "author": "BEND <dev@bendfinance.org>",
+  "contributors": [],
+  "license": "MIT",
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.18.0",
+    "@graphprotocol/graph-ts": "^0.18.1",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "env-cmd": "^10.1.0",
+    "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
+    "lint-staged": "^9.2.5",
+    "mustache": "^3.1.0",
+    "prettier": "^1.18.2",
+    "typescript": "3.5.3"
   }
 }
