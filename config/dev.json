@@ -1,9 +1,9 @@
 {
-  "network": "rinkeby",
+  "network": "hardhatevm",
   "LendPoolAddressesProviderRegistryAddress": "0x0000000000000000000000000000000000000000",
-  "LendPoolAddressesProviderRegistryStartBlock": 9649515,
+  "LendPoolAddressesProviderRegistryStartBlock": 0,
   "ReserveOracleAddress": "0x0000000000000000000000000000000000000000",
-  "ReserveOracleStartBlock": 9649515,
+  "ReserveOracleStartBlock": 0,
   "NFTOracleAddress": "0x0000000000000000000000000000000000000000",
-  "NFTOracleStartBlock": 9649515
+  "NFTOracleStartBlock": 0
 }
