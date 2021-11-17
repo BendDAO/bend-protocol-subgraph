@@ -1,63 +1,4 @@
 # --------------------------------------
-# Common Entities
-# --------------------------------------
-type NftAsset @entity {
-  """
-  ERC721(Native, BNFT): nft asset address
-  PUNKS: punk address
-  """
-  id: ID!
-  nftAsset: Bytes!
-  symbol: String!
-  name: String!
-
-  tokenItems: [NftTokenItem!]! @derivedFrom(field: "nftAsset")
-}
-
-type NftTokenItem @entity {
-  """
-  ERC721(Native, BNFT): nft asset address + nft token id
-  PUNKS: punk address + punk index
-  """
-  id: ID!
-  nftAsset: NftAsset!
-  nftTokenId: BigInt!
-  owner: Bytes
-  tokenUri: String
-}
-
-# --------------------------------------
-# BNFT Entities
-# --------------------------------------
-type BNFT @entity {
-  """
-  BNFT address
-  """
-  id: ID!
-  symbol: String!
-  name: String!
-  nftAsset: NftAsset!
-  tokenContractImpl: Bytes!
-
-  lifetimeFlashLoans: BigInt! # default: 0
-
-  flashLoanHistory: [FlashLoan!]! @derivedFrom(field: "bnft")
-}
-
-type FlashLoan @entity {
-  """
-  tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
-  id: ID!
-  bnft: BNFT!
-  nftAsset: Bytes!
-  nftTokenId: BigInt!
-  target: Bytes!
-  initiator: Bytes!
-  timestamp: Int!
-}
-
-# --------------------------------------
 # Bend Entities
 # --------------------------------------
 type Protocol @entity {
@@ -373,7 +314,6 @@ type NftParamsHistoryItem @entity {
   lifetimeRepayments: BigInt! # default: 0
   lifetimeBorrows: BigInt! # default: 0
   lifetimeLiquidated: BigInt! # default: 0
-  lifetimeFlashLoans: BigInt!
 }
 
 type MapAssetPool @entity {
@@ -396,9 +336,13 @@ type Reserve @entity {
   name: String!
   decimals: Int!
   borrowingEnabled: Boolean! # defalt false
+  reserveFactor: BigInt! #default 0
   isActive: Boolean! # defalt false
   isFrozen: Boolean! # defalt false
   price: PriceOracleAsset!
+
+  bToken: BToken!
+  debtToken: DebtToken!
 
   reserveInterestRateStrategy: Bytes!
   optimalUtilisationRate: BigInt!
@@ -406,29 +350,29 @@ type Reserve @entity {
   variableRateSlope2: BigInt!
   baseVariableBorrowRate: BigInt!
   utilizationRate: BigDecimal! # default: 0
-  totalLiquidity: BigInt! # default: 0
-  totalBTokenSupply: BigInt!
-  availableLiquidity: BigInt! # default: 0
-  totalScaledVariableDebt: BigInt! # default: 0
-  totalCurrentVariableDebt: BigInt! # default: 0
-  totalDeposits: BigInt! # default: 0
+
   liquidityRate: BigInt! # depositors interest
   variableBorrowRate: BigInt!
-  stableBorrowRate: BigInt!
   liquidityIndex: BigInt!
   variableBorrowIndex: BigInt!
-  bToken: BToken!
-  debtToken: DebtToken!
-  reserveFactor: BigInt! #default 0
+
+  totalLiquidity: BigInt! # default: 0
+  availableLiquidity: BigInt! # default: 0
+  totalBTokenSupply: BigInt!
+  totalScaledVariableDebt: BigInt! # default: 0
+  totalCurrentVariableDebt: BigInt! # default: 0
+
   lastUpdateTimestamp: Int!
 
-  lifetimeLiquidity: BigInt! # default: 0
   lifetimeScaledVariableDebt: BigInt! # default: 0
   lifetimeCurrentVariableDebt: BigInt! # default: 0
-  lifetimeRepayments: BigInt! # default: 0
+
+  lifetimeLiquidity: BigInt! # default: 0
   lifetimeWithdrawals: BigInt! # default: 0
   lifetimeBorrows: BigInt! # default: 0
+  lifetimeRepayments: BigInt! # default: 0
   lifetimeLiquidated: BigInt! # default: 0
+
   lifetimeDepositorsInterestEarned: BigInt!
   lifetimeReserveFactorAccrued: BigInt!
 
@@ -441,8 +385,6 @@ type Reserve @entity {
 
   paramsHistory: [ReserveParamsHistoryItem!]! @derivedFrom(field: "reserve")
   configurationHistory: [ReserveConfigurationHistoryItem!]! @derivedFrom(field: "reserve")
-
-  deposits: [Deposit!]! @derivedFrom(field: "reserve")
 }
 
 type NFT @entity {
@@ -456,26 +398,27 @@ type NFT @entity {
   name: String!
   isActive: Boolean! # defalt false
   isFrozen: Boolean! # defalt false
-  price: PriceOracleAsset!
   baseLTVasCollateral: BigInt!
   liquidationThreshold: BigInt!
   liquidationBonus: BigInt!
+  bnftToken: Bytes!
+  price: PriceOracleAsset!
+
   totalCollateral: BigInt! # default: 0
-  bnft: BNFT!
+
+  lifetimeBorrows: BigInt! # default: 0
+  lifetimeRepayments: BigInt! # default: 0
+  lifetimeLiquidated: BigInt! # default: 0
+
   lastUpdateTimestamp: Int!
 
-  lifetimeLiquidity: BigInt! # default: 0
-  lifetimeRepayments: BigInt! # default: 0
-  lifetimeWithdrawals: BigInt! # default: 0
-  lifetimeBorrows: BigInt! # default: 0
-  lifetimeLiquidated: BigInt! # default: 0
-  lifetimeFlashLoans: BigInt! # default: 0
   userNfts: [UserNft!]! @derivedFrom(field: "nftAsset")
-  loanHistory: [Loan!]! @derivedFrom(field: "nftAsset")
+  loans: [Loan!]! @derivedFrom(field: "nftAsset")
 
   borrowHistory: [Borrow!]! @derivedFrom(field: "nftAsset")
   repayHistory: [Repay!]! @derivedFrom(field: "nftAsset")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "nftAsset")
+  loanHistory: [Loan!]! @derivedFrom(field: "nftAsset")
 
   paramsHistory: [NftParamsHistoryItem!]! @derivedFrom(field: "nftAsset")
   configurationHistory: [NftConfigurationHistoryItem!]! @derivedFrom(field: "nftAsset")
@@ -543,6 +486,7 @@ type UserNft @entity {
   pool: Pool!
   nftAsset: NFT!
   user: User!
+
   totalCollateral: BigInt!
 
   lastUpdateTimestamp: Int!
@@ -566,9 +510,13 @@ type LoanBalanceHistoryItem @entity {
 
 type Loan @entity {
   """
-  user address
+  loan id
   """
   id: ID!
+  pool: Pool!
+  user: User!
+  loanId: BigInt!
+  borrower: User!
   nftAsset: NFT!
   nftTokenId: BigInt!
   reserveAsset: Reserve!
@@ -577,6 +525,8 @@ type Loan @entity {
   state: LoanState!
 
   lastUpdateTimestamp: Int!
+
+  loanBalanceHistory: [LoanBalanceHistoryItem!]! @derivedFrom(field: "loan")
 }
 
 type User @entity {
@@ -589,6 +539,7 @@ type User @entity {
 
   reserves: [UserReserve!]! @derivedFrom(field: "user")
   nfts: [UserNft!]! @derivedFrom(field: "user")
+  loands: [Loan!]! @derivedFrom(field: "user")
 
   depositHistory: [Deposit!]! @derivedFrom(field: "user")
   withdrawUnderlyingHistory: [Withdraw!]! @derivedFrom(field: "user")

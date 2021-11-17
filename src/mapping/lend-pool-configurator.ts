@@ -21,7 +21,6 @@ import { IERC20Detailed } from "../../generated/templates/LendPoolConfigurator/I
 import {
   BToken as BTokenContract,
   DebtToken as DebtTokenContract,
-  BNFT as BNFTContract,
 } from "../../generated/templates";
 import { InterestRate } from "../../generated/templates/LendPoolConfigurator/InterestRate";
 import {
@@ -32,11 +31,9 @@ import {
   getOrInitReserveConfigurationHistoryItem,
   getOrInitNft,
   getOrInitNftConfigurationHistoryItem,
-  getOrInitBNFT,
 } from "../helpers/initializers";
 import { Reserve, NFT } from "../../generated/schema";
 import { zeroAddress, zeroBI } from "../utils/converters";
-import { IERC721Detailed } from "../../generated/templates/BNFT/IERC721Detailed";
 
 export function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   let timestamp = event.block.timestamp.toI32();
@@ -116,21 +113,8 @@ export function handleReserveInitialized(event: ReserveInitialized): void {
 export function handleNftInitialized(event: NftInitialized): void {
   let underlyingAssetAddress = event.params.asset; //_nft;
   let nft = getOrInitNft(underlyingAssetAddress, event);
-  let bNft = getOrInitBNFT(event.params.bNft);
 
-  let ERC721BNftContract = IERC721Detailed.bind(event.params.bNft);
-  let ERC721Contract = IERC721Detailed.bind(underlyingAssetAddress);
-
-  let nameStringCall = ERC721Contract.try_name();
-  if (nameStringCall.reverted) {
-    nft.name = "";
-  } else {
-    nft.name = nameStringCall.value;
-  }
-
-  nft.symbol = ERC721BNftContract.symbol().slice(1);
-
-  nft.bnft = bNft.id;
+  nft.bnftToken = event.params.bNft;
   nft.isActive = true;
   saveNft(nft, event);
 }
@@ -236,9 +220,9 @@ export function handleNftUnfreezed(event: NftDeactivated): void {
 }
 
 export function handleBTokenUpgraded(event: BTokenUpgraded): void {
-  let aToken = getOrInitBToken(event.params.proxy);
-  aToken.tokenContractImpl = event.params.implementation;
-  aToken.save();
+  let bToken = getOrInitBToken(event.params.proxy);
+  bToken.tokenContractImpl = event.params.implementation;
+  bToken.save();
 }
 
 export function handleDebtTokenUpgraded(event: DebtTokenUpgraded): void {

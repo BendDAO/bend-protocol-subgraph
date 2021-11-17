@@ -89,8 +89,6 @@ function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: B
   userReserve.variableBorrowIndex = poolReserve.variableBorrowIndex;
   userReserve.liquidityRate = poolReserve.liquidityRate;
 
-  poolReserve.totalDeposits = poolReserve.totalDeposits.minus(value);
-
   poolReserve.availableLiquidity = poolReserve.availableLiquidity.minus(value);
   poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.minus(value);
 
@@ -124,8 +122,6 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
     userReserve.lastUpdateTimestamp = event.block.timestamp.toI32();
 
     userReserve.save();
-
-    poolReserve.totalDeposits = poolReserve.totalDeposits.plus(value);
 
     poolReserve.availableLiquidity = poolReserve.availableLiquidity.plus(value);
     poolReserve.totalLiquidity = poolReserve.totalLiquidity.plus(value);

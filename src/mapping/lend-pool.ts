@@ -22,7 +22,6 @@ import {
 import {
   Borrow as BorrowAction,
   Deposit as DepositAction,
-  FlashLoan as FlashLoanAction,
   Liquidate as LiquidateAction,
   Pool,
   Withdraw as WithdrawAction,
@@ -32,6 +31,7 @@ import { EventTypeRef, getHistoryId } from "../utils/id-generation";
 import { calculateGrowth } from "../helpers/math";
 
 export function handleDeposit(event: Deposit): void {
+  let onBehalfOf = getOrInitUser(event.params.onBehalfOf);
   let poolReserve = getOrInitReserve(event.params.reserve, event);
   let userReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
   let depositedAmount = event.params.amount;
@@ -44,7 +44,7 @@ export function handleDeposit(event: Deposit): void {
   let deposit = new DepositAction(id);
   deposit.pool = poolReserve.pool;
   deposit.user = userReserve.user;
-  deposit.onBehalfOf = event.params.onBehalfOf.toHexString();
+  deposit.onBehalfOf = onBehalfOf.id;
   deposit.userReserve = userReserve.id;
   deposit.reserve = poolReserve.id;
   deposit.amount = depositedAmount;
@@ -74,6 +74,7 @@ export function handleWithdraw(event: Withdraw): void {
 }
 
 export function handleBorrow(event: Borrow): void {
+  let onBehalfOf = getOrInitUser(event.params.onBehalfOf);
   let userReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
   let poolReserve = getOrInitReserve(event.params.reserve, event);
 
@@ -83,8 +84,8 @@ export function handleBorrow(event: Borrow): void {
 
   let borrow = new BorrowAction(getHistoryId(event, EventTypeRef.Borrow));
   borrow.pool = poolReserve.pool;
-  borrow.user = event.params.user.toHexString();
-  borrow.onBehalfOf = event.params.onBehalfOf.toHexString();
+  borrow.user = userReserve.user;
+  borrow.onBehalfOf = onBehalfOf.id;
   borrow.userReserve = userReserve.id;
   borrow.reserve = poolReserve.id;
   borrow.amount = event.params.amount;
