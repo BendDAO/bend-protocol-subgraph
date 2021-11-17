@@ -20,16 +20,21 @@ import {
   ChainlinkAggregator,
   ContractToPoolMapping,
   Protocol,
+  NftAsset,
 } from "../../generated/schema";
+import { LOAN_STATE_DUMMY_DO_NOT_USE, zeroAddress, zeroBD, zeroBI } from "../utils/converters";
 import {
-  LOAN_STATE_DUMMY_DO_NOT_USE,
-  zeroAddress,
-  zeroBD,
-  zeroBI,
-} from "../utils/converters";
-import { getBTokenId,
-  getDebtTokenId, getReserveId, getUserReserveId,
-  getNftId, getNftTokenItemId, getUserNftId, getLoanId } from "../utils/id-generation";
+  getBTokenId,
+  getDebtTokenId,
+  getReserveId,
+  getUserReserveId,
+  getNftId,
+  getNftTokenItemId,
+  getUserNftId,
+  getLoanId,
+  getBNftId,
+  getNftAssetId,
+} from "../utils/id-generation";
 
 export function getProtocol(): Protocol {
   let protocolId = "1";
@@ -113,12 +118,7 @@ export function getOrInitUserReserve(_user: Address, _underlyingAsset: Address, 
   return initUserReserve(_underlyingAsset, _user, poolId, reserve.id);
 }
 
-function initUserNft(
-  underlyingAssetAddress: Address,
-  userAddress: Address,
-  poolId: string,
-  nftId: string
-): UserNft {
+function initUserNft(underlyingAssetAddress: Address, userAddress: Address, poolId: string, nftId: string): UserNft {
   let userNftId = getUserNftId(userAddress, underlyingAssetAddress, poolId);
   let userNft = UserNft.load(userNftId);
   if (userNft === null) {
@@ -134,11 +134,7 @@ function initUserNft(
   return userNft as UserNft;
 }
 
-export function getOrInitUserNftWithIds(
-  userAddress: Address,
-  underlyingAssetAddress: Address,
-  pool: string
-): UserNft {
+export function getOrInitUserNftWithIds(userAddress: Address, underlyingAssetAddress: Address, pool: string): UserNft {
   let nftId = getNftId(underlyingAssetAddress, pool);
   return initUserNft(underlyingAssetAddress, userAddress, pool, nftId);
 }
@@ -260,7 +256,7 @@ export function getOrInitNft(underlyingAsset: Address, event: ethereum.Event): N
     nft.baseLTVasCollateral = zeroBI();
     nft.liquidationThreshold = zeroBI();
     nft.liquidationBonus = zeroBI();
-    nft.bBNFT = zeroAddress().toHexString();
+    nft.bnft = zeroAddress().toHexString();
 
     nft.totalCollateral = zeroBI();
 
@@ -287,8 +283,8 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
   if (loan === null) {
     loan = new Loan(loanIdInDB);
     loan.state = LOAN_STATE_DUMMY_DO_NOT_USE;
-    loan.reserveAsset = "0";
-    loan.nftAsset = "0";
+    loan.reserveAsset = "";
+    loan.nftAsset = "";
     loan.nftTokenId = zeroBI();
     loan.scaledAmount = zeroBI();
     loan.currentAmount = zeroBI();
@@ -329,18 +325,6 @@ export function getOrInitBToken(bTokenAddress: Address): BToken {
     bToken.underlyingAssetDecimals = 18;
   }
   return bToken as BToken;
-}
-
-export function getOrInitBNFT(bNftAddress: Address): BNFT {
-  let bNftId = getBTokenId(bNftAddress);
-  let bNFT = BNFT.load(bNftId);
-  if (!bNFT) {
-    bNFT = new BNFT(bNftId);
-    bNFT.underlyingAssetAddress = new Bytes(1);
-    bNFT.tokenContractImpl = zeroAddress();
-    bNFT.pool = "";
-  }
-  return bNFT as BNFT;
 }
 
 export function getOrInitReserveParamsHistoryItem(id: Bytes, reserve: Reserve): ReserveParamsHistoryItem {
@@ -437,4 +421,38 @@ export function createMapContractToPool(_contractAddress: Address, pool: string)
   contractToPoolMapping = new ContractToPoolMapping(contractAddress);
   contractToPoolMapping.pool = pool;
   contractToPoolMapping.save();
+}
+
+export function getOrInitBNFT(bNftAddress: Address): BNFT {
+  let bnftId = getBNftId(bNftAddress);
+  let bnft = BNFT.load(bnftId);
+  if (!bnft) {
+    bnft = new BNFT(bnftId);
+    bnft.nftAsset = "";
+    bnft.tokenContractImpl = zeroAddress();
+  }
+  return bnft as BNFT;
+}
+
+export function getOrInitNftAsset(nftAsset: Address): NftAsset {
+  let id = getNftAssetId(nftAsset);
+  let asset = NftAsset.load(id);
+  if (!asset) {
+    asset = new NftAsset(id);
+    asset.nftAsset = nftAsset;
+  }
+  return asset as NftAsset;
+}
+
+export function getOrInitNftTokenItem(nftAsset: Address, tokenId: BigInt): NftTokenItem {
+  let itemId = getNftTokenItemId(nftAsset, tokenId);
+  let item = NftTokenItem.load(itemId);
+  if (!item) {
+    item = new NftTokenItem(itemId);
+    item.nftAsset = "";
+    item.nftTokenId = tokenId;
+    item.owner = zeroAddress();
+    item.tokenUri = "";
+  }
+  return item as NftTokenItem;
 }

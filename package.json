@@ -5,6 +5,7 @@
   "scripts": {
     "prettier:abis": "prettier --write 'constant-abis/**/*.json' 'abis/**/*.json'",
     "prettier:write": "prettier --write 'config/**/*.json' 'constant-abis/**/*.json' 'scripts/**/*.js' 'src/**/*.ts'",
+    "prepare:all": "npm run prepare:subgraph",
     "prepare:subgraph": "mustache ./config/${NETWORK:-dev}.json ${BLOCKCHAIN:-ethereum}.subgraph.template.yaml > subgraph.yaml && rm -rf generated && npm run subgraph:codegen",
     "subgraph:codegen": "graph codegen --output-dir ./generated",
     "subgraph:build": "graph build",
@@ -35,9 +36,15 @@
     "env-cmd": "^10.1.0",
     "eslint": "^6.2.2",
     "eslint-config-prettier": "^6.1.0",
+    "husky": "^4.2.5",
     "lint-staged": "^9.2.5",
     "mustache": "^3.1.0",
     "prettier": "^1.18.2",
     "typescript": "3.5.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged --pattern 'contracts/**/*.sol' --pattern 'helpers/**/*.ts'  --pattern 'test/**/*.ts' --pattern 'tasks/**/*.ts'"
+    }
   }
 }

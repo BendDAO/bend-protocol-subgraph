@@ -1,3 +1,65 @@
+# --------------------------------------
+# Common Entities
+# --------------------------------------
+type NftAsset @entity {
+  """
+  ERC721(Native, BNFT): nft asset address
+  PUNKS: punk address
+  """
+  id: ID!
+  nftAsset: Bytes!
+  symbol: String!
+  name: String!
+
+  tokenItems: [NftTokenItem!]! @derivedFrom(field: "nftAsset")
+}
+
+type NftTokenItem @entity {
+  """
+  ERC721(Native, BNFT): nft asset address + nft token id
+  PUNKS: punk address + punk index
+  """
+  id: ID!
+  nftAsset: NftAsset!
+  nftTokenId: BigInt!
+  owner: Bytes
+  tokenUri: String
+}
+
+# --------------------------------------
+# BNFT Entities
+# --------------------------------------
+type BNFT @entity {
+  """
+  BNFT address
+  """
+  id: ID!
+  symbol: String!
+  name: String!
+  nftAsset: NftAsset!
+  tokenContractImpl: Bytes!
+
+  lifetimeFlashLoans: BigInt! # default: 0
+
+  flashLoanHistory: [FlashLoan!]! @derivedFrom(field: "bnft")
+}
+
+type FlashLoan @entity {
+  """
+  tx hash
+  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  id: ID!
+  bnft: BNFT!
+  nftAsset: Bytes!
+  nftTokenId: BigInt!
+  target: Bytes!
+  initiator: Bytes!
+  timestamp: Int!
+}
+
+# --------------------------------------
+# Bend Entities
+# --------------------------------------
 type Protocol @entity {
   # just 1 for now
   id: ID!
@@ -133,16 +195,6 @@ type DebtToken @entity {
   tokenContractImpl: Bytes!
 }
 
-type BNFT @entity {
-  """
-  BNFT address
-  """
-  id: ID!
-  pool: Pool!
-  underlyingAssetAddress: Bytes!
-  tokenContractImpl: Bytes!
-}
-
 enum LoanState {
   DUMMY_DO_NOT_USE
   Created
@@ -228,19 +280,6 @@ type Repay implements UserTransaction @entity {
   repayer: User!
   amount: BigInt!
   loanId: Loan!
-  timestamp: Int!
-}
-
-type FlashLoan @entity {
-  """
-  tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
-  id: ID!
-  pool: Pool!
-  nftAsset: NFT!
-  nftTokenId: BigInt!
-  target: Bytes!
-  initiator: User!
   timestamp: Int!
 }
 
@@ -422,7 +461,7 @@ type NFT @entity {
   liquidationThreshold: BigInt!
   liquidationBonus: BigInt!
   totalCollateral: BigInt! # default: 0
-  bBNFT: BNFT!
+  bnft: BNFT!
   lastUpdateTimestamp: Int!
 
   lifetimeLiquidity: BigInt! # default: 0
@@ -513,6 +552,18 @@ type UserNft @entity {
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "userNft")
 }
 
+type LoanBalanceHistoryItem @entity {
+  """
+  loan + txHash
+  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  id: ID!
+  loan: Loan!
+  timestamp: Int!
+  scaledAmount: BigInt!
+  currentAmount: BigInt!
+  index: BigInt!
+}
+
 type Loan @entity {
   """
   user address
@@ -544,15 +595,4 @@ type User @entity {
   borrowHistory: [Borrow!]! @derivedFrom(field: "user")
   repayHistory: [Repay!]! @derivedFrom(field: "user")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "user")
-}
-
-type NftTokenItem @entity {
-  """
-  ERC721(Native, BNFT): nft asset address + nft token id
-  PUNKS: punk address + punk index
-  """
-  id: ID!
-  nftAsset: Bytes!
-  nftTokenId: BigInt!
-  owner: User!
 }

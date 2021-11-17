@@ -23,8 +23,14 @@ To be able to deploy the subgraph in any environment for any network first we wi
 
 - get the bend protocol contracts and compile them
 
-```
-npm run prepare:contracts
+```bash
+# clone repo
+git clone https://github.com/bendfinance/bend-protocol
+# install project dependencies
+npm i
+# run compile
+npm run compile
+
 ```
 
 ### Self-hosted

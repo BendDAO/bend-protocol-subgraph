@@ -1,9 +1,15 @@
 {
   "network": "hardhatevm",
+  "CryptoPunksMarketAddress": "0x0000000000000000000000000000000000000000",
+  "CryptoPunksMarketStartBlock": 0,
+  "BoredApeYachtClubAddress": "0x0000000000000000000000000000000000000000",
+  "BoredApeYachtClubStartBlock": 0,
   "LendPoolAddressesProviderRegistryAddress": "0x0000000000000000000000000000000000000000",
   "LendPoolAddressesProviderRegistryStartBlock": 0,
   "ReserveOracleAddress": "0x0000000000000000000000000000000000000000",
   "ReserveOracleStartBlock": 0,
   "NFTOracleAddress": "0x0000000000000000000000000000000000000000",
-  "NFTOracleStartBlock": 0
+  "NFTOracleStartBlock": 0,
+  "BNFTRegistryAddress": "0x0000000000000000000000000000000000000000",
+  "BNFTRegistryStartBlock": 0
 }

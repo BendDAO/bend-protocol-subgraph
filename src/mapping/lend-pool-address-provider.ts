@@ -15,6 +15,7 @@ import {
 import {
   LendPool as LendPoolContract,
   LendPoolConfigurator as LendPoolConfiguratorContract,
+  LendPoolLoan as LendPoolLoanContract,
 } from "../../generated/templates";
 import { createMapContractToPool, getOrInitPriceOracle } from "../helpers/initializers";
 import { Pool, PoolConfigurationHistoryItem } from "../../generated/schema";
@@ -26,7 +27,7 @@ let POOL_COMPONENTS = [
   "lendPool",
   "lendPoolImpl",
   "lendPoolLoan",
-  "lendPoolImplLoan",
+  "lendPoolLoanImpl",
   "reserveOracle",
   "nftOracle",
   "bnftRegistry",
@@ -58,7 +59,7 @@ function genericAddressProviderUpdate(
   event: ethereum.Event,
   createMapContract: boolean = true
 ): void {
-  if (!POOL_COMPONENTS.includes(component)) {
+  if (POOL_COMPONENTS.indexOf(component) < 0) {
     throw new Error("wrong pool component name" + component);
   }
   let poolAddress = event.address.toHexString();
@@ -80,12 +81,15 @@ export function handleProxyCreated(event: ProxyCreated): void {
   let contactId = event.params.id.toString();
   let poolComponent: string;
 
-  if (contactId == "LENDING_POOL_CONFIGURATOR") {
+  if (contactId == "LEND_POOL_CONFIGURATOR") {
     poolComponent = "LendPoolConfigurator";
     LendPoolConfiguratorContract.create(newProxyAddress);
-  } else if (contactId == "LENDING_POOL") {
+  } else if (contactId == "LEND_POOL") {
     poolComponent = "lendPool";
     LendPoolContract.create(newProxyAddress);
+  } else if (contactId == "LEND_POOL_LOAN") {
+    poolComponent = "lendPoolLoan";
+    LendPoolLoanContract.create(newProxyAddress);
   } else {
     return;
   }
@@ -142,7 +146,7 @@ export function handleLendPoolConfiguratorUpdated(event: LendPoolConfiguratorUpd
 }
 
 export function handleLendPoolLoanUpdated(event: LendPoolLoanUpdated): void {
-  genericAddressProviderUpdate("lendPoolLoan", event.params.newAddress, event, false);
+  genericAddressProviderUpdate("lendPoolLoanImpl", event.params.newAddress, event, false);
 }
 
 export function handleBNFTRegistryUpdated(event: BNFTRegistryUpdated): void {
