@@ -2,7 +2,6 @@ import { Address, BigInt, Bytes, ethereum, log } from "@graphprotocol/graph-ts";
 import {
   BToken,
   DebtToken,
-  BNFT,
   PriceOracle,
   PriceOracleAsset,
   Reserve,
@@ -11,7 +10,6 @@ import {
   UserReserve,
   UserNft,
   Loan,
-  NftTokenItem,
   ReserveParamsHistoryItem,
   NftParamsHistoryItem,
   ReserveConfigurationHistoryItem,
@@ -20,7 +18,6 @@ import {
   ChainlinkAggregator,
   ContractToPoolMapping,
   Protocol,
-  NftAsset,
 } from "../../generated/schema";
 import { LOAN_STATE_DUMMY_DO_NOT_USE, zeroAddress, zeroBD, zeroBI } from "../utils/converters";
 import {
@@ -29,11 +26,8 @@ import {
   getReserveId,
   getUserReserveId,
   getNftId,
-  getNftTokenItemId,
   getUserNftId,
   getLoanId,
-  getBNftId,
-  getNftAssetId,
 } from "../utils/id-generation";
 
 export function getProtocol(): Protocol {
@@ -194,41 +188,41 @@ export function getOrInitReserve(underlyingAsset: Address, event: ethereum.Event
     reserve.borrowingEnabled = false;
     reserve.isActive = false;
     reserve.isFrozen = false;
+    reserve.reserveFactor = zeroBI(); // TODO: is default 0?
+    reserve.bToken = zeroAddress().toHexString();
+    reserve.debtToken = zeroAddress().toHexString();
+
     reserve.reserveInterestRateStrategy = new Bytes(1);
     reserve.baseVariableBorrowRate = zeroBI();
     reserve.optimalUtilisationRate = zeroBI();
     reserve.variableRateSlope1 = zeroBI();
     reserve.variableRateSlope2 = zeroBI();
+
     reserve.utilizationRate = zeroBD();
     reserve.totalLiquidity = zeroBI();
     reserve.totalBTokenSupply = zeroBI();
     reserve.availableLiquidity = zeroBI();
     reserve.liquidityRate = zeroBI();
     reserve.variableBorrowRate = zeroBI();
-    reserve.stableBorrowRate = zeroBI();
     reserve.liquidityIndex = zeroBI();
     reserve.variableBorrowIndex = zeroBI();
-    reserve.reserveFactor = zeroBI(); // TODO: is default 0?
-    reserve.bToken = zeroAddress().toHexString();
-    reserve.debtToken = zeroAddress().toHexString();
 
     reserve.totalScaledVariableDebt = zeroBI();
     reserve.totalCurrentVariableDebt = zeroBI();
-    reserve.totalDeposits = zeroBI();
 
     reserve.lifetimeScaledVariableDebt = zeroBI();
     reserve.lifetimeCurrentVariableDebt = zeroBI();
 
     reserve.lifetimeLiquidity = zeroBI();
+    reserve.lifetimeWithdrawals = zeroBI();
     reserve.lifetimeBorrows = zeroBI();
     reserve.lifetimeRepayments = zeroBI();
-    reserve.lifetimeWithdrawals = zeroBI();
     reserve.lifetimeLiquidated = zeroBI();
-
-    reserve.lastUpdateTimestamp = 0;
 
     reserve.lifetimeReserveFactorAccrued = zeroBI();
     reserve.lifetimeDepositorsInterestEarned = zeroBI();
+
+    reserve.lastUpdateTimestamp = 0;
 
     let priceOracleAsset = getPriceOracleAsset(underlyingAsset.toHexString());
     if (!priceOracleAsset.lastUpdateTimestamp) {
@@ -256,14 +250,12 @@ export function getOrInitNft(underlyingAsset: Address, event: ethereum.Event): N
     nft.baseLTVasCollateral = zeroBI();
     nft.liquidationThreshold = zeroBI();
     nft.liquidationBonus = zeroBI();
-    nft.bnft = zeroAddress().toHexString();
 
     nft.totalCollateral = zeroBI();
+    nft.bnftToken = zeroAddress();
 
-    nft.lifetimeLiquidity = zeroBI();
     nft.lifetimeBorrows = zeroBI();
     nft.lifetimeRepayments = zeroBI();
-    nft.lifetimeWithdrawals = zeroBI();
     nft.lifetimeLiquidated = zeroBI();
 
     let priceOracleAsset = getPriceOracleAsset(underlyingAsset.toHexString());
@@ -282,9 +274,12 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
 
   if (loan === null) {
     loan = new Loan(loanIdInDB);
+    loan.pool = poolId;
+    loan.loanId = loanId;
+    loan.user = zeroAddress().toHexString();
     loan.state = LOAN_STATE_DUMMY_DO_NOT_USE;
-    loan.reserveAsset = "";
-    loan.nftAsset = "";
+    loan.reserveAsset = zeroAddress().toHexString();
+    loan.nftAsset = zeroAddress().toHexString();
     loan.nftTokenId = zeroBI();
     loan.scaledAmount = zeroBI();
     loan.currentAmount = zeroBI();
@@ -382,7 +377,6 @@ export function getOrInitNftParamsHistoryItem(id: Bytes, nft: NFT): NftParamsHis
     historyItem.lifetimeBorrows = zeroBI();
     historyItem.lifetimeRepayments = zeroBI();
     historyItem.lifetimeLiquidated = zeroBI();
-    historyItem.lifetimeFlashLoans = zeroBI();
   }
   return historyItem as NftParamsHistoryItem;
 }
@@ -421,38 +415,4 @@ export function createMapContractToPool(_contractAddress: Address, pool: string)
   contractToPoolMapping = new ContractToPoolMapping(contractAddress);
   contractToPoolMapping.pool = pool;
   contractToPoolMapping.save();
-}
-
-export function getOrInitBNFT(bNftAddress: Address): BNFT {
-  let bnftId = getBNftId(bNftAddress);
-  let bnft = BNFT.load(bnftId);
-  if (!bnft) {
-    bnft = new BNFT(bnftId);
-    bnft.nftAsset = "";
-    bnft.tokenContractImpl = zeroAddress();
-  }
-  return bnft as BNFT;
-}
-
-export function getOrInitNftAsset(nftAsset: Address): NftAsset {
-  let id = getNftAssetId(nftAsset);
-  let asset = NftAsset.load(id);
-  if (!asset) {
-    asset = new NftAsset(id);
-    asset.nftAsset = nftAsset;
-  }
-  return asset as NftAsset;
-}
-
-export function getOrInitNftTokenItem(nftAsset: Address, tokenId: BigInt): NftTokenItem {
-  let itemId = getNftTokenItemId(nftAsset, tokenId);
-  let item = NftTokenItem.load(itemId);
-  if (!item) {
-    item = new NftTokenItem(itemId);
-    item.nftAsset = "";
-    item.nftTokenId = tokenId;
-    item.owner = zeroAddress();
-    item.tokenUri = "";
-  }
-  return item as NftTokenItem;
 }

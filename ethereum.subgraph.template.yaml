@@ -8,55 +8,6 @@ schema:
   # --------------------------------------
 dataSources:
   # --------------------------------------
-  #           NFT Tokens
-  # --------------------------------------
-  - kind: ethereum/contract
-    name: CryptoPunksMarket
-    network: {{network}}
-    source:
-      address: '{{CryptoPunksMarketAddress}}'
-      abi: CryptoPunksMarket
-      startBlock: {{CryptoPunksMarketStartBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.1
-      language: wasm/assemblyscript
-      entities:
-        - NftAsset
-        - NftTokenItem
-      abis:
-        - name: CryptoPunksMarket
-          file: ./constant-abis/CryptoPunksMarket.json
-      eventHandlers:
-        - event: Assign(indexed address,uint256)
-          handler: handleAssign
-        - event: PunkTransfer(indexed address,indexed address,uint256)
-          handler: handlePunkTransfer
-        - event: PunkBought(indexed uint256,uint256,indexed address,indexed address)
-          handler: handlePunkBought
-      file: src/mapping/crypto-punks-market.ts
-  - kind: ethereum/contract
-    name: BoredApeYachtClub
-    network: {{network}}
-    source:
-      address: '{{BoredApeYachtClubAddress}}'
-      abi: IERC721
-      startBlock: {{BoredApeYachtClubStartBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.1
-      language: wasm/assemblyscript
-      entities:
-        - NftAsset
-        - NftTokenItem
-      abis:
-        - name: IERC721
-          file: ./constant-abis/IERC721.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-      file: src/mapping/erc721.ts
-  # --------------------------------------
   #           CONFIGURATIONS
   # --------------------------------------
   - kind: ethereum/contract
@@ -81,31 +32,7 @@ dataSources:
         - event: AddressesProviderUnregistered(indexed address)
           handler: handleAddressesProviderUnregistered
       file: src/mapping/address-provider-registry.ts
-  # --------------------------------------
-  #           BNFTRegistry
-  # --------------------------------------
-  - kind: ethereum/contract
-    name: BNFTRegistry
-    network: {{network}}
-    source:
-      address: '{{BNFTRegistryAddress}}'
-      abi: BNFTRegistry
-      startBlock: {{BNFTRegistryStartBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.1
-      language: wasm/assemblyscript
-      entities:
-        - BNFT
-      abis:
-        - name: BNFTRegistry
-          file: ./abis/BNFTRegistry.json
-      eventHandlers:
-        - event: BNFTCreated(indexed address,address,address,uint256)
-          handler: handleBNFTCreated
-        - event: BNFTUpgraded(indexed address,address,address,uint256)
-          handler: handleBNFTUpgraded
-      file: src/mapping/bnft-registry.ts
+
   # --------------------------------------
   #       Dynamically Created Contracts
   # --------------------------------------
@@ -239,6 +166,7 @@ templates:
         - event: Initialized(indexed address,indexed address,address,address,bytes)
           handler: handleBTokenInitialized
       file: src/mapping/token/initialization.ts
+
   - kind: ethereum/contract
     name: DebtToken
     network: {{network}}
@@ -266,37 +194,6 @@ templates:
         - event: Initialized(indexed address,indexed address,address,uint8,string,string,bytes)
           handler: handleDebtTokenInitialized
       file: src/mapping/token/initialization.ts
-
-  # --------------------------------------
-  #      BNFT
-  # --------------------------------------
-  - kind: ethereum/contract
-    name: BNFT
-    network: {{network}}
-    source:
-      abi: BNFT
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.1
-      language: wasm/assemblyscript
-      entities:
-        - BNFT
-        - UserReserve
-      abis:
-        - name: BNFT
-          file: ./abis/BNFT.json
-        - name: IERC721Detailed
-          file: ./abis/IERC721Detailed.json
-      eventHandlers:
-        - event: Burn(indexed address,indexed address,uint256,indexed address)
-          handler: handleBurn
-        - event: Mint(indexed address,indexed address,uint256,indexed address)
-          handler: handleMint
-        - event: FlashLoan(indexed address,indexed address,indexed address,uint256)
-          handler: handleFlashLoan
-        - event: Initialized(indexed address,bytes)
-          handler: handleInitialized
-      file: src/mapping/bnft.ts
 
   # --------------------------------------
   #       SERVICES
@@ -337,6 +234,7 @@ templates:
         - event: ReserveDataUpdated(indexed address,uint256,uint256,uint256,uint256)
           handler: handleReserveDataUpdated
       file: src/mapping/lend-pool.ts
+
   - kind: ethereum/contract
     name: LendPoolLoan
     network: {{network}}

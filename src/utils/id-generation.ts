@@ -8,7 +8,6 @@ export enum EventTypeRef {
   Redeem,
   Repay,
   Liquidate,
-  FlashLoan,
 }
 
 export function getHistoryId(event: ethereum.Event, type: EventTypeRef = EventTypeRef.NoType): string {
@@ -46,16 +45,4 @@ export function getBTokenId(bTokenAddress: Address): string {
 
 export function getDebtTokenId(dTokenAddress: Address): string {
   return dTokenAddress.toHexString();
-}
-
-export function getBNftId(bNftAddress: Address): string {
-  return bNftAddress.toHexString();
-}
-
-export function getNftAssetId(nftAsset: Address): string {
-  return nftAsset.toHexString();
-}
-
-export function getNftTokenItemId(nftAsset: Address, tokenId: BigInt): string {
-  return nftAsset.toHexString() + tokenId.toString();
 }
