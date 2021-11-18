@@ -6,12 +6,16 @@
 # copy env and adjust its content
 # you can get an access token from https://thegraph.com/explorer/dashboard
 cp .env.test .env
+
 # install project dependencies
 npm i
+
 # fetch current contracts as submodule
 npm run prepare:all
+
 # run codegen
 npm run subgraph:codegen
+
 # now you're able to deploy to thegraph via
 npm run deploy:hosted:mainnet
 
@@ -19,18 +23,23 @@ npm run deploy:hosted:mainnet
 
 ## Deployment
 
+### Prepare
 To be able to deploy the subgraph in any environment for any network first we will need to prepare the local env:
 
-- get the bend protocol contracts and compile them
+- get the bend protocol contracts and deploy them
 
 ```bash
 # clone repo
 git clone https://github.com/bendfinance/bend-protocol
+
 # install project dependencies
 npm i
-# run compile
-npm run compile
 
+# In first terminal
+npm run hardhat:node
+
+# In second terminal
+npm run bend:localhost:dev:migration
 ```
 
 ### Self-hosted
