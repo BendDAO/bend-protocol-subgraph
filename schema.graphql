@@ -85,33 +85,32 @@ type ChainlinkAggregator @entity {
   oracleAsset: PriceOracleAsset!
 }
 
-# TODO: check nomenclature
 type PriceOracleAsset @entity {
   # underlying asset address
   id: ID!
   oracle: PriceOracle!
+
   priceInEth: BigInt!
   priceSource: Bytes!
-  isFallbackRequired: Boolean!
-  dependentAssets: [PriceOracleAsset!]!
+  fallbackRequired: Boolean!
   lastUpdateTimestamp: Int!
+
   priceHistory: [PriceHistoryItem!]! @derivedFrom(field: "asset")
-  fromChainlinkSourcesRegistry: Boolean!
 }
 
 type PriceOracle @entity {
   id: ID!
   proxyPriceProvider: Bytes!
+
+  # usd price not needed in nft oracle, just query from reserve oracle
   usdPriceEth: BigInt!
   usdPriceEthMainSource: Bytes!
   usdPriceEthFallbackRequired: Boolean!
-  usdDependentAssets: [PriceOracleAsset!]!
-  fallbackPriceOracle: Bytes!
-  tokens: [PriceOracleAsset!]! @derivedFrom(field: "oracle")
-  usdPriceEthHistory: [UsdEthPriceHistoryItem!]! @derivedFrom(field: "oracle")
-  tokensWithFallback: [PriceOracleAsset!]!
   lastUpdateTimestamp: Int!
-  version: Int!
+
+  tokens: [PriceOracleAsset!]! @derivedFrom(field: "oracle")
+
+  usdPriceEthHistory: [UsdEthPriceHistoryItem!]! @derivedFrom(field: "oracle")
 }
 
 type BToken @entity {

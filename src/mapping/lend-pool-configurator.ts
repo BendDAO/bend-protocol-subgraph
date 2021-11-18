@@ -18,10 +18,7 @@ import {
   DebtTokenUpgraded,
 } from "../../generated/templates/LendPoolConfigurator/LendPoolConfigurator";
 import { IERC20Detailed } from "../../generated/templates/LendPoolConfigurator/IERC20Detailed";
-import {
-  BToken as BTokenContract,
-  DebtToken as DebtTokenContract,
-} from "../../generated/templates";
+import { BToken as BTokenContract, DebtToken as DebtTokenContract } from "../../generated/templates";
 import { InterestRate } from "../../generated/templates/LendPoolConfigurator/InterestRate";
 import {
   createMapContractToPool,

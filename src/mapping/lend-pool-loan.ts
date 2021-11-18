@@ -6,7 +6,13 @@ import {
   LoanRepaid,
   LoanLiquidated,
 } from "../../generated/templates/LendPoolLoan/LendPoolLoan";
-import { getOrInitReserve, getOrInitNft, getOrInitLoan, getOrInitUser, getOrInitUserNft } from "../helpers/initializers";
+import {
+  getOrInitReserve,
+  getOrInitNft,
+  getOrInitLoan,
+  getOrInitUser,
+  getOrInitUserNft,
+} from "../helpers/initializers";
 import { getLoanState } from "../utils/converters";
 import { rayDiv, rayMul } from "../helpers/math";
 import { Loan, LoanBalanceHistoryItem, UserNft } from "../../generated/schema";

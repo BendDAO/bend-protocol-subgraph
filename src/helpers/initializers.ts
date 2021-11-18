@@ -28,6 +28,8 @@ import {
   getNftId,
   getUserNftId,
   getLoanId,
+  getReserveOracleId,
+  getNFTOracleId,
 } from "../utils/id-generation";
 
 export function getProtocol(): Protocol {
@@ -139,35 +141,29 @@ export function getOrInitUserNft(_user: Address, _underlyingAsset: Address, even
   return initUserNft(_underlyingAsset, _user, poolId, nft.id);
 }
 
-export function getOrInitPriceOracle(): PriceOracle {
-  let priceOracle = PriceOracle.load("1");
+export function getOrInitPriceOracle(oracleId: string): PriceOracle {
+  let priceOracle = PriceOracle.load(oracleId);
   if (!priceOracle) {
-    priceOracle = new PriceOracle("1");
+    priceOracle = new PriceOracle(oracleId);
     priceOracle.proxyPriceProvider = zeroAddress();
     priceOracle.usdPriceEth = zeroBI();
     priceOracle.usdPriceEthMainSource = zeroAddress();
     priceOracle.usdPriceEthFallbackRequired = false;
-    priceOracle.fallbackPriceOracle = zeroAddress();
-    priceOracle.tokensWithFallback = [];
     priceOracle.lastUpdateTimestamp = 0;
-    priceOracle.usdDependentAssets = [];
-    priceOracle.version = 1;
     priceOracle.save();
   }
   return priceOracle as PriceOracle;
 }
 
-export function getPriceOracleAsset(id: string, save: boolean = true): PriceOracleAsset {
+export function getPriceOracleAsset(id: string, oracleId: string, save: boolean = true): PriceOracleAsset {
   let priceOracleReserve = PriceOracleAsset.load(id);
   if (!priceOracleReserve && save) {
     priceOracleReserve = new PriceOracleAsset(id);
-    priceOracleReserve.oracle = getOrInitPriceOracle().id;
+    priceOracleReserve.oracle = getOrInitPriceOracle(oracleId).id;
     priceOracleReserve.priceSource = zeroAddress();
-    priceOracleReserve.dependentAssets = [];
     priceOracleReserve.priceInEth = zeroBI();
-    priceOracleReserve.isFallbackRequired = false;
+    priceOracleReserve.fallbackRequired = false;
     priceOracleReserve.lastUpdateTimestamp = 0;
-    priceOracleReserve.fromChainlinkSourcesRegistry = false;
     priceOracleReserve.save();
   }
   return priceOracleReserve as PriceOracleAsset;
@@ -224,12 +220,11 @@ export function getOrInitReserve(underlyingAsset: Address, event: ethereum.Event
 
     reserve.lastUpdateTimestamp = 0;
 
-    let priceOracleAsset = getPriceOracleAsset(underlyingAsset.toHexString());
+    let priceOracleAsset = getPriceOracleAsset(underlyingAsset.toHexString(), getReserveOracleId());
     if (!priceOracleAsset.lastUpdateTimestamp) {
       priceOracleAsset.save();
     }
     reserve.price = priceOracleAsset.id;
-    // TODO: think about AToken
   }
   return reserve as Reserve;
 }
@@ -258,7 +253,7 @@ export function getOrInitNft(underlyingAsset: Address, event: ethereum.Event): N
     nft.lifetimeRepayments = zeroBI();
     nft.lifetimeLiquidated = zeroBI();
 
-    let priceOracleAsset = getPriceOracleAsset(underlyingAsset.toHexString());
+    let priceOracleAsset = getPriceOracleAsset(underlyingAsset.toHexString(), getNFTOracleId());
     if (!priceOracleAsset.lastUpdateTimestamp) {
       priceOracleAsset.save();
     }

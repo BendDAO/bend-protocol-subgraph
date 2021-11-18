@@ -19,6 +19,7 @@ import { zeroBI } from "../../utils/converters";
 import { calculateUtilizationRate } from "../../helpers/reserve-logic";
 import { Address, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
 import { rayDiv, rayMul } from "../../helpers/math";
+import { getReserveOracleId } from "../../utils/id-generation";
 
 function saveUserReserveBHistory(userReserve: UserReserve, event: ethereum.Event, index: BigInt): void {
   let bTokenBalanceHistoryItem = new BTokenBalanceHistoryItem(userReserve.id + event.transaction.hash.toHexString());
@@ -65,10 +66,10 @@ function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   reserveParamsHistoryItem.liquidityIndex = reserve.liquidityIndex;
   reserveParamsHistoryItem.liquidityRate = reserve.liquidityRate;
   reserveParamsHistoryItem.totalBTokenSupply = reserve.totalBTokenSupply;
-  let priceOracleAsset = getPriceOracleAsset(reserve.price);
+  let priceOracleAsset = getPriceOracleAsset(reserve.underlyingAsset.toHexString(), getReserveOracleId());
   reserveParamsHistoryItem.priceInEth = priceOracleAsset.priceInEth;
 
-  let priceOracle = getOrInitPriceOracle();
+  let priceOracle = getOrInitPriceOracle(getReserveOracleId());
   reserveParamsHistoryItem.priceInUsd = reserveParamsHistoryItem.priceInEth
     .toBigDecimal()
     .div(priceOracle.usdPriceEth.toBigDecimal());
