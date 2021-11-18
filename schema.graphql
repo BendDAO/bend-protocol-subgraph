@@ -538,7 +538,7 @@ type User @entity {
 
   reserves: [UserReserve!]! @derivedFrom(field: "user")
   nfts: [UserNft!]! @derivedFrom(field: "user")
-  loands: [Loan!]! @derivedFrom(field: "user")
+  loans: [Loan!]! @derivedFrom(field: "user")
 
   depositHistory: [Deposit!]! @derivedFrom(field: "user")
   withdrawUnderlyingHistory: [Withdraw!]! @derivedFrom(field: "user")
