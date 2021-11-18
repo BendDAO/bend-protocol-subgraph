@@ -17,7 +17,7 @@ x-graph-pg-base: &graph-pg-base
 services:
   thegraph-env:
     image: node:11
-    command: npm run dev-environment
+    command: tail -f /dev/null
     restart: always
     working_dir: /src
     volumes:
@@ -46,9 +46,10 @@ services:
     restart: always
     environment:
       <<: *graph-pg-base
-      postgres_host: 'graph-postgres:5432'
+      postgres_host: 'graph-postgres'
       ipfs: 'graph-ipfs:5001'
-      ethereum: 'buidlerevm:http://buidler:8545'
+      # ethereum: 'buidlerevm:http://buidler:8545'
+      ethereum: 'mainnet:http://host.docker.internal:8545'
       RUST_LOG: 'info'
 
   graph-ipfs:
@@ -70,3 +71,5 @@ services:
       - type: volume
         source: graph_pg_data
         target: /var/lib/postgresql/data
+    ports:
+      - '5432:5432'
