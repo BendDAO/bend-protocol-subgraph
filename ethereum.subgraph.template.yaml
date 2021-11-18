@@ -32,11 +32,91 @@ dataSources:
         - event: AddressesProviderUnregistered(indexed address)
           handler: handleAddressesProviderUnregistered
       file: src/mapping/address-provider-registry.ts
-
+  # --------------------------------------
+  #      ORACLES / PRICE PROVIDERS
+  # --------------------------------------
+  - kind: ethereum/contract
+    name: ReserveOracle
+    network: {{network}}
+    source:
+      address: '{{ReserveOracleAddress}}'
+      startBlock: {{ReserveOracleStartBlock}}
+      abi: ReserveOracle
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - PriceOracle
+        - PriceOracleAsset
+      abis:
+        - name: ReserveOracle
+          file: ./abis/ReserveOracle.json
+        - name: IERC20Detailed
+          file: ./abis/IERC20Detailed.json
+        - name: AggregatorV2V3Interface
+          file: ./constant-abis/AggregatorV2V3Interface.json
+        - name: EACAggregatorProxy
+          file: ./constant-abis/EACAggregatorProxy.json
+      eventHandlers:
+        - event: AggregatorAdded(address,address)
+          handler: handleAggregatorAdded
+      file: src/mapping/reserve-oracle.ts
+  - kind: ethereum/contract
+    name: NFTOracle
+    network: {{network}}
+    source:
+      address: '{{NFTOracleAddress}}'
+      startBlock: {{NFTOracleStartBlock}}
+      abi: NFTOracle
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - PriceOracle
+        - PriceOracleAsset
+      abis:
+        - name: NFTOracle
+          file: ./abis/NFTOracle.json
+        - name: IERC20Detailed
+          file: ./abis/IERC721Detailed.json
+      eventHandlers:
+        - event: AssetAdded(indexed address)
+          handler: handleAssetAdded
+        - event: SetAssetData(indexed address,uint256,uint256,uint256)
+          handler: handleSetAssetData
+      file: src/mapping/nft-oracle.ts
   # --------------------------------------
   #       Dynamically Created Contracts
   # --------------------------------------
 templates:
+  # --------------------------------------
+  #      ORACLES / PRICE PROVIDERS
+  # --------------------------------------
+  - kind: ethereum/contract
+    name: ChainlinkAggregator
+    network: {{network}}
+    source:
+      abi: AggregatorV2V3Interface
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - PriceOracle
+        - PriceOracleAsset
+      abis:
+        - name: AggregatorV2V3Interface
+          file: ./constant-abis/AggregatorV2V3Interface.json
+        - name: EACAggregatorProxy
+          file: ./constant-abis/EACAggregatorProxy.json
+        - name: ReserveOracle
+          file: ./abis/ReserveOracle.json
+      eventHandlers:
+        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+          handler: handleChainlinkAnswerUpdated
+      file: src/mapping/reserve-oracle.ts
   # --------------------------------------
   #       CONFIGURATIONS
   # --------------------------------------

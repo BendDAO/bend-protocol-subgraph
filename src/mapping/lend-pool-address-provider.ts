@@ -19,7 +19,7 @@ import {
 } from "../../generated/templates";
 import { createMapContractToPool, getOrInitPriceOracle } from "../helpers/initializers";
 import { Pool, PoolConfigurationHistoryItem } from "../../generated/schema";
-import { EventTypeRef, getHistoryId } from "../utils/id-generation";
+import { EventTypeRef, getHistoryId, getNFTOracleId, getReserveOracleId } from "../utils/id-generation";
 
 let POOL_COMPONENTS = [
   "lendPoolConfigurator",
@@ -128,13 +128,17 @@ export function handleAddressSet(event: AddressSet): void {
 export function handleReserveOracleUpdated(event: ReserveOracleUpdated): void {
   genericAddressProviderUpdate("reserveOracle", event.params.newAddress, event, false);
 
-  let priceOracle = getOrInitPriceOracle();
+  let priceOracle = getOrInitPriceOracle(getReserveOracleId());
   priceOracle.proxyPriceProvider = event.params.newAddress;
   priceOracle.save();
 }
 
 export function handleNFTOracleUpdated(event: NftOracleUpdated): void {
   genericAddressProviderUpdate("nftOracle", event.params.newAddress, event, false);
+
+  let priceOracle = getOrInitPriceOracle(getNFTOracleId());
+  priceOracle.proxyPriceProvider = event.params.newAddress;
+  priceOracle.save();
 }
 
 export function handleLendPoolUpdated(event: LendPoolUpdated): void {

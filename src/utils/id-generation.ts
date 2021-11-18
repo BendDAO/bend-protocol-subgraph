@@ -46,3 +46,11 @@ export function getBTokenId(bTokenAddress: Address): string {
 export function getDebtTokenId(dTokenAddress: Address): string {
   return dTokenAddress.toHexString();
 }
+
+export function getReserveOracleId(): string {
+  return "1";
+}
+
+export function getNFTOracleId(): string {
+  return "2";
+}
