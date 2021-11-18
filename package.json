@@ -39,12 +39,15 @@
     "husky": "^4.2.5",
     "lint-staged": "^9.2.5",
     "mustache": "^3.1.0",
-    "prettier": "^1.18.2",
     "typescript": "3.5.3"
   },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged --pattern 'contracts/**/*.sol' --pattern 'helpers/**/*.ts'  --pattern 'test/**/*.ts' --pattern 'tasks/**/*.ts'"
     }
+  },
+  "devDependencies": {
+    "prettier": "^2.4.1",
+    "pretty-quick": "^3.1.2"
   }
 }
