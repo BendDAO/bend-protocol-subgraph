@@ -52,7 +52,7 @@ export function formatUsdEthChainlinkPrice(price: BigInt): BigInt {
   return exponentToBigInt(18 + 8).div(price);
 }
 
-export const LOAN_STATE_DUMMY_DO_NOT_USE = "None";
+export const LOAN_STATE_NONE = "None";
 export const LOAN_STATE_CREATED = "Created";
 export const LOAN_STATE_ACTIVE = "Active";
 export const LOAN_STATE_REPAID = "Repaid";
@@ -61,7 +61,7 @@ export const LOAN_STATE_DEFAULTED = "Defaulted";
 export function getLoanState(_mode: BigInt): string {
   let mode = _mode.toI32();
   if (mode == 0) {
-    return LOAN_STATE_DUMMY_DO_NOT_USE;
+    return LOAN_STATE_NONE;
   } else if (mode == 1) {
     return LOAN_STATE_CREATED;
   } else if (mode == 2) {
@@ -75,7 +75,7 @@ export function getLoanState(_mode: BigInt): string {
 }
 
 export function getLoanStateFromString(_mode: string): BigInt {
-  if (_mode == LOAN_STATE_DUMMY_DO_NOT_USE) {
+  if (_mode == LOAN_STATE_NONE) {
     return zeroBI();
   } else if (_mode == LOAN_STATE_CREATED) {
     return BigInt.fromI32(1);

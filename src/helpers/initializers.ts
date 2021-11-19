@@ -19,7 +19,7 @@ import {
   ContractToPoolMapping,
   Protocol,
 } from "../../generated/schema";
-import { LOAN_STATE_DUMMY_DO_NOT_USE, zeroAddress, zeroBD, zeroBI } from "../utils/converters";
+import { LOAN_STATE_NONE, zeroAddress, zeroBD, zeroBI } from "../utils/converters";
 import {
   getBTokenId,
   getDebtTokenId,
@@ -272,7 +272,7 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
     loan.pool = poolId;
     loan.loanId = loanId;
     loan.user = zeroAddress().toHexString();
-    loan.state = LOAN_STATE_DUMMY_DO_NOT_USE;
+    loan.state = LOAN_STATE_NONE;
     loan.reserveAsset = zeroAddress().toHexString();
     loan.nftAsset = zeroAddress().toHexString();
     loan.nftTokenId = zeroBI();

@@ -60,6 +60,7 @@ function genericAddressProviderUpdate(
   createMapContract: boolean = true
 ): void {
   if (POOL_COMPONENTS.indexOf(component) < 0) {
+    log.error("wrong pool component name {}", [component]);
     throw new Error("wrong pool component name" + component);
   }
   let poolAddress = event.address.toHexString();
@@ -82,7 +83,7 @@ export function handleProxyCreated(event: ProxyCreated): void {
   let poolComponent: string;
 
   if (contactId == "LEND_POOL_CONFIGURATOR") {
-    poolComponent = "LendPoolConfigurator";
+    poolComponent = "lendPoolConfigurator";
     LendPoolConfiguratorContract.create(newProxyAddress);
   } else if (contactId == "LEND_POOL") {
     poolComponent = "lendPool";
@@ -103,7 +104,7 @@ export function handleAddressSet(event: AddressSet): void {
   if (event.params.id.toString() == "LEND_POOL") {
     mappedId = "lendPool";
   } else if (event.params.id.toString() == "LEND_POOL_CONFIGURATOR") {
-    mappedId = "LendPoolConfigurator";
+    mappedId = "lendPoolConfigurator";
   } else if (event.params.id.toString() == "LEND_POOL_LOAN") {
     mappedId = "lendPoolLoan";
   } else if (event.params.id.toString() == "RESERVE_ORACLE") {

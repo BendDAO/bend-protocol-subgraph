@@ -18,6 +18,7 @@ import {
   DebtTokenUpgraded,
 } from "../../generated/templates/LendPoolConfigurator/LendPoolConfigurator";
 import { IERC20Detailed } from "../../generated/templates/LendPoolConfigurator/IERC20Detailed";
+import { IERC721Detailed } from "../../generated/templates/LendPoolConfigurator/IERC721Detailed";
 import { BToken as BTokenContract, DebtToken as DebtTokenContract } from "../../generated/templates";
 import { InterestRate } from "../../generated/templates/LendPoolConfigurator/InterestRate";
 import {
@@ -110,6 +111,18 @@ export function handleReserveInitialized(event: ReserveInitialized): void {
 export function handleNftInitialized(event: NftInitialized): void {
   let underlyingAssetAddress = event.params.asset; //_nft;
   let nft = getOrInitNft(underlyingAssetAddress, event);
+
+  let ERC721BNftContract = IERC721Detailed.bind(event.params.bNft);
+  let ERC721NftContract = IERC721Detailed.bind(underlyingAssetAddress);
+
+  let nameStringCall = ERC721NftContract.try_name();
+  if (nameStringCall.reverted) {
+    nft.name = "";
+  } else {
+    nft.name = nameStringCall.value;
+  }
+
+  nft.symbol = ERC721BNftContract.symbol().slice(1);
 
   nft.bnftToken = event.params.bNft;
   nft.isActive = true;
