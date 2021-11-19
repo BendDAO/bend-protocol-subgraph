@@ -93,7 +93,7 @@ npm run bend:localhost:dev:migration
 
 # Now you can connect wallet or frontend to localhost node at http://127.0.0.1:8545/
 # Starting hardhat console, interact with Bend in localhost via console
-# How to use console, llease read README.md in bend-protocol, and hardhat documents
+# How to use console, please read README.md in bend-protocol, and hardhat documents
 npx hardhat --network localhost console
 
 ```
