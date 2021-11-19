@@ -95,6 +95,7 @@ function initUserReserve(
     userReserve.user = user.id;
 
     userReserve.reserve = reserveId;
+    userReserve.save();
   }
   return userReserve as UserReserve;
 }
@@ -120,12 +121,13 @@ function initUserNft(underlyingAssetAddress: Address, userAddress: Address, pool
   if (userNft === null) {
     userNft = new UserNft(userNftId);
     userNft.pool = poolId;
-    userNft.totalCollateral = zeroBI();
-
+    userNft.nftAsset = nftId;
     let user = getOrInitUser(userAddress);
     userNft.user = user.id;
 
-    userNft.nftAsset = nftId;
+    userNft.totalCollateral = zeroBI();
+    userNft.lastUpdateTimestamp = 0;
+    userNft.save();
   }
   return userNft as UserNft;
 }

@@ -63,6 +63,10 @@ export function handleLoanCreated(event: LoanCreated): void {
   let poolNft = getOrInitNft(event.params.nftAsset, event);
   let poolLoan = getOrInitLoan(event.params.loanId, event);
 
+  borrowerNft.totalCollateral = borrowerNft.totalCollateral.plus(new BigInt(1));
+  borrowerNft.lastUpdateTimestamp = event.block.timestamp.toI32();
+  borrowerNft.save();
+
   poolLoan.user = userNft.user;
   poolLoan.borrower = borrowerNft.user;
   poolLoan.nftAsset = poolNft.id;
@@ -80,6 +84,7 @@ export function handleLoanCreated(event: LoanCreated): void {
   saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
 
   poolNft.totalCollateral = poolNft.totalCollateral.plus(new BigInt(1));
+  poolNft.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolNft.save();
 
   saveNftHistory(poolNft, event);
@@ -106,6 +111,7 @@ export function handleLoanUpdated(event: LoanUpdated): void {
 }
 
 export function handleLoanRepaid(event: LoanRepaid): void {
+  let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
   let poolLoan = getOrInitLoan(event.params.loanId, event);
   let poolNft = getOrInitNft(event.params.nftAsset, event);
 
@@ -116,6 +122,9 @@ export function handleLoanRepaid(event: LoanRepaid): void {
   poolLoan.save();
   saveLoanBHistory(poolLoan, event, new BigInt(0));
 
+  userNft.totalCollateral = userNft.totalCollateral.minus(new BigInt(1));
+  userNft.save();
+
   poolNft.totalCollateral = poolNft.totalCollateral.minus(new BigInt(1));
   poolNft.save();
 
@@ -123,6 +132,7 @@ export function handleLoanRepaid(event: LoanRepaid): void {
 }
 
 export function handleLoanLiquidated(event: LoanLiquidated): void {
+  let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
   let poolLoan = getOrInitLoan(event.params.loanId, event);
   let poolNft = getOrInitNft(event.params.nftAsset, event);
 
@@ -132,6 +142,9 @@ export function handleLoanLiquidated(event: LoanLiquidated): void {
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
   saveLoanBHistory(poolLoan, event, new BigInt(0));
+
+  userNft.totalCollateral = userNft.totalCollateral.minus(new BigInt(1));
+  userNft.save();
 
   poolNft.totalCollateral = poolNft.totalCollateral.minus(new BigInt(1));
   poolNft.save();

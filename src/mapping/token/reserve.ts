@@ -109,11 +109,12 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   let bToken = getOrInitBToken(event.address);
   let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
   poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.plus(value);
-  // Check if we are minting to treasury for mainnet
+  // Check if we are minting to treasury for mainnet, rinkeby
   if (
     from.toHexString() != "0x707D1a914ea67855617557bd700F01537353a74E" &&
     from.toHexString() != "0x2" //TODO
   ) {
+    // not treasury address
     let userReserve = getOrInitUserReserve(from, bToken.underlyingAssetAddress as Address, event);
     let calculatedAmount = rayDiv(value, index);
 
@@ -133,6 +134,7 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
     saveReserve(poolReserve, event);
     saveUserReserveBHistory(userReserve, event, index);
   } else {
+    // mint bTokens to treasury address
     poolReserve.lifetimeReserveFactorAccrued = poolReserve.lifetimeReserveFactorAccrued.plus(value);
     saveReserve(poolReserve, event);
   }
