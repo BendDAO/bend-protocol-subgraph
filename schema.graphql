@@ -136,7 +136,7 @@ type DebtToken @entity {
 }
 
 enum LoanState {
-  DUMMY_DO_NOT_USE
+  None
   Created
   Active
   Repaid

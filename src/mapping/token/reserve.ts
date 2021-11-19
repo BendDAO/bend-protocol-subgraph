@@ -70,9 +70,11 @@ function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   reserveParamsHistoryItem.priceInEth = priceOracleAsset.priceInEth;
 
   let priceOracle = getOrInitPriceOracle(getReserveOracleId());
-  reserveParamsHistoryItem.priceInUsd = reserveParamsHistoryItem.priceInEth
+  if (priceOracle.usdPriceEth.gt(zeroBI())) {
+    reserveParamsHistoryItem.priceInUsd = reserveParamsHistoryItem.priceInEth
     .toBigDecimal()
     .div(priceOracle.usdPriceEth.toBigDecimal());
+  }
 
   reserveParamsHistoryItem.timestamp = event.block.timestamp.toI32();
   reserveParamsHistoryItem.save();
