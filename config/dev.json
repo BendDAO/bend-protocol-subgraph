@@ -1,5 +1,5 @@
 {
-  "network": "hardhatevm",
+  "network": "development",
   "CryptoPunksMarketAddress": "0x0000000000000000000000000000000000000000",
   "CryptoPunksMarketStartBlock": 0,
   "BoredApeYachtClubAddress": "0x0000000000000000000000000000000000000000",

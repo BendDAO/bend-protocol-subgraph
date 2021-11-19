@@ -173,6 +173,8 @@ templates:
           file: ./abis/LendPoolConfigurator.json
         - name: IERC20Detailed
           file: ./abis/IERC20Detailed.json
+        - name: IERC721Detailed
+          file: ./abis/IERC721Detailed.json
         - name: InterestRate
           file: ./abis/InterestRate.json
       eventHandlers:

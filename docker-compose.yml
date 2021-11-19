@@ -1,10 +1,58 @@
 version: '3.5'
 
+volumes:
+  graph_pg_data:
+    driver: local
+  graph_ipfs_data:
+    driver: local
+
+x-graph-pg-base: &graph-pg-base
+  POSTGRES_USER: graph-node
+  POSTGRES_PASSWORD: let-me-in
+  POSTGRES_DB: graph-node
+  postgres_user: graph-node
+  postgres_pass: let-me-in
+  postgres_db: graph-node
+
 services:
-  buidler:
-    build:
-      context: ./buidler_docker_image
-      dockerfile: ./Dockerfile
-    command: buidler --config ./buidler.config.js --network buidlerevm node --hostname 0.0.0.0 --port 8545
+  graph-node:
+    image: graphprotocol/graph-node
+    depends_on:
+      - graph-postgres
+      - graph-ipfs
     ports:
-      - '8545:8545'
+      - '8000:8000'
+      - '8001:8001'
+      - '8030:8030'
+      - '8020:8020'
+    restart: always
+    environment:
+      <<: *graph-pg-base
+      postgres_host: 'graph-postgres'
+      ipfs: 'graph-ipfs:5001'
+      #ethereum: 'mainnet:https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}'
+      #ethereum: 'rinkeby:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}'
+      ethereum: '${GRAPH_ETHEREUM:-development:http://host.docker.internal:8545}'
+      RUST_LOG: 'info'
+
+  graph-ipfs:
+    image: ipfs/go-ipfs:v0.4.23
+    restart: always
+    volumes:
+      - type: volume
+        source: graph_ipfs_data
+        target: /data/ipfs
+    ports:
+      - '5001:5001'
+
+  graph-postgres:
+    image: postgres
+    command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
+    environment:
+      <<: *graph-pg-base
+    volumes:
+      - type: volume
+        source: graph_pg_data
+        target: /var/lib/postgresql/data
+    ports:
+      - '5432:5432'
