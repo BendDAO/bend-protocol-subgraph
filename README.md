@@ -23,24 +23,7 @@ npm run deploy:hosted:mainnet
 
 ## Deployment
 
-### Prepare
-To be able to deploy the subgraph in any environment for any network first we will need to prepare the local env:
-
-- get the bend protocol contracts and deploy them
-
-```bash
-# clone repo
-git clone https://github.com/bendfinance/bend-protocol
-
-# install project dependencies
-npm i
-
-# In first terminal
-npm run hardhat:node
-
-# In second terminal
-npm run bend:localhost:dev:migration
-```
+To be able to deploy the subgraph in any environment for any network first we will need to prepare the local env.
 
 ### Self-hosted
 
@@ -74,40 +57,85 @@ npm run subgraph:codegen
 
 To be able to deploy to the hosted solution you will need to create a .env file and add `ACCESS_TOKEN` environment variable. You can find this in the dashboard of the TheGraph
 
-```
-// For Rinkeby:
+```shell
+# For Rinkeby:
 npm run deploy:hosted:rinkeby
 
-// For Mainnet:
+# For Mainnet:
 npm run deploy:hosted:mainnet
 ```
 
 ### Local
+1. Start environment for a hardhat node
+If you want to use mainnet or testnet, or already started hardhat node, jump to next step.
 
-TODO:
+```shell
+################################################################################
+# clone bend protocol repo
+git clone https://github.com/bendfinance/bend-protocol
 
-- refactor get addresses after local deployment
-- refactor npm scripts
+cd bend-protocol
 
-1. Start docker environment for a buidler node and TheGraph infrastructure:
+# install project dependencies
+npm i --force
+
+################################################################################
+# In first terminal, start localhost node
+npm run hardhat:node
+
+# In second terminal, deploy all contracts and trigger some events
+npm run test:subgraph
+
+################################################################################
+# For advanced testing
+# In second terminal, deploy all contracts
+npm run bend:localhost:dev:migration
+
+# Now you can connect wallet or frontend to localhost node at http://127.0.0.1:8545/
+# Starting hardhat console, interact with Bend in localhost via console
+# How to use console, llease read README.md in bend-protocol, and hardhat documents
+npx hardhat --network localhost console
 
 ```
+
+2. Start docker environment for TheGraph infrastructure:
+
+```shell
+# development using localhost hardhat node
 docker-compose up
+
+# or development using rinkeby
+export GRAPH_ETHEREUM="rinkeby:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}"
+docker-compose up
+
+# or development using mainnet
+export GRAPH_ETHEREUM="mainnet:https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}"
+docker-compose up
+
 ```
 
 Remember that before runing `docker-compose up` you need to run `docker-compose down` if it is not the first time. That is because the postgres database needs to not be persistant, so we need to delete the docker volumes.
 
-2. Deploy local subgraph:
+3. Deploy local subgraph:
+
+```shell
+# development using dev config
+npm run deploy-stack:local
+
+# or development using rinkeby config
+npm run deploy-stack:local:rinkeby
+
+# or development using mainnet config
+npm run deploy-stack:local:mainnet
 
 ```
 
-```
-
-3. To check or query the subgraph use:
+4. To check or query the subgraph use:
 
 ```
-Queries (HTTP):     http://localhost:8000/subgraphs/name/bend/migrator
-Subscriptions (WS): http://localhost:8001/subgraphs/name/bend/migrator
+Subgraph endpoints:
+Queries (HTTP):     http://localhost:8000/subgraphs/name/bend/bend-protocol
+Subscriptions (WS): http://localhost:8001/subgraphs/name/bend/bend-protocol
 
 INFO Starting JSON-RPC admin server at: http://localhost:8020, component: JsonRpcServer
 INFO Starting GraphQL HTTP server at: http://localhost:8000, component: GraphQLServer
