@@ -29,28 +29,28 @@ To be able to deploy the subgraph in any environment for any network first we wi
 
 - The first time you will deploy the subgraph you need to first create it in the TheGraph node:
 
-```
-// For Rinkeby:
+```shell
+# For Rinkeby:
 npm run subgraph:create:self-hosted:rinkeby
 
-// for Mainnet
+# for Mainnet
 npm run subgraph:create:self-hosted:mainnet
 ```
 
 - Before any deployment you need to generate the types and schemas:
 
-```
+```shell
 npm run subgraph:codegen
 ```
 
 - When / If the subgraph is created you can then deploy
 
-```
-// For Rinkeby:
-  npm run deploy:self-hosted:rinkeby
+```shell
+# For Rinkeby:
+npm run deploy:self-hosted:rinkeby
 
-// For Mainnet:
-  npm run deploy:self-hosted:mainnet
+# For Mainnet:
+npm run deploy:self-hosted:mainnet
 ```
 
 ### Hosted
@@ -104,11 +104,11 @@ npx hardhat --network localhost console
 # development using localhost hardhat node
 docker-compose up
 
-# or development using rinkeby
+# or development using rinkeby, api url can be infura or alchemy
 export GRAPH_ETHEREUM="rinkeby:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}"
 docker-compose up
 
-# or development using mainnet
+# or development using mainnet, api url can be infura or alchemy
 export GRAPH_ETHEREUM="mainnet:https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}"
 docker-compose up
 
@@ -119,6 +119,9 @@ Remember that before runing `docker-compose up` you need to run `docker-compose 
 3. Deploy local subgraph:
 
 ```shell
+# create subgraph
+npm run subgraph:create:local
+
 # development using dev config
 npm run deploy-stack:local
 
