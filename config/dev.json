@@ -1,15 +1,9 @@
 {
   "network": "development",
-  "CryptoPunksMarketAddress": "0x0000000000000000000000000000000000000000",
-  "CryptoPunksMarketStartBlock": 0,
-  "BoredApeYachtClubAddress": "0x0000000000000000000000000000000000000000",
-  "BoredApeYachtClubStartBlock": 0,
-  "LendPoolAddressesProviderRegistryAddress": "0x0000000000000000000000000000000000000000",
+  "LendPoolAddressesProviderRegistryAddress": "0x9502b1F459F54aF8E994f2F11344c7f0DAD2e111",
   "LendPoolAddressesProviderRegistryStartBlock": 0,
-  "ReserveOracleAddress": "0x0000000000000000000000000000000000000000",
+  "ReserveOracleAddress": "0x3260875EDa4975dba52d5d6c323203927A383D0c",
   "ReserveOracleStartBlock": 0,
-  "NFTOracleAddress": "0x0000000000000000000000000000000000000000",
-  "NFTOracleStartBlock": 0,
-  "BNFTRegistryAddress": "0x0000000000000000000000000000000000000000",
-  "BNFTRegistryStartBlock": 0
+  "NFTOracleAddress": "0x441E9Ec3Aa9a267405BDD9CfD08794Ade3d6Ed8a",
+  "NFTOracleStartBlock": 0
 }

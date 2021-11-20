@@ -84,7 +84,7 @@ npm i --force
 npm run hardhat:node
 
 # In second terminal, deploy all contracts and trigger some events
-npm run test:subgraph
+npm run test:subgraph:localhost
 
 ################################################################################
 # For advanced testing
@@ -96,9 +96,26 @@ npm run bend:localhost:dev:migration
 # How to use console, please read README.md in bend-protocol, and hardhat documents
 npx hardhat --network localhost console
 
+# Now you shoud check contracts addresses in deployments/deployed-contracts-localhost.json
 ```
 
 2. Start docker environment for TheGraph infrastructure:
+
+Remember that before runing `docker-compose up` you need to run `docker-compose down` if it is not the first time.
+That is because the postgres database and ipfs data needs to not be persistant, so we need to delete the docker volumes.
+
+```shell
+docker-compose down
+
+docker container prune
+
+docker volume prune
+
+# or using ls and rm
+# docker volume ls
+# docker volume rm bend-protocol-subgraph_xxx
+
+```
 
 ```shell
 # development using localhost hardhat node
@@ -114,8 +131,6 @@ docker-compose up
 
 ```
 
-Remember that before runing `docker-compose up` you need to run `docker-compose down` if it is not the first time. That is because the postgres database needs to not be persistant, so we need to delete the docker volumes.
-
 3. Deploy local subgraph:
 
 ```shell
@@ -123,12 +138,16 @@ Remember that before runing `docker-compose up` you need to run `docker-compose 
 npm run subgraph:create:local
 
 # development using dev config
+# Before deploying, you should fill correct contracts addresses in ./config/dev.conf.
+# You can find addresses in bend-protocol/deployments/deployed-contracts-localhost.json.
 npm run deploy-stack:local
 
 # or development using rinkeby config
+# Before deploying, you should fill correct contracts addresses in ./config/rinkeby.conf.
 npm run deploy-stack:local:rinkeby
 
 # or development using mainnet config
+# Before deploying, you should fill correct contracts addresses in ./config/mainnet.conf.
 npm run deploy-stack:local:mainnet
 
 ```
