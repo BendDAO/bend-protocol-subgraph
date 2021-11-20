@@ -46,10 +46,20 @@ export function format18(price: BigInt): BigInt {
   return exponentToBigInt(18).div(price);
 }
 
+export function formatUsdEthPrice(price: BigInt): BigInt {
+  return formatUsdEthReserveOraclePrice(price);
+}
+
 export function formatUsdEthChainlinkPrice(price: BigInt): BigInt {
   // IF the price is 0
   if (price == BigInt.fromI32(0)) return price;
   return exponentToBigInt(18 + 8).div(price);
+}
+
+export function formatUsdEthReserveOraclePrice(price: BigInt): BigInt {
+  // IF the price is 0
+  if (price == BigInt.fromI32(0)) return price;
+  return exponentToBigInt(18 + 18).div(price);
 }
 
 export const LOAN_STATE_NONE = "None";

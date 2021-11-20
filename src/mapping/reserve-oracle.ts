@@ -1,7 +1,7 @@
 import { PriceOracle, PriceOracleAsset } from "../../generated/schema";
 import { ReserveOracle, AggregatorAdded } from "../../generated/ReserveOracle/ReserveOracle";
 import { Address, BigInt, Bytes, ethereum, log } from "@graphprotocol/graph-ts";
-import { formatUsdEthChainlinkPrice, zeroAddress, zeroBI } from "../utils/converters";
+import { formatUsdEthPrice, zeroAddress, zeroBI } from "../utils/converters";
 import { AggregatorV2V3Interface } from "../../generated/templates/ChainlinkAggregator/AggregatorV2V3Interface";
 import { getChainlinkAggregator, getOrInitPriceOracle, getPriceOracleAsset } from "../helpers/initializers";
 import { MOCK_USD_ADDRESS } from "../utils/constants";
@@ -124,7 +124,7 @@ export function priceFeedUpdated(
     priceOracle.usdPriceEthMainSource = priceOracleAsset.priceSource;
     priceOracle.usdPriceEthFallbackRequired = priceOracleAsset.fallbackRequired;
 
-    usdEthPriceUpdate(priceOracle, formatUsdEthChainlinkPrice(priceFromOracle), event);
+    usdEthPriceUpdate(priceOracle, formatUsdEthPrice(priceFromOracle), event);
 
     // this is so we also save the assetOracle for usd chainlink
     genericPriceUpdate(priceOracleAsset, priceFromOracle, event);
@@ -141,11 +141,11 @@ export function genericHandleChainlinkUSDETHPrice(
 ): void {
   if (price.gt(zeroBI())) {
     priceOracle.usdPriceEthFallbackRequired = false;
-    let formatPrice = formatUsdEthChainlinkPrice(price);
+    let formatPrice = formatUsdEthPrice(price);
     usdEthPriceUpdate(priceOracle, formatPrice, event);
   } else {
     priceOracle.usdPriceEthFallbackRequired = true;
-    let formatPrice = formatUsdEthChainlinkPrice(
+    let formatPrice = formatUsdEthPrice(
       proxyPriceProvider.getAssetPrice(Bytes.fromHexString(MOCK_USD_ADDRESS) as Address)
     );
     usdEthPriceUpdate(priceOracle, formatPrice, event);

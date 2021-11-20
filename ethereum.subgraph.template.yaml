@@ -340,10 +340,10 @@ templates:
           handler: handleInitialized
         - event: LoanCreated(indexed address,indexed address,indexed uint256,address,uint256,address,uint256,uint256)
           handler: handleLoanCreated
-        - event: LoanUpdated(indexed address,indexed uint256,address,uint256,uint256,uint256)
+        - event: LoanUpdated(indexed address,indexed uint256,address,uint256,address,uint256,uint256,uint256)
           handler: handleLoanUpdated
-        - event: LoanRepaid(indexed address,indexed uint256,address,uint256,address,uint256)
+        - event: LoanRepaid(indexed address,indexed uint256,address,uint256,address,uint256,uint256)
           handler: handleLoanRepaid
-        - event: LoanLiquidated(indexed address,indexed uint256,address,uint256,address,uint256)
+        - event: LoanLiquidated(indexed address,indexed uint256,address,uint256,address,uint256,uint256)
           handler: handleLoanLiquidated
       file: src/mapping/lend-pool-loan.ts

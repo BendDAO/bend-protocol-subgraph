@@ -33,7 +33,7 @@ services:
       #ethereum: 'mainnet:https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}'
       #ethereum: 'rinkeby:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}'
       ethereum: '${GRAPH_ETHEREUM:-development:http://host.docker.internal:8545}'
-      RUST_LOG: 'info'
+      RUST_LOG: 'warn'
 
   graph-ipfs:
     image: ipfs/go-ipfs:v0.4.23

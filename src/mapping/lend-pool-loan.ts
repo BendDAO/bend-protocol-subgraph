@@ -16,7 +16,7 @@ import {
   getOrInitPriceOracle,
   getPriceOracleAsset,
 } from "../helpers/initializers";
-import { getLoanState, zeroBI } from "../utils/converters";
+import { getLoanState, LOAN_STATE_ACTIVE, LOAN_STATE_DEFAULTED, LOAN_STATE_REPAID, zeroBI } from "../utils/converters";
 import { rayDiv, rayMul } from "../helpers/math";
 import { Loan, LoanBalanceHistoryItem, NFT, UserNft } from "../../generated/schema";
 import { getNFTOracleId, getReserveOracleId } from "../utils/id-generation";
@@ -77,7 +77,7 @@ export function handleLoanCreated(event: LoanCreated): void {
 
   poolLoan.scaledAmount = calculatedAmount;
   poolLoan.currentAmount = rayMul(poolLoan.scaledAmount, event.params.borrowIndex);
-  poolLoan.state = getLoanState(new BigInt(2)); // active
+  poolLoan.state = LOAN_STATE_ACTIVE; // active
 
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
@@ -116,11 +116,11 @@ export function handleLoanRepaid(event: LoanRepaid): void {
   let poolNft = getOrInitNft(event.params.nftAsset, event);
 
   poolLoan.currentAmount = event.params.amount;
-  poolLoan.state = getLoanState(new BigInt(3)); // repaid
+  poolLoan.state = LOAN_STATE_REPAID; // repaid
 
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
-  saveLoanBHistory(poolLoan, event, new BigInt(0));
+  saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
 
   userNft.totalCollateral = userNft.totalCollateral.minus(new BigInt(1));
   userNft.save();
@@ -137,11 +137,11 @@ export function handleLoanLiquidated(event: LoanLiquidated): void {
   let poolNft = getOrInitNft(event.params.nftAsset, event);
 
   poolLoan.currentAmount = event.params.amount;
-  poolLoan.state = getLoanState(new BigInt(4)); // defaulted(liquidated)
+  poolLoan.state = LOAN_STATE_DEFAULTED; // defaulted(liquidated)
 
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
-  saveLoanBHistory(poolLoan, event, new BigInt(0));
+  saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
 
   userNft.totalCollateral = userNft.totalCollateral.minus(new BigInt(1));
   userNft.save();

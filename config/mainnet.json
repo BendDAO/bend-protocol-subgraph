@@ -1,15 +1,9 @@
 {
   "network": "mainnet",
-  "CryptoPunksMarketAddress": "0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB",
-  "CryptoPunksMarketStartBlock": 3914495,
-  "BoredApeYachtClubAddress": "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-  "BoredApeYachtClubStartBlock": 12287507,
   "LendPoolAddressesProviderRegistryAddress": "0x0000000000000000000000000000000000000000",
   "LendPoolAddressesProviderRegistryStartBlock": 13623705,
   "ReserveOracleAddress": "0x0000000000000000000000000000000000000000",
   "ReserveOracleStartBlock": 13623705,
   "NFTOracleAddress": "0x0000000000000000000000000000000000000000",
-  "NFTOracleStartBlock": 13623705,
-  "BNFTRegistryAddress": "0x0000000000000000000000000000000000000000",
-  "BNFTRegistryStartBlock": 13623705
+  "NFTOracleStartBlock": 13623705
 }
