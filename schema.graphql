@@ -4,7 +4,7 @@
 
 type _Schema_
   @fulltext(
-    name: "bandSearch"
+    name: "bendSearch"
     language: en
     algorithm: rank
     include: [
