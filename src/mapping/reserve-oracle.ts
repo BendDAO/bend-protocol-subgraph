@@ -7,7 +7,7 @@ import { getChainlinkAggregator, getOrInitPriceOracle, getPriceOracleAsset } fro
 import { MOCK_USD_ADDRESS } from "../utils/constants";
 import { genericPriceUpdate, usdEthPriceUpdate } from "../helpers/price-updates";
 import { AnswerUpdated } from "../../generated/templates/ChainlinkAggregator/AggregatorV2V3Interface";
-import { getReserveOracleId } from "../utils/id-generation";
+import { getNFTOracleId, getReserveOracleId } from "../utils/id-generation";
 import { EACAggregatorProxy } from "../../generated/templates/ChainlinkAggregator/EACAggregatorProxy";
 import { ChainlinkAggregator as ChainlinkAggregatorContract } from "../../generated/templates";
 
@@ -126,6 +126,12 @@ export function priceFeedUpdated(
 
     usdEthPriceUpdate(priceOracle, formatUsdEthPrice(priceFromOracle), event);
 
+    // update usd price in nft oracle
+    let nftOracle = getOrInitPriceOracle(getNFTOracleId());
+    nftOracle.usdPriceEthMainSource = priceOracleAsset.priceSource;
+    nftOracle.usdPriceEthFallbackRequired = priceOracleAsset.fallbackRequired;
+    usdEthPriceUpdate(nftOracle, formatUsdEthPrice(priceFromOracle), event);
+
     // this is so we also save the assetOracle for usd chainlink
     genericPriceUpdate(priceOracleAsset, priceFromOracle, event);
   } else {
@@ -143,11 +149,21 @@ export function genericHandleChainlinkUSDETHPrice(
     priceOracle.usdPriceEthFallbackRequired = false;
     let formatPrice = formatUsdEthPrice(price);
     usdEthPriceUpdate(priceOracle, formatPrice, event);
+
+    // update usd price in nft oracle
+    let nftOracle = getOrInitPriceOracle(getNFTOracleId());
+    nftOracle.usdPriceEthFallbackRequired = false;
+    usdEthPriceUpdate(nftOracle, formatPrice, event);
   } else {
     priceOracle.usdPriceEthFallbackRequired = true;
     let formatPrice = formatUsdEthPrice(
       proxyPriceProvider.getAssetPrice(Bytes.fromHexString(MOCK_USD_ADDRESS) as Address)
     );
     usdEthPriceUpdate(priceOracle, formatPrice, event);
+
+    // update usd price in nft oracle
+    let nftOracle = getOrInitPriceOracle(getNFTOracleId());
+    nftOracle.usdPriceEthFallbackRequired = true;
+    usdEthPriceUpdate(nftOracle, formatPrice, event);
   }
 }
