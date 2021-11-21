@@ -30,6 +30,7 @@ services:
       <<: *graph-pg-base
       postgres_host: 'graph-postgres'
       ipfs: 'graph-ipfs:5001'
+      GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 'y'
       #ethereum: 'mainnet:https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}'
       #ethereum: 'rinkeby:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}'
       ethereum: '${GRAPH_ETHEREUM:-development:http://host.docker.internal:8545}'

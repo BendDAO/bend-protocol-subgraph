@@ -107,9 +107,9 @@ That is because the postgres database and ipfs data needs to not be persistant, 
 ```shell
 docker-compose down
 
-docker container prune
+docker container prune -f
 
-docker volume prune
+docker volume prune -f
 
 # or using ls and rm
 # docker volume ls

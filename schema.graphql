@@ -1,6 +1,18 @@
 # --------------------------------------
 # Bend Entities
 # --------------------------------------
+
+type _Schema_
+  @fulltext(
+    name: "bandSearch"
+    language: en
+    algorithm: rank
+    include: [
+      { entity: "Reserve", fields: [{ name: "name" }, { name: "symbol" }] },
+      { entity: "NFT", fields: [{ name: "name" }, { name: "symbol" }] }
+    ]
+  )
+
 type Protocol @entity {
   # just 1 for now
   id: ID!
