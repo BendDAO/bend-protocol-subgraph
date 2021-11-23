@@ -41,10 +41,10 @@ function saveNftHistory(nft: NFT, event: ethereum.Event): void {
   historyItem.priceInEth = priceOracleAsset.priceInEth;
 
   let priceOracle = getOrInitPriceOracle(getReserveOracleId());
-  if (priceOracle.usdPriceEth.gt(zeroBI())) {
+  if (priceOracle.usdPriceEthFormated.gt(zeroBI())) {
     historyItem.priceInUsd = historyItem.priceInEth
     .toBigDecimal()
-    .div(priceOracle.usdPriceEth.toBigDecimal());
+    .div(priceOracle.usdPriceEthFormated.toBigDecimal());
   }
 
   historyItem.timestamp = event.block.timestamp.toI32();

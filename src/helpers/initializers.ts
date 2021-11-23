@@ -149,6 +149,7 @@ export function getOrInitPriceOracle(oracleId: string): PriceOracle {
     priceOracle = new PriceOracle(oracleId);
     priceOracle.proxyPriceProvider = zeroAddress();
     priceOracle.usdPriceEth = zeroBI();
+    priceOracle.usdPriceEthFormated = zeroBI();
     priceOracle.usdPriceEthMainSource = zeroAddress();
     priceOracle.usdPriceEthFallbackRequired = false;
     priceOracle.lastUpdateTimestamp = 0;
