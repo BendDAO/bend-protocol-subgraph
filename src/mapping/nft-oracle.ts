@@ -1,5 +1,5 @@
 import { Address, ethereum } from "@graphprotocol/graph-ts";
-import { AssetAdded, SetAssetData } from "../../generated/NFTOracle/NFTOracle";
+import { AssetAdded, NFTOracle, SetAssetData } from "../../generated/NFTOracle/NFTOracle";
 import { getOrInitPriceOracle, getPriceOracleAsset } from "../helpers/initializers";
 import { genericPriceUpdate } from "../helpers/price-updates";
 import { zeroAddress, zeroBI } from "../utils/converters";
@@ -34,6 +34,9 @@ export function handleSetAssetData(event: SetAssetData): void {
       genericPriceUpdate(oracleAsset, assetPrice, event);
     } else {
       oracleAsset.fallbackRequired = true;
+      let proxyPriceProvider = NFTOracle.bind(priceOracle.proxyPriceProvider as Address);
+      let fallbackPrice = proxyPriceProvider.getAssetPrice(assetAddress);
+      genericPriceUpdate(oracleAsset, fallbackPrice, event);
     }
   }
 }
