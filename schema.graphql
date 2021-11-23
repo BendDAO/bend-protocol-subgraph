@@ -88,6 +88,7 @@ type UsdEthPriceHistoryItem @entity {
   id: ID!
   oracle: PriceOracle!
   price: BigInt!
+  priceFormated: BigInt!
   timestamp: Int!
 }
 
@@ -116,6 +117,7 @@ type PriceOracle @entity {
 
   # usd price not needed in nft oracle, just query from reserve oracle
   usdPriceEth: BigInt!
+  usdPriceEthFormated: BigInt!
   usdPriceEthMainSource: Bytes!
   usdPriceEthFallbackRequired: Boolean!
   lastUpdateTimestamp: Int!

@@ -10,8 +10,9 @@ export function savePriceToHistory(oracleAsset: PriceOracleAsset, event: ethereu
   priceHistoryItem.save();
 }
 
-export function usdEthPriceUpdate(priceOracle: PriceOracle, price: BigInt, event: ethereum.Event): void {
+export function usdEthPriceUpdate(priceOracle: PriceOracle, price: BigInt, priceFormated: BigInt, event: ethereum.Event): void {
   priceOracle.usdPriceEth = price;
+  priceOracle.usdPriceEthFormated = priceFormated;
   priceOracle.lastUpdateTimestamp = event.block.timestamp.toI32();
   priceOracle.save();
 
@@ -20,6 +21,7 @@ export function usdEthPriceUpdate(priceOracle: PriceOracle, price: BigInt, event
   );
   usdEthPriceHistoryItem.oracle = priceOracle.id;
   usdEthPriceHistoryItem.price = priceOracle.usdPriceEth;
+  usdEthPriceHistoryItem.priceFormated = priceOracle.usdPriceEthFormated;
   usdEthPriceHistoryItem.timestamp = priceOracle.lastUpdateTimestamp;
   usdEthPriceHistoryItem.save();
 }
