@@ -29,9 +29,11 @@ import {
   getOrInitReserveConfigurationHistoryItem,
   getOrInitNft,
   getOrInitNftConfigurationHistoryItem,
+  getPriceOracleAsset,
 } from "../helpers/initializers";
 import { Reserve, NFT } from "../../generated/schema";
-import { zeroAddress, zeroBI } from "../utils/converters";
+import { oneEther, zeroAddress, zeroBI } from "../utils/converters";
+import { getReserveOracleId } from "../utils/id-generation";
 
 export function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   let timestamp = event.block.timestamp.toI32();
@@ -101,6 +103,12 @@ export function handleReserveInitialized(event: ReserveInitialized): void {
   dToken.underlyingAssetDecimals = reserve.decimals;
   dToken.pool = reserve.pool;
   dToken.save();
+
+  if (reserve.symbol == "WETH" || reserve.symbol == "ETH") {
+    let priceOracleAsset = getPriceOracleAsset(reserve.underlyingAsset.toHexString(), getReserveOracleId());
+    priceOracleAsset.priceInEth = oneEther();
+    priceOracleAsset.save();
+  }
 
   reserve.bToken = bToken.id;
   reserve.debtToken = dToken.id;
