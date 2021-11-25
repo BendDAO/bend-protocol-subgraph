@@ -84,6 +84,7 @@ export function handleLoanCreated(event: LoanCreated): void {
   saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
 
   poolNft.totalCollateral = poolNft.totalCollateral.plus(BigInt.fromI32(1));
+  poolNft.lifetimeBorrows = poolNft.lifetimeBorrows.plus(BigInt.fromI32(1));
   poolNft.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolNft.save();
 
@@ -92,22 +93,22 @@ export function handleLoanCreated(event: LoanCreated): void {
 
 export function handleLoanUpdated(event: LoanUpdated): void {
   let poolLoan = getOrInitLoan(event.params.loanId, event);
-  let poolNft = NFT.load(poolLoan.nftAsset) as NFT;
+  let poolNft = getOrInitNft(event.params.nftAsset, event);
 
   let calculatedAmountAdded = rayDiv(event.params.amountAdded, event.params.borrowIndex);
   let calculatedAmountTaken = rayDiv(event.params.amountTaken, event.params.borrowIndex);
 
   poolLoan.scaledAmount = poolLoan.scaledAmount.plus(calculatedAmountAdded);
-  poolLoan.scaledAmount = poolLoan.scaledAmount.minus(calculatedAmountTaken);
+  poolLoan.scaledAmount = poolLoan.scaledAmount.minus(calculatedAmountTakend);
   poolLoan.currentAmount = rayMul(poolLoan.scaledAmount, event.params.borrowIndex);
 
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
   saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
 
-  if (poolNft != null) {
-    saveNftHistory(poolNft, event);
-  }
+  poolNft.save();
+
+  saveNftHistory(poolNft, event);
 }
 
 export function handleLoanRepaid(event: LoanRepaid): void {
@@ -126,6 +127,7 @@ export function handleLoanRepaid(event: LoanRepaid): void {
   userNft.save();
 
   poolNft.totalCollateral = poolNft.totalCollateral.minus(BigInt.fromI32(1));
+  poolNft.lifetimeRepayments = poolNft.lifetimeRepayments.plus(BigInt.fromI32(1));
   poolNft.save();
 
   saveNftHistory(poolNft, event);
@@ -147,6 +149,7 @@ export function handleLoanLiquidated(event: LoanLiquidated): void {
   userNft.save();
 
   poolNft.totalCollateral = poolNft.totalCollateral.minus(BigInt.fromI32(1));
+  poolNft.lifetimeLiquidated = poolNft.lifetimeLiquidated.plus(BigInt.fromI32(1));
   poolNft.save();
 
   saveNftHistory(poolNft, event);
