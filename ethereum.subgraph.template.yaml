@@ -88,6 +88,45 @@ dataSources:
           handler: handleSetAssetData
       file: src/mapping/nft-oracle.ts
   # --------------------------------------
+  #       STAKE
+  # --------------------------------------
+  - kind: ethereum/contract
+    name: StakedBend
+    network: {{network}}
+    source:
+      address: '{{StakedBendAddress}}'
+      startBlock: {{StakedBendStartBlock}}
+      abi: StakedBend
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - UserStakedBend
+      abis:
+        - name: StakedBend
+          file: ./abis/StakedBend.json
+      eventHandlers:
+        - event: AssetConfigUpdated(indexed address,uint256)
+          handler: handleAssetConfigUpdated
+        - event: AssetIndexUpdated(indexed address,uint256)
+          handler: handleAssetIndexUpdated
+        - event: UserIndexUpdated(indexed address,indexed address,uint256)
+          handler: handleUserIndexUpdated
+        - event: DistributionEndUpdated(uint256)
+          handler: handleDistributionEndUpdated
+        - event: Staked(indexed address,indexed address,uint256)
+          handler: handleStaked
+        - event: Redeem(indexed address,indexed address,uint256)
+          handler: handleRedeem
+        - event: RewardsAccrued(address,uint256)
+          handler: handleRewardsAccrued
+        - event: RewardsClaimed(indexed address,indexed address,uint256)
+          handler: handleRewardsClaimed
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: src/mapping/staked-bend.ts
+  # --------------------------------------
   #       Dynamically Created Contracts
   # --------------------------------------
 templates:

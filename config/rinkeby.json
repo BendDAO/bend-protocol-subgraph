@@ -5,5 +5,7 @@
   "ReserveOracleAddress": "0xF8cbFf1Ef3e84a50E3F5e0b8617aa85162FDF5D3",
   "ReserveOracleStartBlock": 9673615,
   "NFTOracleAddress": "0xb55ea3D072Fd8943fa7DEf37b8da4a20A9d9ebF9",
-  "NFTOracleStartBlock": 9673615
+  "NFTOracleStartBlock": 9673615,
+  "StakedBendAddress": "0xafaebc22e8c9954134ef539548be8075bdfb1c60",
+  "StakedBendStartBlock": 9773163 
 }
