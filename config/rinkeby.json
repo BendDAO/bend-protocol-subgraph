@@ -1,9 +1,9 @@
 {
   "network": "rinkeby",
-  "LendPoolAddressesProviderRegistryAddress": "0x7f87344614bB4A3b97440790E9546c837BF8F723",
-  "LendPoolAddressesProviderRegistryStartBlock": 9783264,
+  "LendPoolAddressesProviderRegistryAddress": "0x7fd1dCDe1bc38cA18975f5fe8Ed80A7f1dd797b1",
+  "LendPoolAddressesProviderRegistryStartBlock": 9783968,
   "ReserveOracleAddress": "0xF8cbFf1Ef3e84a50E3F5e0b8617aa85162FDF5D3",
-  "ReserveOracleStartBlock": 9783264,
+  "ReserveOracleStartBlock": 9673615,
   "NFTOracleAddress": "0xb55ea3D072Fd8943fa7DEf37b8da4a20A9d9ebF9",
-  "NFTOracleStartBlock": 9783264
+  "NFTOracleStartBlock": 9673615
 }

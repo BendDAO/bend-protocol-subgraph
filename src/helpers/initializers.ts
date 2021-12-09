@@ -293,6 +293,7 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
     loan.nftTokenId = zeroBI();
     loan.scaledAmount = zeroBI();
     loan.currentAmount = zeroBI();
+    loan.bidStartTimestamp = 0;
     loan.bidderAddress = new Bytes(1);
     loan.bidPrice = zeroBI();
     loan.bidBorrowAmount = zeroBI();

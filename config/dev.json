@@ -1,9 +1,9 @@
 {
   "network": "development",
-  "LendPoolAddressesProviderRegistryAddress": "0x707c68B9c6Ba0E23eCa3A65E321007c5425c54A1",
+  "LendPoolAddressesProviderRegistryAddress": "0x0b1c63041dd4a8049c61FAD207598c7Fd52D2D20",
   "LendPoolAddressesProviderRegistryStartBlock": 0,
-  "ReserveOracleAddress": "0x192f62bA68383ee584072eF55E3170de1c5232D8",
+  "ReserveOracleAddress": "0xAca284cee59139D9533CBB851a24cED1a4C2510E",
   "ReserveOracleStartBlock": 0,
-  "NFTOracleAddress": "0xBCD813970412df463331bbb906B35b3E530412F9",
+  "NFTOracleAddress": "0x5aC94dED0Fe79C890AF99f92164D93941a3F6Ac7",
   "NFTOracleStartBlock": 0
 }
