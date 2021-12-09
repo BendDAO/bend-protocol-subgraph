@@ -12,6 +12,7 @@ import {
   ReserveDecimalsChanged,
   NftInitialized,
   NftConfigurationChanged,
+  NftAuctionChanged,
   NftActivated,
   NftDeactivated,
   BTokenUpgraded,
@@ -212,6 +213,15 @@ export function handleNftConfigurationChanged(event: NftConfigurationChanged): v
   nft.baseLTVasCollateral = event.params.ltv;
   nft.liquidationThreshold = event.params.liquidationThreshold;
   nft.liquidationBonus = event.params.liquidationBonus;
+  saveNft(nft, event);
+}
+
+export function handleNftAuctionChanged(event: NftAuctionChanged): void {
+  let nft = getOrInitNft(event.params.asset, event);
+
+  nft.redeemDuration = event.params.redeemDuration;
+  nft.auctionDuration = event.params.auctionDuration;
+  nft.redeemFine = event.params.redeemFine;
   saveNft(nft, event);
 }
 

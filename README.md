@@ -11,7 +11,7 @@ cp .env.test .env
 npm i
 
 # fetch current contracts as submodule
-npm run prepare:all
+npm run prepare:subgraph
 
 # run codegen
 npm run subgraph:codegen

@@ -212,7 +212,7 @@ export function getOrInitReserve(underlyingAsset: Address, event: ethereum.Event
     reserve.lifetimeScaledVariableDebt = zeroBI();
     reserve.lifetimeCurrentVariableDebt = zeroBI();
 
-    reserve.lifetimeLiquidity = zeroBI();
+    reserve.lifetimeDeposits = zeroBI();
     reserve.lifetimeWithdrawals = zeroBI();
     reserve.lifetimeBorrows = zeroBI();
     reserve.lifetimeRepayments = zeroBI();
@@ -228,6 +228,8 @@ export function getOrInitReserve(underlyingAsset: Address, event: ethereum.Event
       priceOracleAsset.save();
     }
     reserve.price = priceOracleAsset.id;
+
+    reserve.save();
   }
   return reserve as Reserve;
 }
@@ -248,12 +250,17 @@ export function getOrInitNft(underlyingAsset: Address, event: ethereum.Event): N
     nft.baseLTVasCollateral = zeroBI();
     nft.liquidationThreshold = zeroBI();
     nft.liquidationBonus = zeroBI();
+    nft.redeemDuration = zeroBI();
+    nft.auctionDuration = zeroBI();
+    nft.redeemFine = zeroBI();
 
     nft.totalCollateral = zeroBI();
     nft.bnftToken = zeroAddress();
 
     nft.lifetimeBorrows = zeroBI();
     nft.lifetimeRepayments = zeroBI();
+    nft.lifetimeAuctions = zeroBI();
+    nft.lifetimeRedeems = zeroBI();
     nft.lifetimeLiquidated = zeroBI();
 
     let priceOracleAsset = getPriceOracleAsset(underlyingAsset.toHexString(), getNFTOracleId());
@@ -261,6 +268,10 @@ export function getOrInitNft(underlyingAsset: Address, event: ethereum.Event): N
       priceOracleAsset.save();
     }
     nft.price = priceOracleAsset.id;
+
+    nft.lastUpdateTimestamp = 0;
+
+    nft.save();
   }
   return nft as NFT;
 }
@@ -276,11 +287,18 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
     loan.loanId = loanId;
     loan.user = zeroAddress().toHexString();
     loan.state = LOAN_STATE_NONE;
+    loan.borrower = zeroAddress().toHexString();
     loan.reserveAsset = zeroAddress().toHexString();
     loan.nftAsset = zeroAddress().toHexString();
     loan.nftTokenId = zeroBI();
     loan.scaledAmount = zeroBI();
     loan.currentAmount = zeroBI();
+    loan.bidderAddress = new Bytes(1);
+    loan.bidPrice = zeroBI();
+    loan.bidBorrowAmount = zeroBI();
+    loan.lastUpdateTimestamp = 0;
+
+    loan.save();
   }
   return loan as Loan;
 }
@@ -303,6 +321,8 @@ export function getOrInitDebtToken(dTokenAddress: Address): DebtToken {
     dToken.tokenContractImpl = zeroAddress();
     dToken.pool = "";
     dToken.underlyingAssetDecimals = 18;
+
+    dToken.save();
   }
   return dToken as DebtToken;
 }
@@ -316,6 +336,8 @@ export function getOrInitBToken(bTokenAddress: Address): BToken {
     bToken.tokenContractImpl = zeroAddress();
     bToken.pool = "";
     bToken.underlyingAssetDecimals = 18;
+
+    bToken.save();
   }
   return bToken as BToken;
 }
@@ -340,10 +362,10 @@ export function getOrInitReserveParamsHistoryItem(id: Bytes, reserve: Reserve): 
     reserveParamsHistoryItem.totalCurrentVariableDebt = zeroBI();
     reserveParamsHistoryItem.lifetimeScaledVariableDebt = zeroBI();
     reserveParamsHistoryItem.lifetimeCurrentVariableDebt = zeroBI();
-    reserveParamsHistoryItem.lifetimeLiquidity = zeroBI();
+    reserveParamsHistoryItem.lifetimeDeposits = zeroBI();
+    reserveParamsHistoryItem.lifetimeWithdrawals = zeroBI();
     reserveParamsHistoryItem.lifetimeBorrows = zeroBI();
     reserveParamsHistoryItem.lifetimeRepayments = zeroBI();
-    reserveParamsHistoryItem.lifetimeWithdrawals = zeroBI();
     reserveParamsHistoryItem.lifetimeLiquidated = zeroBI();
     reserveParamsHistoryItem.lifetimeReserveFactorAccrued = zeroBI();
     reserveParamsHistoryItem.lifetimeDepositorsInterestEarned = zeroBI();
@@ -374,6 +396,8 @@ export function getOrInitNftParamsHistoryItem(id: Bytes, nft: NFT): NftParamsHis
     historyItem.nftAsset = nft.id;
     historyItem.lifetimeBorrows = zeroBI();
     historyItem.lifetimeRepayments = zeroBI();
+    historyItem.lifetimeAuctions = zeroBI();
+    historyItem.lifetimeRedeems = zeroBI();
     historyItem.lifetimeLiquidated = zeroBI();
   }
   return historyItem as NftParamsHistoryItem;

@@ -202,6 +202,8 @@ templates:
           handler: handleNftInitialized
         - event: NftConfigurationChanged(indexed address,uint256,uint256,uint256)
           handler: handleNftConfigurationChanged
+        - event: NftAuctionChanged(indexed address,uint256,uint256,uint256)
+          handler: handleNftAuctionChanged
         - event: NftActivated(indexed address)
           handler: handleNftActivated
         - event: NftDeactivated(indexed address)
@@ -299,15 +301,19 @@ templates:
         - name: LendPool
           file: ./abis/LendPool.json
       eventHandlers:
-        - event: Deposit(indexed address,address,indexed address,uint256,indexed uint16)
+        - event: Deposit(address,indexed address,uint256,indexed address,indexed uint16)
           handler: handleDeposit
-        - event: Withdraw(indexed address,indexed address,indexed address,uint256)
+        - event: Withdraw(indexed address,indexed address,uint256,indexed address)
           handler: handleWithdraw
-        - event: Borrow(indexed address,address,indexed address,uint256,address,uint256,uint256,uint256,indexed uint16)
+        - event: Borrow(address,indexed address,uint256,address,uint256,indexed address,uint256,uint256,indexed uint16)
           handler: handleBorrow
-        - event: Repay(indexed address,uint256,indexed address,indexed address,address,uint256,uint256)
+        - event: Repay(address,indexed address,uint256,indexed address,uint256,indexed address,uint256)
           handler: handleRepay
-        - event: Liquidate(indexed address,uint256,indexed address,indexed address,uint256,uint256,address,address,uint256)
+        - event: Auction(address,indexed address,uint256,indexed address,uint256,address,indexed address,uint256)
+          handler: handleAuction
+        - event: Redeem(address,indexed address,uint256,uint256,indexed address,uint256,indexed address,uint256)
+          handler: handleRedeem
+        - event: Liquidate(address,indexed address,uint256,uint256,indexed address,uint256,indexed address,uint256)
           handler: handleLiquidate
         - event: Paused()
           handler: handlePaused
@@ -344,6 +350,8 @@ templates:
           handler: handleLoanUpdated
         - event: LoanRepaid(indexed address,indexed uint256,address,uint256,address,uint256,uint256)
           handler: handleLoanRepaid
+        - event: LoanAuctioned(indexed address,indexed uint256,address,uint256,uint256,uint256,address,uint256,address,uint256)
+          handler: handleLoanAuctioned
         - event: LoanLiquidated(indexed address,indexed uint256,address,uint256,address,uint256,uint256)
           handler: handleLoanLiquidated
       file: src/mapping/lend-pool-loan.ts

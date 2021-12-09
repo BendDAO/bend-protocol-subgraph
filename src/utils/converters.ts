@@ -69,39 +69,9 @@ export function formatUsdEthReserveOraclePrice(price: BigInt): BigInt {
 export const LOAN_STATE_NONE = "None";
 export const LOAN_STATE_CREATED = "Created";
 export const LOAN_STATE_ACTIVE = "Active";
+export const LOAN_STATE_AUCTION = "Auction";
 export const LOAN_STATE_REPAID = "Repaid";
 export const LOAN_STATE_DEFAULTED = "Defaulted";
-
-export function getLoanState(_mode: BigInt): string {
-  let mode = _mode.toI32();
-  if (mode == 0) {
-    return LOAN_STATE_NONE;
-  } else if (mode == 1) {
-    return LOAN_STATE_CREATED;
-  } else if (mode == 2) {
-    return LOAN_STATE_ACTIVE;
-  } else if (mode == 3) {
-    return LOAN_STATE_REPAID;
-  } else if (mode == 4) {
-    return LOAN_STATE_DEFAULTED;
-  }
-  throw new Error("invalid loan state");
-}
-
-export function getLoanStateFromString(_mode: string): BigInt {
-  if (_mode == LOAN_STATE_NONE) {
-    return zeroBI();
-  } else if (_mode == LOAN_STATE_CREATED) {
-    return BigInt.fromI32(1);
-  } else if (_mode == LOAN_STATE_ACTIVE) {
-    return BigInt.fromI32(2);
-  } else if (_mode == LOAN_STATE_REPAID) {
-    return BigInt.fromI32(3);
-  } else if (_mode == LOAN_STATE_DEFAULTED) {
-    return BigInt.fromI32(4);
-  }
-  throw new Error("invalid loan state");
-}
 
 export function byteArrayFromHex(s: string): ByteArray {
   if (s.length % 2 !== 0) {
@@ -126,7 +96,7 @@ export function concat(a: ByteArray, b: ByteArray): ByteArray {
   return out as ByteArray;
 }
 
-const Zeros = new ByteArray(32);
+let Zeros = new ByteArray(32);
 Zeros.fill(0);
 
 export function namehash(partition: Array<string>): string {
