@@ -149,6 +149,8 @@ templates:
           handler: handleLendPoolLoanUpdated
         - event: BNFTRegistryUpdated(indexed address)
           handler: handleBNFTRegistryUpdated
+        - event: LendPoolLiquidatorUpdated(indexed address)
+          handler: handleLendPoolLiquidatorUpdated
         - event: ConfigurationAdminUpdated(indexed address)
           handler: handleConfigurationAdminUpdated
         - event: EmergencyAdminUpdated(indexed address)

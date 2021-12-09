@@ -122,10 +122,12 @@ docker volume prune -f
 docker-compose up
 
 # or development using rinkeby, api url can be infura or alchemy
+#export GRAPH_ETHEREUM="rinkeby:https://rinkeby.infura.io/v3/${INFURA_KEY}"
 export GRAPH_ETHEREUM="rinkeby:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}"
 docker-compose up
 
 # or development using mainnet, api url can be infura or alchemy
+#export GRAPH_ETHEREUM="mainnet:https://mainnet.infura.io/v3/${INFURA_KEY}"
 export GRAPH_ETHEREUM="mainnet:https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}"
 docker-compose up
 

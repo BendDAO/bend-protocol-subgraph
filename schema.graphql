@@ -591,6 +591,7 @@ type Loan @entity {
   scaledAmount: BigInt!
   currentAmount: BigInt!
   state: LoanState!
+  bidStartTimestamp: Int!
   bidderAddress: Bytes!
   bidPrice: BigInt!
   bidBorrowAmount: BigInt!
