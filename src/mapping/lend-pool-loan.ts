@@ -5,6 +5,7 @@ import {
   LoanUpdated,
   LoanRepaid,
   LoanLiquidated,
+  LoanAuctioned,
 } from "../../generated/templates/LendPoolLoan/LendPoolLoan";
 import {
   getOrInitReserve,
@@ -16,7 +17,7 @@ import {
   getOrInitPriceOracle,
   getPriceOracleAsset,
 } from "../helpers/initializers";
-import { getLoanState, LOAN_STATE_ACTIVE, LOAN_STATE_DEFAULTED, LOAN_STATE_REPAID, zeroBI } from "../utils/converters";
+import { LOAN_STATE_ACTIVE, LOAN_STATE_AUCTION, LOAN_STATE_DEFAULTED, LOAN_STATE_REPAID, zeroBI } from "../utils/converters";
 import { rayDiv, rayMul } from "../helpers/math";
 import { Loan, LoanBalanceHistoryItem, NFT, UserNft } from "../../generated/schema";
 import { getNFTOracleId, getReserveOracleId } from "../utils/id-generation";
@@ -36,6 +37,8 @@ function saveNftHistory(nft: NFT, event: ethereum.Event): void {
   historyItem.totalCollateral = nft.totalCollateral;
   historyItem.lifetimeBorrows = nft.lifetimeBorrows;
   historyItem.lifetimeRepayments = nft.lifetimeRepayments;
+  historyItem.lifetimeAuctions = nft.lifetimeAuctions;
+  historyItem.lifetimeRedeems = nft.lifetimeRedeems;
   historyItem.lifetimeLiquidated = nft.lifetimeLiquidated;
   let priceOracleAsset = getPriceOracleAsset(nft.underlyingAsset.toHexString(), getNFTOracleId());
   historyItem.priceInEth = priceOracleAsset.priceInEth;
@@ -133,6 +136,27 @@ export function handleLoanRepaid(event: LoanRepaid): void {
   saveNftHistory(poolNft, event);
 }
 
+export function handleLoanAuctioned(event: LoanAuctioned): void {
+  let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
+  let poolLoan = getOrInitLoan(event.params.loanId, event);
+  let poolNft = getOrInitNft(event.params.nftAsset, event);
+
+  poolLoan.currentAmount = event.params.amount;
+  poolLoan.state = LOAN_STATE_AUCTION; // auction
+  poolLoan.bidderAddress = event.params.bidder;
+  poolLoan.bidPrice = event.params.price;
+  poolLoan.bidBorrowAmount = event.params.amount;
+
+  poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
+  poolLoan.save();
+  saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
+
+  poolNft.lifetimeAuctions = poolNft.lifetimeAuctions.plus(BigInt.fromI32(1));
+  poolNft.save();
+
+  saveNftHistory(poolNft, event);
+}
+
 export function handleLoanLiquidated(event: LoanLiquidated): void {
   let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
   let poolLoan = getOrInitLoan(event.params.loanId, event);
@@ -143,13 +167,17 @@ export function handleLoanLiquidated(event: LoanLiquidated): void {
 
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
-  saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
+  saveLoanBHistory(poolLoan, event, zeroBI());
 
   userNft.totalCollateral = userNft.totalCollateral.minus(BigInt.fromI32(1));
   userNft.save();
 
   poolNft.totalCollateral = poolNft.totalCollateral.minus(BigInt.fromI32(1));
-  poolNft.lifetimeLiquidated = poolNft.lifetimeLiquidated.plus(BigInt.fromI32(1));
+  if (event.params.liqType.equals(BigInt.fromI32(1))) {
+    poolNft.lifetimeRedeems = poolNft.lifetimeRedeems.plus(BigInt.fromI32(1));
+  } else {
+    poolNft.lifetimeLiquidated = poolNft.lifetimeLiquidated.plus(BigInt.fromI32(1));
+  }
   poolNft.save();
 
   saveNftHistory(poolNft, event);

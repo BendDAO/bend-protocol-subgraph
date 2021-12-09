@@ -5,8 +5,9 @@ export enum EventTypeRef {
   NoType,
   Deposit,
   Borrow,
-  Redeem,
   Repay,
+  Auction,
+  Redeem,
   Liquidate,
 }
 

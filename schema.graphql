@@ -153,6 +153,7 @@ enum LoanState {
   None
   Created
   Active
+  Auction
   Repaid
   Defaulted
 }
@@ -214,7 +215,7 @@ type Borrow implements UserTransaction @entity {
   nftAsset: NFT!
   userNft: UserNft!
   nftTokenId: BigInt!
-  loanId: Loan!
+  loan: Loan!
   referrer: Referrer
   timestamp: Int!
 }
@@ -231,9 +232,47 @@ type Repay implements UserTransaction @entity {
   nftTokenId: BigInt!
   reserve: Reserve!
   userReserve: UserReserve!
-  repayer: User!
   amount: BigInt!
-  loanId: Loan!
+  borrower: User!
+  loan: Loan!
+  timestamp: Int!
+}
+
+type Auction implements UserTransaction @entity {
+  """
+  tx hash
+  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  id: ID!
+  pool: Pool!
+  user: User!
+  nftAsset: NFT!
+  userNft: UserNft!
+  nftTokenId: BigInt!
+  reserve: Reserve!
+  userReserve: UserReserve!
+  bidPrice: BigInt!
+  onBehalfOf: User!
+  borrower: User!
+  loan: Loan!
+  timestamp: Int!
+}
+
+type Redeem implements UserTransaction @entity {
+  """
+  tx hash
+  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  id: ID!
+  pool: Pool!
+  user: User!
+  nftAsset: NFT!
+  userNft: UserNft!
+  nftTokenId: BigInt!
+  reserve: Reserve!
+  userReserve: UserReserve!
+  repayAmount: BigInt!
+  bidFine: BigInt!
+  borrower: User!
+  loan: Loan!
   timestamp: Int!
 }
 
@@ -250,10 +289,9 @@ type Liquidate implements UserTransaction @entity {
   reserve: Reserve!
   userReserve: UserReserve!
   repayAmount: BigInt!
-  borrowerAmount: BigInt!
-  liquidator: Bytes!
-  onBehalfOf: User!
-  loanId: Loan!
+  remainAmount: BigInt!
+  borrower: User!
+  loan: Loan!
   timestamp: Int!
 }
 
@@ -305,7 +343,7 @@ type ReserveParamsHistoryItem @entity {
   totalCurrentVariableDebt: BigInt!
   lifetimeScaledVariableDebt: BigInt!
   lifetimeCurrentVariableDebt: BigInt!
-  lifetimeLiquidity: BigInt! # default: 0
+  lifetimeDeposits: BigInt! # default: 0
   lifetimeRepayments: BigInt! # default: 0
   lifetimeWithdrawals: BigInt! # default: 0
   lifetimeBorrows: BigInt! # default: 0
@@ -324,8 +362,11 @@ type NftParamsHistoryItem @entity {
   priceInEth: BigInt!
   priceInUsd: BigDecimal!
   timestamp: Int!
-  lifetimeRepayments: BigInt! # default: 0
+
   lifetimeBorrows: BigInt! # default: 0
+  lifetimeRepayments: BigInt! # default: 0
+  lifetimeAuctions: BigInt!
+  lifetimeRedeems: BigInt!
   lifetimeLiquidated: BigInt! # default: 0
 }
 
@@ -380,7 +421,7 @@ type Reserve @entity {
   lifetimeScaledVariableDebt: BigInt! # default: 0
   lifetimeCurrentVariableDebt: BigInt! # default: 0
 
-  lifetimeLiquidity: BigInt! # default: 0
+  lifetimeDeposits: BigInt! # default: 0
   lifetimeWithdrawals: BigInt! # default: 0
   lifetimeBorrows: BigInt! # default: 0
   lifetimeRepayments: BigInt! # default: 0
@@ -394,7 +435,10 @@ type Reserve @entity {
   depositHistory: [Deposit!]! @derivedFrom(field: "reserve")
   withdrawHistory: [Withdraw!]! @derivedFrom(field: "reserve")
   borrowHistory: [Borrow!]! @derivedFrom(field: "reserve")
+  auctionHistory: [Auction!]! @derivedFrom(field: "reserve")
+  redeemHistory: [Redeem!]! @derivedFrom(field: "reserve")
   repayHistory: [Repay!]! @derivedFrom(field: "reserve")
+  liquidateHistory: [Liquidate!]! @derivedFrom(field: "reserve")
 
   paramsHistory: [ReserveParamsHistoryItem!]! @derivedFrom(field: "reserve")
   configurationHistory: [ReserveConfigurationHistoryItem!]! @derivedFrom(field: "reserve")
@@ -414,6 +458,9 @@ type NFT @entity {
   baseLTVasCollateral: BigInt!
   liquidationThreshold: BigInt!
   liquidationBonus: BigInt!
+  redeemDuration: BigInt!
+  auctionDuration: BigInt!
+  redeemFine: BigInt!
   bnftToken: Bytes!
   price: PriceOracleAsset!
 
@@ -421,6 +468,8 @@ type NFT @entity {
 
   lifetimeBorrows: BigInt! # default: 0
   lifetimeRepayments: BigInt! # default: 0
+  lifetimeAuctions: BigInt! # default: 0
+  lifetimeRedeems: BigInt! # default: 0
   lifetimeLiquidated: BigInt! # default: 0
 
   lastUpdateTimestamp: Int!
@@ -430,6 +479,8 @@ type NFT @entity {
 
   borrowHistory: [Borrow!]! @derivedFrom(field: "nftAsset")
   repayHistory: [Repay!]! @derivedFrom(field: "nftAsset")
+  auctionHistory: [Auction!]! @derivedFrom(field: "nftAsset")
+  redeemHistory: [Redeem!]! @derivedFrom(field: "nftAsset")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "nftAsset")
   loanHistory: [Loan!]! @derivedFrom(field: "nftAsset")
 
@@ -488,6 +539,8 @@ type UserReserve @entity {
   withdrawHistory: [Withdraw!]! @derivedFrom(field: "userReserve")
   borrowHistory: [Borrow!]! @derivedFrom(field: "userReserve")
   repayHistory: [Repay!]! @derivedFrom(field: "userReserve")
+  auctionHistory: [Auction!]! @derivedFrom(field: "userReserve")
+  redeemHistory: [Redeem!]! @derivedFrom(field: "userReserve")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "userReserve")
 }
 
@@ -506,6 +559,8 @@ type UserNft @entity {
 
   borrowHistory: [Borrow!]! @derivedFrom(field: "userNft")
   repayHistory: [Repay!]! @derivedFrom(field: "userNft")
+  auctionHistory: [Auction!]! @derivedFrom(field: "userNft")
+  redeemHistory: [Redeem!]! @derivedFrom(field: "userNft")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "userNft")
 }
 
@@ -536,9 +591,17 @@ type Loan @entity {
   scaledAmount: BigInt!
   currentAmount: BigInt!
   state: LoanState!
+  bidderAddress: Bytes!
+  bidPrice: BigInt!
+  bidBorrowAmount: BigInt!
 
   lastUpdateTimestamp: Int!
 
+  borrowHistory: [Borrow!]! @derivedFrom(field: "loan")
+  repayHistory: [Repay!]! @derivedFrom(field: "loan")
+  auctionHistory: [Auction!]! @derivedFrom(field: "loan")
+  redeemHistory: [Redeem!]! @derivedFrom(field: "loan")
+  liquidateHistory: [Liquidate!]! @derivedFrom(field: "loan")
   loanBalanceHistory: [LoanBalanceHistoryItem!]! @derivedFrom(field: "loan")
 }
 
@@ -558,5 +621,7 @@ type User @entity {
   withdrawUnderlyingHistory: [Withdraw!]! @derivedFrom(field: "user")
   borrowHistory: [Borrow!]! @derivedFrom(field: "user")
   repayHistory: [Repay!]! @derivedFrom(field: "user")
+  auctionHistory: [Auction!]! @derivedFrom(field: "user")
+  redeemHistory: [Redeem!]! @derivedFrom(field: "user")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "user")
 }

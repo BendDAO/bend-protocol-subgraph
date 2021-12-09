@@ -2,6 +2,8 @@ import { BigInt } from "@graphprotocol/graph-ts";
 import {
   Borrow,
   Deposit,
+  Auction,
+  Redeem,
   Liquidate,
   Paused,
   Unpaused,
@@ -22,6 +24,8 @@ import {
 import {
   Borrow as BorrowAction,
   Deposit as DepositAction,
+  Auction as AuctionAction,
+  Redeem as RedeemAction,
   Liquidate as LiquidateAction,
   Pool,
   Withdraw as WithdrawAction,
@@ -29,6 +33,22 @@ import {
 } from "../../generated/schema";
 import { EventTypeRef, getHistoryId } from "../utils/id-generation";
 import { calculateGrowth } from "../helpers/math";
+
+export function handlePaused(event: Paused): void {
+  let poolId = getPoolByEventContract(event);
+  let lendPool = Pool.load(poolId);
+
+  lendPool.paused = true;
+  lendPool.save();
+}
+
+export function handleUnpaused(event: Unpaused): void {
+  let poolId = getPoolByEventContract(event);
+  let lendPool = Pool.load(poolId);
+
+  lendPool.paused = false;
+  lendPool.save();
+}
 
 export function handleDeposit(event: Deposit): void {
   let onBehalfOf = getOrInitUser(event.params.onBehalfOf);
@@ -94,7 +114,7 @@ export function handleBorrow(event: Borrow): void {
   borrow.userNft = userNft.id;
   borrow.nftAsset = poolNft.id;
   borrow.nftTokenId = event.params.nftTokenId;
-  borrow.loanId = poolLoan.id;
+  borrow.loan = poolLoan.id;
 
   borrow.timestamp = event.block.timestamp.toI32();
   if (event.params.referral) {
@@ -104,26 +124,10 @@ export function handleBorrow(event: Borrow): void {
   borrow.save();
 }
 
-export function handlePaused(event: Paused): void {
-  let poolId = getPoolByEventContract(event);
-  let lendPool = Pool.load(poolId);
-
-  lendPool.paused = true;
-  lendPool.save();
-}
-
-export function handleUnpaused(event: Unpaused): void {
-  let poolId = getPoolByEventContract(event);
-  let lendPool = Pool.load(poolId);
-
-  lendPool.paused = false;
-  lendPool.save();
-}
-
 export function handleRepay(event: Repay): void {
-  let repayer = getOrInitUser(event.params.repayer);
   let userReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
   let poolReserve = getOrInitReserve(event.params.reserve, event);
+  let borrower = getOrInitUser(event.params.borrower);
 
   let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
   let poolNft = getOrInitNft(event.params.nftAsset, event);
@@ -134,29 +138,88 @@ export function handleRepay(event: Repay): void {
   let repay = new RepayAction(getHistoryId(event, EventTypeRef.Repay));
   repay.pool = poolReserve.pool;
   repay.user = userReserve.user;
-  repay.repayer = repayer.id;
   repay.userReserve = userReserve.id;
   repay.reserve = poolReserve.id;
-  repay.amount = event.params.amount;
 
   repay.userNft = userNft.id;
   repay.nftAsset = poolNft.id;
   repay.nftTokenId = event.params.nftTokenId;
-  repay.loanId = poolLoan.id;
+  repay.borrower = borrower.id;
+  repay.loan = poolLoan.id;
+
+  repay.amount = event.params.amount;
 
   repay.timestamp = event.block.timestamp.toI32();
   repay.save();
 }
 
-export function handleLiquidate(event: Liquidate): void {
-  let user = getOrInitUser(event.params.user);
+export function handleAuction(event: Auction): void {
+  let userReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
+  let poolReserve = getOrInitReserve(event.params.reserve, event);
   let onBehalfOf = getOrInitUser(event.params.onBehalfOf);
+  let borrower = getOrInitUser(event.params.borrower);
 
-  let debtUserReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
+  let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
+  let poolNft = getOrInitNft(event.params.nftAsset, event);
+  let poolLoan = getOrInitLoan(event.params.loanId, event);
+
+  let auction = new AuctionAction(getHistoryId(event, EventTypeRef.Auction));
+  auction.pool = poolReserve.pool;
+  auction.user = userReserve.user;
+  auction.userReserve = userReserve.id;
+  auction.reserve = poolReserve.id;
+
+  auction.userNft = userNft.id;
+  auction.nftAsset = poolNft.id;
+  auction.nftTokenId = event.params.nftTokenId;
+  auction.borrower = borrower.id;
+  auction.loan = poolLoan.id;
+
+  auction.onBehalfOf = onBehalfOf.id;
+  auction.bidPrice = event.params.bidPrice;
+
+  auction.timestamp = event.block.timestamp.toI32();
+  auction.save();
+}
+
+export function handleRedeem(event: Redeem): void {
+  let userReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
+  let poolReserve = getOrInitReserve(event.params.reserve, event);
+  let borrower = getOrInitUser(event.params.borrower);
+
+  let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
+  let poolNft = getOrInitNft(event.params.nftAsset, event);
+  let poolLoan = getOrInitLoan(event.params.loanId, event);
+
+  let redeem = new RedeemAction(getHistoryId(event, EventTypeRef.Redeem));
+  redeem.pool = poolReserve.pool;
+  redeem.user = userReserve.user;
+  redeem.userReserve = userReserve.id;
+  redeem.reserve = poolReserve.id;
+
+  redeem.userNft = userNft.id;
+  redeem.nftAsset = poolNft.id;
+  redeem.nftTokenId = event.params.nftTokenId;
+  redeem.borrower = borrower.id;
+  redeem.loan = poolLoan.id;
+
+  redeem.repayAmount = event.params.borrowAmount;
+  redeem.bidFine = event.params.fineAmount;
+
+  redeem.timestamp = event.block.timestamp.toI32();
+  redeem.save();
+}
+
+export function handleLiquidate(event: Liquidate): void {
+  let userReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
+  let poolReserve = getOrInitReserve(event.params.reserve, event);
+  let borrower = getOrInitUser(event.params.borrower);
+
+  let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
+
   let debtReserve = getOrInitReserve(event.params.reserve, event);
   debtReserve.save();
 
-  let collateralUserNft = getOrInitUserReserve(event.params.user, event.params.reserve, event);
   let collateralNft = getOrInitNft(event.params.nftAsset, event);
   collateralNft.lifetimeLiquidated = collateralNft.lifetimeLiquidated.plus(event.params.repayAmount);
   collateralNft.save();
@@ -165,14 +228,19 @@ export function handleLiquidate(event: Liquidate): void {
 
   let liquidate = new LiquidateAction(getHistoryId(event, EventTypeRef.Liquidate));
   liquidate.pool = collateralNft.pool;
-  liquidate.user = user.id;
-  liquidate.onBehalfOf = onBehalfOf.id;
+  liquidate.user = userReserve.user;
+  liquidate.reserve = poolReserve.id;
+  liquidate.userReserve = userReserve.id;
+
+  liquidate.userNft = userNft.id;
   liquidate.nftAsset = collateralNft.id;
   liquidate.nftTokenId = event.params.nftTokenId;
-  liquidate.loanId = poolLoan.id;
-  liquidate.liquidator = event.params.liquidator;
+  liquidate.loan = poolLoan.id;
+  liquidate.borrower = borrower.id;
+
   liquidate.repayAmount = event.params.repayAmount;
-  liquidate.borrowerAmount = event.params.borrowerAmount;
+  liquidate.remainAmount = event.params.remainAmount;
+
   liquidate.timestamp = event.block.timestamp.toI32();
   liquidate.save();
 }

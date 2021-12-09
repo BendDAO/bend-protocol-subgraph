@@ -51,11 +51,10 @@ function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   reserveParamsHistoryItem.totalCurrentVariableDebt = reserve.totalCurrentVariableDebt;
   reserveParamsHistoryItem.lifetimeScaledVariableDebt = reserve.lifetimeScaledVariableDebt;
   reserveParamsHistoryItem.lifetimeCurrentVariableDebt = reserve.lifetimeCurrentVariableDebt;
-  reserveParamsHistoryItem.lifetimeLiquidity = reserve.lifetimeLiquidity;
+  reserveParamsHistoryItem.lifetimeDeposits = reserve.lifetimeDeposits;
+  reserveParamsHistoryItem.lifetimeWithdrawals = reserve.lifetimeWithdrawals;
   reserveParamsHistoryItem.lifetimeBorrows = reserve.lifetimeBorrows;
   reserveParamsHistoryItem.lifetimeRepayments = reserve.lifetimeRepayments;
-  reserveParamsHistoryItem.lifetimeWithdrawals = reserve.lifetimeWithdrawals;
-  reserveParamsHistoryItem.lifetimeLiquidated = reserve.lifetimeLiquidated;
   reserveParamsHistoryItem.lifetimeReserveFactorAccrued = reserve.lifetimeReserveFactorAccrued;
   reserveParamsHistoryItem.lifetimeDepositorsInterestEarned = reserve.lifetimeDepositorsInterestEarned;
   reserveParamsHistoryItem.availableLiquidity = reserve.availableLiquidity;
@@ -129,7 +128,7 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
 
     poolReserve.availableLiquidity = poolReserve.availableLiquidity.plus(value);
     poolReserve.totalLiquidity = poolReserve.totalLiquidity.plus(value);
-    poolReserve.lifetimeLiquidity = poolReserve.lifetimeLiquidity.plus(value);
+    poolReserve.lifetimeDeposits = poolReserve.lifetimeDeposits.plus(value);
 
     saveReserve(poolReserve, event);
     saveUserReserveBHistory(userReserve, event, index);
