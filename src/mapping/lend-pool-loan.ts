@@ -102,7 +102,7 @@ export function handleLoanUpdated(event: LoanUpdated): void {
   let calculatedAmountTaken = rayDiv(event.params.amountTaken, event.params.borrowIndex);
 
   poolLoan.scaledAmount = poolLoan.scaledAmount.plus(calculatedAmountAdded);
-  poolLoan.scaledAmount = poolLoan.scaledAmount.minus(calculatedAmountTakend);
+  poolLoan.scaledAmount = poolLoan.scaledAmount.minus(calculatedAmountTaken);
   poolLoan.currentAmount = rayMul(poolLoan.scaledAmount, event.params.borrowIndex);
 
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
