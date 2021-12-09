@@ -39,6 +39,7 @@ type PoolConfigurationHistoryItem @entity {
   lendPoolConfiguratorImpl: Bytes
   lendPoolImpl: Bytes
   lendPoolLoanImpl: Bytes
+  lendPoolLiquidator: Bytes
   reserveOracle: Bytes
   nftOracle: Bytes
   bnftRegistry: Bytes
@@ -56,6 +57,7 @@ type Pool @entity {
   lendPoolConfiguratorImpl: Bytes
   lendPoolImpl: Bytes
   lendPoolLoanImpl: Bytes
+  lendPoolLiquidator: Bytes
   reserveOracle: Bytes
   nftOracle: Bytes
   bnftRegistry: Bytes
@@ -71,6 +73,8 @@ type Pool @entity {
   withdrawHistory: [Withdraw!]! @derivedFrom(field: "pool")
   borrowHistory: [Borrow!]! @derivedFrom(field: "pool")
   repayHistory: [Repay!]! @derivedFrom(field: "pool")
+  auctionHistory: [Repay!]! @derivedFrom(field: "pool")
+  redeemHistory: [Repay!]! @derivedFrom(field: "pool")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "pool")
 
   active: Boolean!
