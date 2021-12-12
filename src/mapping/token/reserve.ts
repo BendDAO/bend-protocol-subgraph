@@ -20,6 +20,7 @@ import { calculateUtilizationRate } from "../../helpers/reserve-logic";
 import { Address, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
 import { rayDiv, rayMul } from "../../helpers/math";
 import { getReserveOracleId } from "../../utils/id-generation";
+import { MAINNET_TREASURY_ADDRESS, RINKEBY_TREASURY_ADDRESS } from "../../utils/constants";
 
 function saveUserReserveBHistory(userReserve: UserReserve, event: ethereum.Event, index: BigInt): void {
   let bTokenBalanceHistoryItem = new BTokenBalanceHistoryItem(userReserve.id + event.transaction.hash.toHexString());
@@ -110,8 +111,8 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.plus(value);
   // Check if we are minting to treasury for mainnet, rinkeby
   if (
-    from.toHexString() != "0x707D1a914ea67855617557bd700F01537353a74E" &&
-    from.toHexString() != "0x2" //TODO
+    from.toHexString() != RINKEBY_TREASURY_ADDRESS &&
+    from.toHexString() != MAINNET_TREASURY_ADDRESS //TODO
   ) {
     // not treasury address
     let userReserve = getOrInitUserReserve(from, bToken.underlyingAssetAddress as Address, event);
