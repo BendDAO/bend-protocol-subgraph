@@ -18,6 +18,10 @@ import {
   ChainlinkAggregator,
   ContractToPoolMapping,
   Protocol,
+  DistributionManager,
+  UserStakedBend,
+  DistributionManagerAsset,
+  DistributionManagerUserAsset,
 } from "../../generated/schema";
 import { LOAN_STATE_NONE, zeroAddress, zeroBD, zeroBI } from "../utils/converters";
 import {
@@ -30,6 +34,9 @@ import {
   getLoanId,
   getReserveOracleId,
   getNFTOracleId,
+  getUserStakedBendId,
+  getDistributionManagerAssetId,
+  getDistributionManagerUserAssetId,
 } from "../utils/id-generation";
 
 export function getProtocol(): Protocol {
@@ -438,4 +445,106 @@ export function createMapContractToPool(_contractAddress: Address, pool: string)
   contractToPoolMapping = new ContractToPoolMapping(contractAddress);
   contractToPoolMapping.pool = pool;
   contractToPoolMapping.save();
+}
+
+export function getOrInitDistributionManager(address: Address): DistributionManager {
+  let distributionManager = DistributionManager.load(address.toHexString());
+  if (!distributionManager) {
+    distributionManager = new DistributionManager(address.toHexString());
+    distributionManager.lastUpdateTimestamp = 0;
+    distributionManager.distributionEnd = zeroBI();
+    distributionManager.save();
+  }
+
+  return distributionManager as DistributionManager;
+}
+
+export function initDistributionManagerAsset(
+  assetAddress: Address,
+  distributionManagerAddress: Address
+): DistributionManagerAsset {
+  let id = getDistributionManagerAssetId(assetAddress, distributionManagerAddress);
+  let distributionManagerAsset = DistributionManagerAsset.load(id);
+  if (!distributionManagerAsset) {
+    distributionManagerAsset = new DistributionManagerAsset(id);
+    distributionManagerAsset.lastUpdateTimestamp = 0;
+    let distributionManager = getOrInitDistributionManager(distributionManagerAddress);
+    distributionManagerAsset.distributionManager = distributionManager.id;
+    distributionManagerAsset.emissionPerSecond = zeroBI();
+    distributionManagerAsset.index = zeroBI();
+    distributionManagerAsset.save();
+  }
+
+  return distributionManagerAsset as DistributionManagerAsset;
+}
+
+export function getOrInitDistributionManagerAsset(
+  assetAddress: Address,
+  distributionManagerAddress: Address
+): DistributionManagerAsset {
+  getOrInitDistributionManager(distributionManagerAddress);
+
+  return initDistributionManagerAsset(assetAddress, distributionManagerAddress);
+}
+
+function initDistributionManagerUserAsset(
+  userAddress: Address,
+  assetAddress: Address,
+  distributionManagerAddress: Address
+): DistributionManagerUserAsset {
+  let id = getDistributionManagerUserAssetId(userAddress, assetAddress, distributionManagerAddress);
+  let distributionManagerUserAsset = DistributionManagerUserAsset.load(id);
+  if (!distributionManagerUserAsset) {
+    distributionManagerUserAsset = new DistributionManagerUserAsset(id);
+    distributionManagerUserAsset.lastUpdateTimestamp = 0;
+    let user = getOrInitUser(userAddress);
+    distributionManagerUserAsset.user = user.id;
+    let distributionManager = getOrInitDistributionManager(distributionManagerAddress);
+    distributionManagerUserAsset.distributionManager = distributionManager.id;
+    let asset = getOrInitDistributionManagerAsset(assetAddress, distributionManagerAddress);
+    distributionManagerUserAsset.asset = asset.id;
+    distributionManagerUserAsset.index = zeroBI();
+    distributionManagerUserAsset.save();
+  }
+
+  return distributionManagerUserAsset as DistributionManagerUserAsset;
+}
+
+export function getOrInitDistributionManagerUserAsset(
+  userAddress: Address,
+  assetAddress: Address,
+  distributionManagerAddress: Address
+): DistributionManagerUserAsset {
+  getOrInitDistributionManagerAsset(assetAddress, distributionManagerAddress);
+
+  return initDistributionManagerUserAsset(userAddress, assetAddress, distributionManagerAddress);
+}
+
+function initUserStakedBend(userAddress: Address, stakedBendAddress: Address): UserStakedBend {
+  let userStakedBendId = getUserStakedBendId(userAddress, stakedBendAddress);
+  let userStakedBend = UserStakedBend.load(userStakedBendId);
+  if (!userStakedBend) {
+    userStakedBend = new UserStakedBend(userStakedBendId);
+    let user = getOrInitUser(userAddress);
+    userStakedBend.user = user.id;
+    userStakedBend.lastUpdateTimestamp = 0;
+    let distributionManager = getOrInitDistributionManager(stakedBendAddress);
+    userStakedBend.distributionManager = distributionManager.id;
+    let asset = getOrInitDistributionManagerAsset(userAddress, stakedBendAddress);
+    userStakedBend.asset = asset.id;
+    let userAsset = getOrInitDistributionManagerUserAsset(userAddress, stakedBendAddress, stakedBendAddress);
+    userStakedBend.userAsset = userAsset.id;
+    userStakedBend.balance = zeroBI();
+    userStakedBend.reward = zeroBI();
+
+    userStakedBend.save();
+  }
+
+  return userStakedBend as UserStakedBend;
+}
+
+export function getOrInitUserStakedBend(userAddress: Address, stakedBendAddress: Address): UserStakedBend {
+  getOrInitDistributionManager(stakedBendAddress);
+
+  return initUserStakedBend(userAddress, stakedBendAddress);
 }

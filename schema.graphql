@@ -8,7 +8,7 @@ type _Schema_
     language: en
     algorithm: rank
     include: [
-      { entity: "Reserve", fields: [{ name: "name" }, { name: "symbol" }] },
+      { entity: "Reserve", fields: [{ name: "name" }, { name: "symbol" }] }
       { entity: "NFT", fields: [{ name: "name" }, { name: "symbol" }] }
     ]
   )
@@ -408,7 +408,6 @@ type Reserve @entity {
   variableRateSlope2: BigInt!
   baseVariableBorrowRate: BigInt!
   utilizationRate: BigDecimal! # default: 0
-
   liquidityRate: BigInt! # depositors interest
   variableBorrowRate: BigInt!
   liquidityIndex: BigInt!
@@ -419,18 +418,15 @@ type Reserve @entity {
   totalBTokenSupply: BigInt!
   totalScaledVariableDebt: BigInt! # default: 0
   totalCurrentVariableDebt: BigInt! # default: 0
-
   lastUpdateTimestamp: Int!
 
   lifetimeScaledVariableDebt: BigInt! # default: 0
   lifetimeCurrentVariableDebt: BigInt! # default: 0
-
   lifetimeDeposits: BigInt! # default: 0
   lifetimeWithdrawals: BigInt! # default: 0
   lifetimeBorrows: BigInt! # default: 0
   lifetimeRepayments: BigInt! # default: 0
   lifetimeLiquidated: BigInt! # default: 0
-
   lifetimeDepositorsInterestEarned: BigInt!
   lifetimeReserveFactorAccrued: BigInt!
 
@@ -469,13 +465,11 @@ type NFT @entity {
   price: PriceOracleAsset!
 
   totalCollateral: BigInt! # default: 0
-
   lifetimeBorrows: BigInt! # default: 0
   lifetimeRepayments: BigInt! # default: 0
   lifetimeAuctions: BigInt! # default: 0
   lifetimeRedeems: BigInt! # default: 0
   lifetimeLiquidated: BigInt! # default: 0
-
   lastUpdateTimestamp: Int!
 
   userNfts: [UserNft!]! @derivedFrom(field: "nftAsset")
@@ -629,4 +623,90 @@ type User @entity {
   auctionHistory: [Auction!]! @derivedFrom(field: "user")
   redeemHistory: [Redeem!]! @derivedFrom(field: "user")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "user")
+}
+
+type DistributionManagerUserAsset @entity {
+  id: ID!
+  lastUpdateTimestamp: Int!
+
+  user: User!
+  distributionManager: DistributionManager!
+  asset: DistributionManagerAsset!
+  index: BigInt!
+}
+
+type DistributionManagerAsset @entity {
+  id: ID!
+  lastUpdateTimestamp: Int!
+
+  distributionManager: DistributionManager!
+
+  emissionPerSecond: BigInt!
+  index: BigInt!
+
+  users: [DistributionManagerUserAsset!]! @derivedFrom(field: "asset")
+}
+
+type DistributionManager @entity {
+  id: ID!
+  lastUpdateTimestamp: Int!
+
+  distributionEnd: BigInt!
+
+  assets: [DistributionManagerAsset!]! @derivedFrom(field: "distributionManager")
+  userAssets: [DistributionManagerUserAsset!]! @derivedFrom(field: "distributionManager")
+}
+
+type StakedHistoryItem @entity {
+  id: ID!
+  timestamp: Int!
+
+  userStakedBend: UserStakedBend!
+  amount: BigInt!
+
+  from: User!
+}
+
+type RedeemHistoryItem @entity {
+  id: ID!
+  timestamp: Int!
+
+  userStakedBend: UserStakedBend!
+  amount: BigInt!
+  to: User!
+}
+
+type RewardsAccruedHistoryItem @entity {
+  id: ID!
+  timestamp: Int!
+
+  userStakedBend: UserStakedBend!
+  amount: BigInt!
+}
+
+type RewardsClaimedHistoryItem @entity {
+  id: ID!
+  timestamp: Int!
+
+  userStakedBend: UserStakedBend!
+  amount: BigInt!
+  to: User!
+}
+
+type UserStakedBend @entity {
+  id: ID!
+  lastUpdateTimestamp: Int!
+
+  user: User!
+  distributionManager: DistributionManager!
+  asset: DistributionManagerAsset!
+  userAsset: DistributionManagerUserAsset!
+
+  balance: BigInt!
+  reward: BigInt!
+
+  stakedHistory: [StakedHistoryItem!]! @derivedFrom(field: "userStakedBend")
+  redeemHistory: [RedeemHistoryItem!]! @derivedFrom(field: "userStakedBend")
+  rewardsAccruedHistory: [RewardsAccruedHistoryItem!]! @derivedFrom(field: "userStakedBend")
+  rewardsClaimedHistory: [RewardsClaimedHistoryItem!]! @derivedFrom(field: "userStakedBend")
 }

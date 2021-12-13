@@ -9,6 +9,10 @@ export enum EventTypeRef {
   Auction,
   Redeem,
   Liquidate,
+  Staked,
+  StakeRedeem,
+  RewardsAccrued,
+  RewardsClaimed,
 }
 
 export function getHistoryId(event: ethereum.Event, type: EventTypeRef = EventTypeRef.NoType): string {
@@ -54,4 +58,20 @@ export function getReserveOracleId(): string {
 
 export function getNFTOracleId(): string {
   return "2";
+}
+
+export function getUserStakedBendId(userAddress: Address, stakedBendAddress: Address): string {
+  return userAddress.toHexString() + stakedBendAddress.toHexString();
+}
+
+export function getDistributionManagerAssetId(assetAddress: Address, distributionManagerAddress: Address): string {
+  return assetAddress.toHexString() + distributionManagerAddress.toHexString();
+}
+
+export function getDistributionManagerUserAssetId(
+  userAddress: Address,
+  assetAddress: Address,
+  distributionManagerAddress: Address
+): string {
+  return userAddress.toHexString() + assetAddress.toHexString() + distributionManagerAddress.toHexString();
 }
