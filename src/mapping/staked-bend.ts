@@ -70,6 +70,7 @@ export function handleStaked(event: Staked): void {
   history.timestamp = event.block.timestamp.toI32();
   history.amount = event.params.amount;
   history.from = getOrInitUser(event.params.from).id;
+  history.userStakedBend = userStake.id;
   history.save();
 }
 
@@ -85,6 +86,7 @@ export function handleRedeem(event: Redeem): void {
   history.timestamp = event.block.timestamp.toI32();
   history.amount = event.params.amount;
   history.to = getOrInitUser(event.params.to).id;
+  history.userStakedBend = userStake.id;
   history.save();
 }
 
@@ -99,6 +101,7 @@ export function handleRewardsAccrued(event: RewardsAccrued): void {
   let history = new RewardsAccruedHistoryItem(getHistoryId(event, EventTypeRef.RewardsAccrued));
   history.timestamp = event.block.timestamp.toI32();
   history.amount = event.params.amount;
+  history.userStakedBend = userStake.id;
   history.save();
 }
 
@@ -114,5 +117,6 @@ export function handleRewardsClaimed(event: RewardsClaimed): void {
   history.timestamp = event.block.timestamp.toI32();
   history.amount = event.params.amount;
   history.to = getOrInitUser(event.params.to).id;
+  history.userStakedBend = userStake.id;
   history.save();
 }
