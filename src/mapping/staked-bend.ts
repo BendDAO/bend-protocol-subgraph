@@ -12,6 +12,7 @@ import {
   RewardsAccrued,
   RewardsClaimed,
   Staked,
+  Transfer,
   UserIndexUpdated,
 } from "../../generated/StakedBend/StakedBend";
 import {
@@ -119,4 +120,18 @@ export function handleRewardsClaimed(event: RewardsClaimed): void {
   history.to = getOrInitUser(event.params.to).id;
   history.userStakedBend = userStake.id;
   history.save();
+}
+
+export function handleTransfer(event: Transfer): void {
+  let fromUserStake = getOrInitUserStakedBend(event.params.from, event.address);
+
+  fromUserStake.balance = fromUserStake.balance.minus(event.params.value);
+  fromUserStake.lastUpdateTimestamp = event.block.timestamp.toI32();
+  fromUserStake.save();
+
+  let toUserStake = getOrInitUserStakedBend(event.params.to, event.address);
+
+  toUserStake.balance = toUserStake.balance.plus(event.params.value);
+  toUserStake.lastUpdateTimestamp = event.block.timestamp.toI32();
+  toUserStake.save();
 }

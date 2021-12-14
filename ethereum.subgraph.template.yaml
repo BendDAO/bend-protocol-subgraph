@@ -123,6 +123,8 @@ dataSources:
           handler: handleRewardsAccrued
         - event: RewardsClaimed(indexed address,indexed address,uint256)
           handler: handleRewardsClaimed
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
       file: src/mapping/staked-bend.ts
   # --------------------------------------
   #       Dynamically Created Contracts
