@@ -13,8 +13,8 @@ npm i
 # fetch current contracts as submodule
 npm run prepare:subgraph
 
-# run codegen
-npm run subgraph:codegen
+# run build
+npm run subgraph:build
 
 # now you're able to deploy to thegraph via
 npm run deploy:hosted:mainnet

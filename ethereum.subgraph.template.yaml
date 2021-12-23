@@ -180,11 +180,11 @@ templates:
           handler: handleReserveOracleUpdated
         - event: NftOracleUpdated(indexed address)
           handler: handleNFTOracleUpdated
-        - event: LendPoolUpdated(indexed address)
+        - event: LendPoolUpdated(indexed address,bytes)
           handler: handleLendPoolUpdated
-        - event: LendPoolConfiguratorUpdated(indexed address)
+        - event: LendPoolConfiguratorUpdated(indexed address,bytes)
           handler: handleLendPoolConfiguratorUpdated
-        - event: LendPoolLoanUpdated(indexed address)
+        - event: LendPoolLoanUpdated(indexed address,bytes)
           handler: handleLendPoolLoanUpdated
         - event: BNFTRegistryUpdated(indexed address)
           handler: handleBNFTRegistryUpdated
@@ -194,8 +194,16 @@ templates:
           handler: handleConfigurationAdminUpdated
         - event: EmergencyAdminUpdated(indexed address)
           handler: handleEmergencyAdminUpdated
-        - event: AddressSet(bytes32,indexed address,bool)
+        - event: AddressSet(bytes32,indexed address,bool,bytes)
           handler: handleAddressSet
+        - event: IncentivesControllerUpdated(indexed address)
+          handler: handleIncentivesControllerUpdated
+        - event: UIDataProviderUpdated(indexed address)
+          handler: handleUIDataProviderUpdated
+        - event: BendDataProviderUpdated(indexed address)
+          handler: handleBendDataProviderUpdated
+        - event: WalletBalanceProviderUpdated(indexed address)
+          handler: handleWalletBalanceProviderUpdated
       file: src/mapping/lend-pool-address-provider.ts
 
   - kind: ethereum/contract
@@ -288,7 +296,7 @@ templates:
           handler: handleBTokenTransfer
         - event: Mint(indexed address,uint256,uint256)
           handler: handleBTokenMint
-        - event: Initialized(indexed address,indexed address,address,address,bytes)
+        - event: Initialized(indexed address,indexed address,address,address)
           handler: handleBTokenInitialized
       file: src/mapping/token/initialization.ts
 
@@ -316,7 +324,7 @@ templates:
           handler: handleDebtTokenBurn
         - event: Mint(indexed address,uint256,uint256)
           handler: handleDebtTokenMint
-        - event: Initialized(indexed address,indexed address,address,uint8,string,string,bytes)
+        - event: Initialized(indexed address,indexed address,address,uint8,string,string)
           handler: handleDebtTokenInitialized
       file: src/mapping/token/initialization.ts
 

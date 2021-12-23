@@ -45,6 +45,10 @@ type PoolConfigurationHistoryItem @entity {
   bnftRegistry: Bytes
   configurationAdmin: Bytes
   emergencyAdmin: Bytes
+  incentivesController: Bytes
+  uiDataProvider: Bytes
+  bendDataProvider: Bytes
+  walletBalanceProvider: Bytes
   timestamp: Int!
 }
 
@@ -63,6 +67,10 @@ type Pool @entity {
   bnftRegistry: Bytes
   configurationAdmin: Bytes
   emergencyAdmin: Bytes
+  incentivesController: Bytes
+  uiDataProvider: Bytes
+  bendDataProvider: Bytes
+  walletBalanceProvider: Bytes
   history: [PoolConfigurationHistoryItem!]! @derivedFrom(field: "pool")
   lastUpdateTimestamp: Int!
 

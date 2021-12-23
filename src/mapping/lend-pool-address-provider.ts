@@ -12,6 +12,10 @@ import {
   ProxyCreated,
   ConfigurationAdminUpdated,
   EmergencyAdminUpdated,
+  IncentivesControllerUpdated,
+  UIDataProviderUpdated,
+  BendDataProviderUpdated,
+  WalletBalanceProviderUpdated
 } from "../../generated/templates/LendPoolAddressesProvider/LendPoolAddressesProvider";
 import {
   LendPool as LendPoolContract,
@@ -35,6 +39,10 @@ let POOL_COMPONENTS = [
   "bnftRegistry",
   "configurationAdmin",
   "emergencyAdmin",
+  "incentivesController",
+  "uiDataProvider",
+  "bendDataProvider",
+  "walletBalanceProvider",
 ] as string[];
 
 function saveAddressProvider(lendPool: Pool, timestamp: BigInt, event: ethereum.Event): void {
@@ -121,6 +129,14 @@ export function handleAddressSet(event: AddressSet): void {
     mappedId = "configurationAdmin";
   } else if (event.params.id.toString() == "EMERGENCY_ADMIN") {
     mappedId = "emergencyAdmin";
+  } else if (event.params.id.toString() == "INCENTIVES_CONTROLLER") {
+    mappedId = "incentivesController";
+  } else if (event.params.id.toString() == "BEND_DATA_PROVIDER") {
+    mappedId = "uiDataProvider";
+  } else if (event.params.id.toString() == "UI_DATA_PROVIDER") {
+    mappedId = "bendDataProvider";
+  } else if (event.params.id.toString() == "WALLET_BALANCE_PROVIDER") {
+    mappedId = "walletBalanceProvider";
   }
 
   if (mappedId != "") {
@@ -172,4 +188,20 @@ export function handleConfigurationAdminUpdated(event: ConfigurationAdminUpdated
 
 export function handleEmergencyAdminUpdated(event: EmergencyAdminUpdated): void {
   genericAddressProviderUpdate("emergencyAdmin", event.params.newAddress, event, false);
+}
+
+export function handleIncentivesControllerUpdated(event: IncentivesControllerUpdated): void {
+  genericAddressProviderUpdate("incentivesController", event.params.newAddress, event, false);
+}
+
+export function handleUIDataProviderUpdated(event: UIDataProviderUpdated): void {
+  genericAddressProviderUpdate("uiDataProvider", event.params.newAddress, event, false);
+}
+
+export function handleBendDataProviderUpdated(event: BendDataProviderUpdated): void {
+  genericAddressProviderUpdate("bendDataProvider", event.params.newAddress, event, false);
+}
+
+export function handleWalletBalanceProviderUpdated(event: WalletBalanceProviderUpdated): void {
+  genericAddressProviderUpdate("walletBalanceProvider", event.params.newAddress, event, false);
 }
