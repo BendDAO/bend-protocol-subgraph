@@ -60,8 +60,8 @@ export function getNFTOracleId(): string {
   return "2";
 }
 
-export function getUserStakedBendId(userAddress: Address, stakedBendAddress: Address): string {
-  return userAddress.toHexString() + stakedBendAddress.toHexString();
+export function getUserIncentiveId(userAddress: Address, managerAddress: Address): string {
+  return userAddress.toHexString() + managerAddress.toHexString();
 }
 
 export function getDistributionManagerAssetId(assetAddress: Address, distributionManagerAddress: Address): string {

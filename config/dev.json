@@ -6,6 +6,6 @@
   "ReserveOracleStartBlock": 0,
   "NFTOracleAddress": "0x9718F7A661C0137d13EB4f0659dA5E8697075492",
   "NFTOracleStartBlock": 0,
-  "StakedBendAddress": "0x0000000000000000000000000000000000000000",
-  "StakedBendStartBlock": 0
+  "IncentivesControllerAddress": "0x0000000000000000000000000000000000000000",
+  "IncentivesControllerStartBlock": 0
 }
