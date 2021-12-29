@@ -19,7 +19,7 @@ import {
   ContractToPoolMapping,
   Protocol,
   DistributionManager,
-  UserStakedBend,
+  UserIncentive,
   DistributionManagerAsset,
   DistributionManagerUserAsset,
 } from "../../generated/schema";
@@ -34,7 +34,7 @@ import {
   getLoanId,
   getReserveOracleId,
   getNFTOracleId,
-  getUserStakedBendId,
+  getUserIncentiveId,
   getDistributionManagerAssetId,
   getDistributionManagerUserAssetId,
 } from "../utils/id-generation";
@@ -520,31 +520,30 @@ export function getOrInitDistributionManagerUserAsset(
   return initDistributionManagerUserAsset(userAddress, assetAddress, distributionManagerAddress);
 }
 
-function initUserStakedBend(userAddress: Address, stakedBendAddress: Address): UserStakedBend {
-  let userStakedBendId = getUserStakedBendId(userAddress, stakedBendAddress);
-  let userStakedBend = UserStakedBend.load(userStakedBendId);
-  if (!userStakedBend) {
-    userStakedBend = new UserStakedBend(userStakedBendId);
+function initUserIncentive(userAddress: Address, managerAddress: Address): UserIncentive {
+  let userIncentiveId = getUserIncentiveId(userAddress, managerAddress);
+  let userIncentive = UserIncentive.load(userIncentiveId);
+  if (!userIncentive) {
+    userIncentive = new UserIncentive(userIncentiveId);
     let user = getOrInitUser(userAddress);
-    userStakedBend.user = user.id;
-    userStakedBend.lastUpdateTimestamp = 0;
-    let distributionManager = getOrInitDistributionManager(stakedBendAddress);
-    userStakedBend.distributionManager = distributionManager.id;
-    let asset = getOrInitDistributionManagerAsset(userAddress, stakedBendAddress);
-    userStakedBend.asset = asset.id;
-    let userAsset = getOrInitDistributionManagerUserAsset(userAddress, stakedBendAddress, stakedBendAddress);
-    userStakedBend.userAsset = userAsset.id;
-    userStakedBend.balance = zeroBI();
-    userStakedBend.reward = zeroBI();
+    userIncentive.user = user.id;
+    userIncentive.lastUpdateTimestamp = 0;
+    let distributionManager = getOrInitDistributionManager(managerAddress);
+    userIncentive.distributionManager = distributionManager.id;
+    let asset = getOrInitDistributionManagerAsset(userAddress, managerAddress);
+    userIncentive.asset = asset.id;
+    let userAsset = getOrInitDistributionManagerUserAsset(userAddress, managerAddress, managerAddress);
+    userIncentive.userAsset = userAsset.id;
+    userIncentive.reward = zeroBI();
 
-    userStakedBend.save();
+    userIncentive.save();
   }
 
-  return userStakedBend as UserStakedBend;
+  return userIncentive as UserIncentive;
 }
 
-export function getOrInitUserStakedBend(userAddress: Address, stakedBendAddress: Address): UserStakedBend {
-  getOrInitDistributionManager(stakedBendAddress);
+export function getOrInitUserIncentive(userAddress: Address, managerAddress: Address): UserIncentive {
+  getOrInitDistributionManager(managerAddress);
 
-  return initUserStakedBend(userAddress, stakedBendAddress);
+  return initUserIncentive(userAddress, managerAddress);
 }

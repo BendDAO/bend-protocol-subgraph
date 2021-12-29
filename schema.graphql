@@ -623,7 +623,7 @@ type User @entity {
   reserves: [UserReserve!]! @derivedFrom(field: "user")
   nfts: [UserNft!]! @derivedFrom(field: "user")
   loans: [Loan!]! @derivedFrom(field: "user")
-  stakedBend: [UserStakedBend!]! @derivedFrom(field: "user")
+  incentives: [UserIncentive!]! @derivedFrom(field: "user")
 
   depositHistory: [Deposit!]! @derivedFrom(field: "user")
   withdrawUnderlyingHistory: [Withdraw!]! @derivedFrom(field: "user")
@@ -666,30 +666,11 @@ type DistributionManager @entity {
   userAssets: [DistributionManagerUserAsset!]! @derivedFrom(field: "distributionManager")
 }
 
-type StakedHistoryItem @entity {
-  id: ID!
-  timestamp: Int!
-
-  userStakedBend: UserStakedBend!
-  amount: BigInt!
-
-  from: User!
-}
-
-type RedeemHistoryItem @entity {
-  id: ID!
-  timestamp: Int!
-
-  userStakedBend: UserStakedBend!
-  amount: BigInt!
-  to: User!
-}
-
 type RewardsAccruedHistoryItem @entity {
   id: ID!
   timestamp: Int!
 
-  userStakedBend: UserStakedBend!
+  userIncentive: UserIncentive!
   amount: BigInt!
 }
 
@@ -697,12 +678,11 @@ type RewardsClaimedHistoryItem @entity {
   id: ID!
   timestamp: Int!
 
-  userStakedBend: UserStakedBend!
+  userIncentive: UserIncentive!
   amount: BigInt!
-  to: User!
 }
 
-type UserStakedBend @entity {
+type UserIncentive @entity {
   id: ID!
   lastUpdateTimestamp: Int!
 
@@ -711,11 +691,8 @@ type UserStakedBend @entity {
   asset: DistributionManagerAsset!
   userAsset: DistributionManagerUserAsset!
 
-  balance: BigInt!
   reward: BigInt!
 
-  stakedHistory: [StakedHistoryItem!]! @derivedFrom(field: "userStakedBend")
-  redeemHistory: [RedeemHistoryItem!]! @derivedFrom(field: "userStakedBend")
-  rewardsAccruedHistory: [RewardsAccruedHistoryItem!]! @derivedFrom(field: "userStakedBend")
-  rewardsClaimedHistory: [RewardsClaimedHistoryItem!]! @derivedFrom(field: "userStakedBend")
+  rewardsAccruedHistory: [RewardsAccruedHistoryItem!]! @derivedFrom(field: "userIncentive")
+  rewardsClaimedHistory: [RewardsClaimedHistoryItem!]! @derivedFrom(field: "userIncentive")
 }

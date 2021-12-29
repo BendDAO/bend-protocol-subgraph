@@ -91,21 +91,22 @@ dataSources:
   #       STAKE
   # --------------------------------------
   - kind: ethereum/contract
-    name: StakedBend
+    name: IncentivesController
     network: {{network}}
     source:
-      address: '{{StakedBendAddress}}'
-      startBlock: {{StakedBendStartBlock}}
-      abi: StakedBend
+      address: '{{IncentivesControllerAddress}}'
+      startBlock: {{IncentivesControllerStartBlock}}
+      abi: IncentivesController
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.1
       language: wasm/assemblyscript
       entities:
-        - UserStakedBend
+        - DistributionManager
+        - UserIncentive
       abis:
-        - name: StakedBend
-          file: ./abis/StakedBend.json
+        - name: IncentivesController
+          file: ./abis/IncentivesController.json
       eventHandlers:
         - event: AssetConfigUpdated(indexed address,uint256)
           handler: handleAssetConfigUpdated
@@ -115,17 +116,11 @@ dataSources:
           handler: handleUserIndexUpdated
         - event: DistributionEndUpdated(uint256)
           handler: handleDistributionEndUpdated
-        - event: Staked(indexed address,indexed address,uint256)
-          handler: handleStaked
-        - event: Redeem(indexed address,indexed address,uint256)
-          handler: handleRedeem
-        - event: RewardsAccrued(address,uint256)
+        - event: RewardsAccrued(indexed address,uint256)
           handler: handleRewardsAccrued
-        - event: RewardsClaimed(indexed address,indexed address,uint256)
+        - event: RewardsClaimed(indexed address,uint256)
           handler: handleRewardsClaimed
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-      file: src/mapping/staked-bend.ts
+      file: src/mapping/incentives.ts
   # --------------------------------------
   #       Dynamically Created Contracts
   # --------------------------------------
