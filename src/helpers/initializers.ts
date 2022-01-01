@@ -304,6 +304,8 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
     loan.bidderAddress = new Bytes(1);
     loan.bidPrice = zeroBI();
     loan.bidBorrowAmount = zeroBI();
+    loan.lifetimeBorrows = zeroBI();
+    loan.lifetimeRepays = zeroBI();
     loan.lastUpdateTimestamp = 0;
 
     loan.save();
@@ -535,6 +537,7 @@ function initUserIncentive(userAddress: Address, managerAddress: Address): UserI
     let userAsset = getOrInitDistributionManagerUserAsset(userAddress, managerAddress, managerAddress);
     userIncentive.userAsset = userAsset.id;
     userIncentive.reward = zeroBI();
+    userIncentive.lifetimeRewards = zeroBI();
 
     userIncentive.save();
   }

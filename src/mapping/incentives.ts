@@ -59,6 +59,7 @@ export function handleRewardsAccrued(event: RewardsAccrued): void {
   let userIncentive = getOrInitUserIncentive(event.params._user, event.address);
 
   userIncentive.reward = userIncentive.reward.plus(event.params._amount);
+  userIncentive.lifetimeRewards = userIncentive.lifetimeRewards.plus(event.params._amount);
   userIncentive.lastUpdateTimestamp = event.block.timestamp.toI32();
   userIncentive.save();
 
@@ -71,15 +72,15 @@ export function handleRewardsAccrued(event: RewardsAccrued): void {
 
 export function handleRewardsClaimed(event: RewardsClaimed): void {
   getOrInitUser(event.params._user);
-  let userStake = getOrInitUserIncentive(event.params._user, event.address);
+  let userIncentive = getOrInitUserIncentive(event.params._user, event.address);
 
-  userStake.reward = userStake.reward.minus(event.params._amount);
-  userStake.lastUpdateTimestamp = event.block.timestamp.toI32();
-  userStake.save();
+  userIncentive.reward = userIncentive.reward.minus(event.params._amount);
+  userIncentive.lastUpdateTimestamp = event.block.timestamp.toI32();
+  userIncentive.save();
 
   let history = new RewardsClaimedHistoryItem(getHistoryId(event, EventTypeRef.RewardsAccrued));
   history.timestamp = event.block.timestamp.toI32();
   history.amount = event.params._amount;
-  history.userIncentive = userStake.id;
+  history.userIncentive = userIncentive.id;
   history.save();
 }

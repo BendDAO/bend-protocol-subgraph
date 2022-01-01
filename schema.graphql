@@ -602,6 +602,8 @@ type Loan @entity {
   bidPrice: BigInt!
   bidBorrowAmount: BigInt!
 
+  lifetimeBorrows: BigInt!
+  lifetimeRepays: BigInt!
   lastUpdateTimestamp: Int!
 
   borrowHistory: [Borrow!]! @derivedFrom(field: "loan")
@@ -692,6 +694,7 @@ type UserIncentive @entity {
   userAsset: DistributionManagerUserAsset!
 
   reward: BigInt!
+  lifetimeRewards: BigInt!
 
   rewardsAccruedHistory: [RewardsAccruedHistoryItem!]! @derivedFrom(field: "userIncentive")
   rewardsClaimedHistory: [RewardsClaimedHistoryItem!]! @derivedFrom(field: "userIncentive")

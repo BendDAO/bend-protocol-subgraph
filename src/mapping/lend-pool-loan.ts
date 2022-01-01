@@ -82,6 +82,8 @@ export function handleLoanCreated(event: LoanCreated): void {
   poolLoan.currentAmount = rayMul(poolLoan.scaledAmount, event.params.borrowIndex);
   poolLoan.state = LOAN_STATE_ACTIVE; // active
 
+  poolLoan.lifetimeBorrows = poolLoan.lifetimeBorrows.plus(event.params.amount);
+
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
   saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
@@ -105,6 +107,9 @@ export function handleLoanUpdated(event: LoanUpdated): void {
   poolLoan.scaledAmount = poolLoan.scaledAmount.minus(calculatedAmountTaken);
   poolLoan.currentAmount = rayMul(poolLoan.scaledAmount, event.params.borrowIndex);
 
+  poolLoan.lifetimeBorrows = poolLoan.lifetimeBorrows.plus(event.params.amountAdded);
+  poolLoan.lifetimeRepays = poolLoan.lifetimeRepays.plus(event.params.amountTaken);
+
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
   saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
@@ -121,6 +126,8 @@ export function handleLoanRepaid(event: LoanRepaid): void {
 
   poolLoan.currentAmount = event.params.amount;
   poolLoan.state = LOAN_STATE_REPAID; // repaid
+
+  poolLoan.lifetimeRepays = poolLoan.lifetimeRepays.plus(event.params.amount);
 
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
@@ -149,6 +156,8 @@ export function handleLoanAuctioned(event: LoanAuctioned): void {
   poolLoan.bidderAddress = event.params.bidder;
   poolLoan.bidPrice = event.params.price;
   poolLoan.bidBorrowAmount = event.params.amount;
+
+  poolLoan.lifetimeRepays = poolLoan.lifetimeRepays.plus(event.params.amount);
 
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
