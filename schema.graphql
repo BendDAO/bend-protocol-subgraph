@@ -652,6 +652,7 @@ type DistributionManagerAsset @entity {
 
   distributionManager: DistributionManager!
 
+  assetAddress: Bytes!
   emissionPerSecond: BigInt!
   index: BigInt!
 

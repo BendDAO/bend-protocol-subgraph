@@ -474,6 +474,7 @@ export function initDistributionManagerAsset(
     distributionManagerAsset.distributionManager = distributionManager.id;
     distributionManagerAsset.emissionPerSecond = zeroBI();
     distributionManagerAsset.index = zeroBI();
+    distributionManagerAsset.assetAddress = assetAddress;
     distributionManagerAsset.save();
   }
 
