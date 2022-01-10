@@ -644,6 +644,7 @@ type DistributionManagerUserAsset @entity {
   distributionManager: DistributionManager!
   asset: DistributionManagerAsset!
   index: BigInt!
+  assetAddress: Bytes!
 }
 
 type DistributionManagerAsset @entity {

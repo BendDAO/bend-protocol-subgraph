@@ -29,6 +29,7 @@ export function handleAssetConfigUpdated(event: AssetConfigUpdated): void {
 export function handleAssetIndexUpdated(event: AssetIndexUpdated): void {
   let distributionManagerAsset = getOrInitDistributionManagerAsset(event.params._asset, event.address);
   distributionManagerAsset.index = event.params._index;
+  distributionManagerAsset.assetAddress = event.params._asset;
   distributionManagerAsset.lastUpdateTimestamp = event.block.timestamp.toI32();
   distributionManagerAsset.save();
   distributionManagerAsset.save();
@@ -41,6 +42,7 @@ export function handleUserIndexUpdated(event: UserIndexUpdated): void {
     event.address
   );
 
+  distributionManagerUserAsset.assetAddress = event.params.asset;
   distributionManagerUserAsset.index = event.params.index;
   distributionManagerUserAsset.lastUpdateTimestamp = event.block.timestamp.toI32();
   distributionManagerUserAsset.save();
