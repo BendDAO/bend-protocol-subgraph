@@ -507,6 +507,7 @@ function initDistributionManagerUserAsset(
     let asset = getOrInitDistributionManagerAsset(assetAddress, distributionManagerAddress);
     distributionManagerUserAsset.asset = asset.id;
     distributionManagerUserAsset.index = zeroBI();
+    distributionManagerUserAsset.assetAddress = assetAddress;
     distributionManagerUserAsset.save();
   }
 
