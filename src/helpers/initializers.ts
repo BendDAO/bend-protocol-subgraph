@@ -534,7 +534,7 @@ function initUserIncentive(userAddress: Address, managerAddress: Address): UserI
     userIncentive.lastUpdateTimestamp = 0;
     let distributionManager = getOrInitDistributionManager(managerAddress);
     userIncentive.distributionManager = distributionManager.id;
-    let asset = getOrInitDistributionManagerAsset(userAddress, managerAddress);
+    let asset = getOrInitDistributionManagerAsset(managerAddress, managerAddress);
     userIncentive.asset = asset.id;
     let userAsset = getOrInitDistributionManagerUserAsset(userAddress, managerAddress, managerAddress);
     userIncentive.userAsset = userAsset.id;
