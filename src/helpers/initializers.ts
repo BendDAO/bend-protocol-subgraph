@@ -155,6 +155,7 @@ export function getOrInitPriceOracle(oracleId: string): PriceOracle {
   if (!priceOracle) {
     priceOracle = new PriceOracle(oracleId);
     priceOracle.proxyPriceProvider = zeroAddress();
+    priceOracle.usdPriceDecimals = 8;
     priceOracle.usdPriceEth = zeroBI();
     priceOracle.usdPriceEthFormated = zeroBI();
     priceOracle.usdPriceEthMainSource = zeroAddress();
@@ -172,6 +173,8 @@ export function getPriceOracleAsset(id: string, oracleId: string, save: boolean 
     priceOracleReserve.oracle = getOrInitPriceOracle(oracleId).id;
     priceOracleReserve.priceSource = zeroAddress();
     priceOracleReserve.priceInEth = zeroBI();
+    priceOracleReserve.answerDecimals = 18;
+    priceOracleReserve.priceDecimals = 18;
     priceOracleReserve.fallbackRequired = false;
     priceOracleReserve.lastUpdateTimestamp = 0;
     priceOracleReserve.save();
@@ -318,6 +321,7 @@ export function getChainlinkAggregator(id: string): ChainlinkAggregator {
   if (!chainlinkAggregator) {
     chainlinkAggregator = new ChainlinkAggregator(id);
     chainlinkAggregator.oracleAsset = "";
+    chainlinkAggregator.answerDecimals = 18;
   }
   return chainlinkAggregator as ChainlinkAggregator;
 }

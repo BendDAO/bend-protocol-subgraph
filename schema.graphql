@@ -108,6 +108,7 @@ type ChainlinkAggregator @entity {
   # aggregator address
   id: ID!
   oracleAsset: PriceOracleAsset!
+  answerDecimals: Int!
 }
 
 type PriceOracleAsset @entity {
@@ -115,6 +116,8 @@ type PriceOracleAsset @entity {
   id: ID!
   oracle: PriceOracle!
 
+  answerDecimals: Int!
+  priceDecimals: Int!
   priceInEth: BigInt!
   priceSource: Bytes!
   fallbackRequired: Boolean!
@@ -128,6 +131,7 @@ type PriceOracle @entity {
   proxyPriceProvider: Bytes!
 
   # usd price not needed in nft oracle, just query from reserve oracle
+  usdPriceDecimals: Int!
   usdPriceEth: BigInt!
   usdPriceEthFormated: BigInt!
   usdPriceEthMainSource: Bytes!

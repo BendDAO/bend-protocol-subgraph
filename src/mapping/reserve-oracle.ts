@@ -79,7 +79,7 @@ export function priceFeedUpdated(
     // If we can't get the aggregator, it means that the source address is not a chainlink proxy
     // so it has been registered badly.
     if (aggregatorAddressCall.reverted) {
-      log.error(`PROXY: Simple Type must be a chainlink proxy. || asset: {} | assetOracleAddress: {}`, [
+      log.error(`try_aggregator failed: asset: {} | assetOracleAddress: {}`, [
         sAssetAddress,
         assetOracleAddress.toHexString(),
       ]);
@@ -99,18 +99,34 @@ export function priceFeedUpdated(
     if (priceAggregatorlatestAnswerCall.reverted || priceAggregatorlatestAnswerCall.value.isZero()) {
       priceOracleAsset.fallbackRequired = true;
 
-      log.error("registry of asset: {} | oracle: {} | price: {}", [
+      log.error("try_latestAnswer failed: asset: {} | oracle: {} | price: {}", [
         assetAddress.toHexString(),
         assetOracleAddress.toHexString(),
         priceFromOracle.toString(),
       ]);
     } else {
       priceOracleAsset.fallbackRequired = false;
+
+      priceFromOracle = priceAggregatorlatestAnswerCall.value;
+    }
+
+    // get decimals
+    let priceAggregatorDecimalsCall = priceAggregatorInstance.try_decimals();
+    if (priceAggregatorDecimalsCall.reverted) {
+      log.error("try_decimals failed: asset: {} | oracle: {} | price: {}", [
+        assetAddress.toHexString(),
+        assetOracleAddress.toHexString(),
+        priceFromOracle.toString(),
+      ]);
+    } else {
+      priceOracleAsset.answerDecimals = priceAggregatorDecimalsCall.value;
+      priceOracleAsset.priceDecimals = priceOracleAsset.answerDecimals;
     }
 
     // create chainlinkAggregator entity with new aggregator to be able to match asset and oracle after
     let chainlinkAggregator = getChainlinkAggregator(aggregatorAddress.toHexString());
     chainlinkAggregator.oracleAsset = assetAddress.toHexString();
+    chainlinkAggregator.answerDecimals = priceOracleAsset.answerDecimals;
     chainlinkAggregator.save();
   } else {
     log.error("registry of asset: {} | oracle: {} | price: {}", [
@@ -122,6 +138,7 @@ export function priceFeedUpdated(
 
   if (sAssetAddress == MOCK_USD_ADDRESS) {
     let formatPrice = formatUsdEthPrice(priceFromOracle);
+    priceOracle.usdPriceDecimals = priceOracleAsset.answerDecimals;
     priceOracle.usdPriceEthMainSource = priceOracleAsset.priceSource;
     priceOracle.usdPriceEthFallbackRequired = priceOracleAsset.fallbackRequired;
 
@@ -129,6 +146,7 @@ export function priceFeedUpdated(
 
     // update usd price in nft oracle
     let nftOracle = getOrInitPriceOracle(getNFTOracleId());
+    nftOracle.usdPriceDecimals = priceOracleAsset.answerDecimals;
     nftOracle.usdPriceEthMainSource = priceOracleAsset.priceSource;
     nftOracle.usdPriceEthFallbackRequired = priceOracleAsset.fallbackRequired;
     usdEthPriceUpdate(nftOracle, priceFromOracle, formatPrice, event);
