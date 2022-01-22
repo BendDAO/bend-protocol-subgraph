@@ -48,19 +48,10 @@ export function calculateCompoundedInterest(rate: BigInt, lastUpdatedTimestamp: 
   let basePowerTwo = rayMul(ratePerSecond, ratePerSecond);
   let basePowerThree = rayMul(basePowerTwo, ratePerSecond);
 
-  let secondTerm = timeDiff
-    .times(expMinusOne)
-    .times(basePowerTwo)
-    .div(BigInt.fromI32(2));
-  let thirdTerm = timeDiff
-    .times(expMinusOne)
-    .times(expMinusTwo)
-    .times(basePowerThree)
-    .div(BigInt.fromI32(6));
+  let secondTerm = timeDiff.times(expMinusOne).times(basePowerTwo).div(BigInt.fromI32(2));
+  let thirdTerm = timeDiff.times(expMinusOne).times(expMinusTwo).times(basePowerThree).div(BigInt.fromI32(6));
 
-  return RAY.plus(ratePerSecond.times(timeDiff))
-    .plus(secondTerm)
-    .plus(thirdTerm);
+  return RAY.plus(ratePerSecond.times(timeDiff)).plus(secondTerm).plus(thirdTerm);
 }
 
 export function calculateLinearInterest(rate: BigInt, lastUpdatedTimestamp: BigInt, nowTimestamp: BigInt): BigInt {

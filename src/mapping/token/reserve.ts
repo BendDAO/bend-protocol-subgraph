@@ -72,8 +72,8 @@ function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   let priceOracle = getOrInitPriceOracle(getReserveOracleId());
   if (priceOracle.usdPriceEthFormated.gt(zeroBI())) {
     reserveParamsHistoryItem.priceInUsd = reserveParamsHistoryItem.priceInEth
-    .toBigDecimal()
-    .div(priceOracle.usdPriceEthFormated.toBigDecimal());
+      .toBigDecimal()
+      .div(priceOracle.usdPriceEthFormated.toBigDecimal());
   }
 
   reserveParamsHistoryItem.timestamp = event.block.timestamp.toI32();
@@ -112,7 +112,7 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   // Check if we are minting to treasury for mainnet, rinkeby
   let fromHexStr = from.toHexString().toString();
   if (
-    (fromHexStr == RINKEBY_TREASURY_ADDRESS)
+    fromHexStr == RINKEBY_TREASURY_ADDRESS
     //|| (fromHexStr == MAINNET_TREASURY_ADDRESS) //TODO
   ) {
     // mint bTokens to treasury address

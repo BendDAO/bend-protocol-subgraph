@@ -17,7 +17,13 @@ import {
   getOrInitPriceOracle,
   getPriceOracleAsset,
 } from "../helpers/initializers";
-import { LOAN_STATE_ACTIVE, LOAN_STATE_AUCTION, LOAN_STATE_DEFAULTED, LOAN_STATE_REPAID, zeroBI } from "../utils/converters";
+import {
+  LOAN_STATE_ACTIVE,
+  LOAN_STATE_AUCTION,
+  LOAN_STATE_DEFAULTED,
+  LOAN_STATE_REPAID,
+  zeroBI,
+} from "../utils/converters";
 import { rayDiv, rayMul } from "../helpers/math";
 import { Loan, LoanBalanceHistoryItem, NFT, UserNft } from "../../generated/schema";
 import { getNFTOracleId, getReserveOracleId } from "../utils/id-generation";
@@ -33,7 +39,7 @@ function saveLoanBHistory(loan: Loan, event: ethereum.Event, index: BigInt): voi
 }
 
 function saveNftHistory(nft: NFT, event: ethereum.Event): void {
-  let historyItem = getOrInitNftParamsHistoryItem(event.transaction.hash, nft)
+  let historyItem = getOrInitNftParamsHistoryItem(event.transaction.hash, nft);
   historyItem.totalCollateral = nft.totalCollateral;
   historyItem.lifetimeBorrows = nft.lifetimeBorrows;
   historyItem.lifetimeRepayments = nft.lifetimeRepayments;
@@ -45,9 +51,7 @@ function saveNftHistory(nft: NFT, event: ethereum.Event): void {
 
   let priceOracle = getOrInitPriceOracle(getReserveOracleId());
   if (priceOracle.usdPriceEthFormated.gt(zeroBI())) {
-    historyItem.priceInUsd = historyItem.priceInEth
-    .toBigDecimal()
-    .div(priceOracle.usdPriceEthFormated.toBigDecimal());
+    historyItem.priceInUsd = historyItem.priceInEth.toBigDecimal().div(priceOracle.usdPriceEthFormated.toBigDecimal());
   }
 
   historyItem.timestamp = event.block.timestamp.toI32();

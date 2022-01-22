@@ -15,7 +15,7 @@ import {
   IncentivesControllerUpdated,
   UIDataProviderUpdated,
   BendDataProviderUpdated,
-  WalletBalanceProviderUpdated
+  WalletBalanceProviderUpdated,
 } from "../../generated/templates/LendPoolAddressesProvider/LendPoolAddressesProvider";
 import {
   LendPool as LendPoolContract,

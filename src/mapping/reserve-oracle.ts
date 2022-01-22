@@ -29,20 +29,22 @@ export function handleChainlinkAnswerUpdated(event: AnswerUpdated): void {
   let priceOracle = getOrInitPriceOracle(getReserveOracleId());
   let chainlinkAggregator = getChainlinkAggregator(event.address.toHexString());
 
+  // setting price in asset
+  let oracleAsset = getPriceOracleAsset(chainlinkAggregator.oracleAsset, getReserveOracleId());
+
+  // if it's correct oracle for this asset
+  if (oracleAsset.priceSource.equals(event.address)) {
+    // if oracle answer is valid
+    if (event.params.current.gt(zeroBI())) {
+      genericPriceUpdate(oracleAsset, event.params.current, event);
+    }
+  }
+
+  // setting price in oracle for ETH-USD asset
   if (priceOracle.usdPriceEthMainSource.equals(event.address)) {
     let proxyPriceProvider = ReserveOracle.bind(priceOracle.proxyPriceProvider as Address);
 
     genericHandleChainlinkUSDETHPrice(event.params.current, event, priceOracle, proxyPriceProvider);
-  } else {
-    let oracleAsset = getPriceOracleAsset(chainlinkAggregator.oracleAsset, getReserveOracleId());
-
-    // if it's correct oracle for this asset
-    if (oracleAsset.priceSource.equals(event.address)) {
-      // if oracle answer is valid
-      if (event.params.current.gt(zeroBI())) {
-        genericPriceUpdate(oracleAsset, event.params.current, event);
-      }
-    }
   }
 }
 

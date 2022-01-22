@@ -1,7 +1,4 @@
-import {
-  RewardsAccruedHistoryItem,
-  RewardsClaimedHistoryItem,
-} from "../../generated/schema";
+import { RewardsAccruedHistoryItem, RewardsClaimedHistoryItem } from "../../generated/schema";
 import {
   AssetConfigUpdated,
   AssetIndexUpdated,
