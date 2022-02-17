@@ -309,6 +309,7 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
     loan.bidBorrowAmount = zeroBI();
     loan.lifetimeBorrows = zeroBI();
     loan.lifetimeRepays = zeroBI();
+    loan.lifetimeRedeems = zeroBI();
     loan.lastUpdateTimestamp = 0;
 
     loan.save();

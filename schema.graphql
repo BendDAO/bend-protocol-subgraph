@@ -608,6 +608,7 @@ type Loan @entity {
 
   lifetimeBorrows: BigInt!
   lifetimeRepays: BigInt!
+  lifetimeRedeems: BigInt!
   lastUpdateTimestamp: Int!
 
   borrowHistory: [Borrow!]! @derivedFrom(field: "loan")
