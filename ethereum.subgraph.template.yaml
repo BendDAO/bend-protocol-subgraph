@@ -1,6 +1,6 @@
 specVersion: 0.0.1
 description: Bend Protocol subgraph
-repository: https://github.com/qlcchain/bend-subgraph
+repository: https://github.com/BendDAO/bend-protocol-subgraph
 schema:
   file: ./schema.graphql
   # --------------------------------------
@@ -396,6 +396,8 @@ templates:
           handler: handleLoanRepaid
         - event: LoanAuctioned(indexed address,indexed uint256,address,uint256,uint256,uint256,address,uint256,address,uint256)
           handler: handleLoanAuctioned
+        - event: LoanRedeemed(indexed address,indexed uint256,address,uint256,address,uint256,uint256)
+          handler: handleLoanRedeemed
         - event: LoanLiquidated(indexed address,indexed uint256,address,uint256,address,uint256,uint256)
           handler: handleLoanLiquidated
       file: src/mapping/lend-pool-loan.ts
