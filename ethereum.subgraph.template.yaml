@@ -1,6 +1,6 @@
 specVersion: 0.0.1
 description: Bend Protocol subgraph
-repository: https://github.com/qlcchain/bend-subgraph
+repository: https://github.com/BendDAO/bend-protocol-subgraph
 schema:
   file: ./schema.graphql
   # --------------------------------------
