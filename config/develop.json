@@ -1,0 +1,11 @@
+{
+  "network": "develop",
+  "LendPoolAddressesProviderRegistryAddress": "0x1Db6D93Cc48074A0D0664850508eC76Ca4955951",
+  "LendPoolAddressesProviderRegistryStartBlock": 10251469,
+  "ReserveOracleAddress": "0xd30179fbB087088a77E1DD0903cCc64510287cB2",
+  "ReserveOracleStartBlock": 10251495,
+  "NFTOracleAddress": "0xE283F4D306517200911F9c378aC68f020acb9f64",
+  "NFTOracleStartBlock": 10251500,
+  "IncentivesControllerAddress": "0x602bE80f0Bf54E0AffaCD794dfe3ac0f867F7581",
+  "IncentivesControllerStartBlock": 10251319
+}

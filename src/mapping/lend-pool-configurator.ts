@@ -83,7 +83,11 @@ export function handleReserveInitialized(event: ReserveInitialized): void {
     reserve.name = nameStringCall.value;
   }
 
-  reserve.symbol = ERC20BTokenContract.symbol().slice(1);
+  if (ERC20BTokenContract.symbol().indexOf("bend") == 0) {
+    reserve.symbol = ERC20BTokenContract.symbol().slice(4);
+  } else {
+    reserve.symbol = ERC20BTokenContract.symbol().slice(1);
+  }
 
   reserve.decimals = ERC20ReserveContract.decimals();
 
@@ -131,7 +135,11 @@ export function handleNftInitialized(event: NftInitialized): void {
     nft.name = nameStringCall.value;
   }
 
-  nft.symbol = ERC721BNftContract.symbol().slice(1);
+  if (ERC721BNftContract.symbol().indexOf("bound") == 0) {
+    nft.symbol = ERC721BNftContract.symbol().slice(5);
+  } else {
+    nft.symbol = ERC721BNftContract.symbol().slice(1);
+  }
 
   nft.bnftToken = event.params.bNft;
   nft.isActive = true;
