@@ -1,4 +1,4 @@
-import { BigInt, ethereum, Value, Address, log } from "@graphprotocol/graph-ts";
+import { BigInt, ethereum, Value, Address, log, Bytes } from "@graphprotocol/graph-ts";
 
 import {
   AddressSet,
@@ -111,38 +111,46 @@ export function handleProxyCreated(event: ProxyCreated): void {
 // TODO: not completely sure that this should work, as id passed through event can not mach, and proxy? or impl?
 export function handleAddressSet(event: AddressSet): void {
   let mappedId = "";
-  if (event.params.id.toString() == "LEND_POOL") {
+
+  let addressIdHex = event.params.id.toHexString().slice(0,6);
+  if (addressIdHex=="0xadde") {
+      log.error("Address set: {} | Contract ID: {}", [event.params.newAddress.toHexString(), event.params.id.toHexString()]);
+      return;
+  }
+
+  let addressId = event.params.id.toString();
+  if (addressId == "LEND_POOL") {
     mappedId = "lendPool";
-  } else if (event.params.id.toString() == "LEND_POOL_CONFIGURATOR") {
+  } else if (addressId == "LEND_POOL_CONFIGURATOR") {
     mappedId = "lendPoolConfigurator";
-  } else if (event.params.id.toString() == "LEND_POOL_LOAN") {
+  } else if (addressId == "LEND_POOL_LOAN") {
     mappedId = "lendPoolLoan";
-  } else if (event.params.id.toString() == "LEND_POOL_LIQUIDATOR") {
+  } else if (addressId == "LEND_POOL_LIQUIDATOR") {
     mappedId = "lendPoolLiquidator";
-  } else if (event.params.id.toString() == "RESERVE_ORACLE") {
+  } else if (addressId == "RESERVE_ORACLE") {
     mappedId = "reserveOracle";
-  } else if (event.params.id.toString() == "NFT_ORACLE") {
+  } else if (addressId == "NFT_ORACLE") {
     mappedId = "nftOracle";
-  } else if (event.params.id.toString() == "BNFT_REGISTRY") {
+  } else if (addressId == "BNFT_REGISTRY") {
     mappedId = "bnftRegistry";
-  } else if (event.params.id.toString() == "POOL_ADMIN") {
+  } else if (addressId == "POOL_ADMIN") {
     mappedId = "configurationAdmin";
-  } else if (event.params.id.toString() == "EMERGENCY_ADMIN") {
+  } else if (addressId == "EMERGENCY_ADMIN") {
     mappedId = "emergencyAdmin";
-  } else if (event.params.id.toString() == "INCENTIVES_CONTROLLER") {
+  } else if (addressId == "INCENTIVES_CONTROLLER") {
     mappedId = "incentivesController";
-  } else if (event.params.id.toString() == "BEND_DATA_PROVIDER") {
+  } else if (addressId == "BEND_DATA_PROVIDER") {
     mappedId = "uiDataProvider";
-  } else if (event.params.id.toString() == "UI_DATA_PROVIDER") {
+  } else if (addressId == "UI_DATA_PROVIDER") {
     mappedId = "bendDataProvider";
-  } else if (event.params.id.toString() == "WALLET_BALANCE_PROVIDER") {
+  } else if (addressId == "WALLET_BALANCE_PROVIDER") {
     mappedId = "walletBalanceProvider";
   }
 
   if (mappedId != "") {
     genericAddressProviderUpdate(mappedId, event.params.newAddress, event, false);
   } else {
-    log.error("Address set: {} | Contract ID: {}", [event.params.newAddress.toHexString(), event.params.id.toString()]);
+    log.error("Address set: {} | Contract ID: {}", [event.params.newAddress.toHexString(), event.params.id.toHexString()]);
   }
 }
 
