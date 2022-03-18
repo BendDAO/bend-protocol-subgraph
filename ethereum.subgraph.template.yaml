@@ -248,6 +248,8 @@ templates:
           handler: handleNftConfigurationChanged
         - event: NftAuctionChanged(indexed address,uint256,uint256,uint256)
           handler: handleNftAuctionChanged
+        - event: NftRedeemThresholdChanged(indexed address,uint256)
+          handler: handleNftRedeemThresholdChanged
         - event: NftActivated(indexed address)
           handler: handleNftActivated
         - event: NftDeactivated(indexed address)

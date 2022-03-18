@@ -263,6 +263,7 @@ export function getOrInitNft(underlyingAsset: Address, event: ethereum.Event): N
     nft.redeemDuration = zeroBI();
     nft.auctionDuration = zeroBI();
     nft.redeemFine = zeroBI();
+    nft.redeemThreshold = zeroBI();
 
     nft.totalCollateral = zeroBI();
     nft.bnftToken = zeroAddress();

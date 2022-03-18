@@ -13,6 +13,7 @@ import {
   NftInitialized,
   NftConfigurationChanged,
   NftAuctionChanged,
+  NftRedeemThresholdChanged,
   NftActivated,
   NftDeactivated,
   BTokenUpgraded,
@@ -230,6 +231,13 @@ export function handleNftAuctionChanged(event: NftAuctionChanged): void {
   nft.redeemDuration = event.params.redeemDuration;
   nft.auctionDuration = event.params.auctionDuration;
   nft.redeemFine = event.params.redeemFine;
+  saveNft(nft, event);
+}
+
+export function handleNftRedeemThresholdChanged(event: NftRedeemThresholdChanged): void {
+  let nft = getOrInitNft(event.params.asset, event);
+
+  nft.redeemThreshold = event.params.redeemThreshold;
   saveNft(nft, event);
 }
 
