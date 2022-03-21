@@ -473,6 +473,7 @@ type NFT @entity {
   redeemDuration: BigInt!
   auctionDuration: BigInt!
   redeemFine: BigInt!
+  redeemThreshold: BigInt!
   bnftToken: Bytes!
   price: PriceOracleAsset!
 

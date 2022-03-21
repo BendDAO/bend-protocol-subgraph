@@ -121,6 +121,12 @@ docker volume prune -f
 # development using localhost hardhat node
 docker-compose up
 
+# or development using develop, api url can be infura or alchemy
+#export GRAPH_ETHEREUM="develop:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}"
+export GRAPH_ETHEREUM="develop:https://rinkeby.infura.io/v3/${INFURA_KEY}"
+
+docker-compose up
+
 # or development using rinkeby, api url can be infura or alchemy
 #export GRAPH_ETHEREUM="rinkeby:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}"
 export GRAPH_ETHEREUM="rinkeby:https://rinkeby.infura.io/v3/${INFURA_KEY}"
@@ -141,18 +147,22 @@ docker-compose up
 # create subgraph
 npm run subgraph:create:local
 
-# development using dev config
+# development using localhost config
 # Before deploying, you should fill correct contracts addresses in ./config/dev.conf.
 # You can find addresses in bend-protocol/deployments/deployed-contracts-localhost.json.
-npm run deploy-stack:local
+npm run deploy:local:localhost
+
+# or development using develop config
+# Before deploying, you should fill correct contracts addresses in ./config/develop.conf.
+npm run deploy:local:develop
 
 # or development using rinkeby config
 # Before deploying, you should fill correct contracts addresses in ./config/rinkeby.conf.
-npm run deploy-stack:local:rinkeby
+npm run deploy:local:rinkeby
 
 # or development using mainnet config
 # Before deploying, you should fill correct contracts addresses in ./config/mainnet.conf.
-npm run deploy-stack:local:mainnet
+npm run deploy:local:mainnet
 
 ```
 
