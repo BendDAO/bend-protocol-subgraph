@@ -27,7 +27,8 @@ export function handleSetAssetData(event: SetAssetData): void {
   let oracleAsset = getPriceOracleAsset(assetAddress.toHexString(), getNFTOracleId());
 
   // if it's correct oracle for this asset
-  if (oracleAsset.priceSource.equals(event.address)) {
+  //if (oracleAsset.priceSource.equals(event.address)) 
+  {
     // if oracle answer is valid
     if (assetPrice.gt(zeroBI())) {
       oracleAsset.fallbackRequired = false;
