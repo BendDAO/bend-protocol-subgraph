@@ -114,7 +114,7 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   if (
     (fromHexStr == DEVELOP_TREASURY_ADDRESS)
     || (fromHexStr == RINKEBY_TREASURY_ADDRESS)
-    //|| (fromHexStr == MAINNET_TREASURY_ADDRESS) //TODO
+    || (fromHexStr == MAINNET_TREASURY_ADDRESS)
   ) {
     // mint bTokens to treasury address
     poolReserve.lifetimeReserveFactorAccrued = poolReserve.lifetimeReserveFactorAccrued.plus(value);
