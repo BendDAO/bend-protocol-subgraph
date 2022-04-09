@@ -100,8 +100,10 @@ function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: B
 
   saveReserve(poolReserve, event);
 
+  userReserve.lifetimeWithdrawals = userReserve.lifetimeWithdrawals.plus(value);
   userReserve.lastUpdateTimestamp = event.block.timestamp.toI32();
   userReserve.save();
+
   saveUserReserveBHistory(userReserve, event, index);
 }
 
@@ -129,6 +131,9 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
 
     userReserve.liquidityRate = poolReserve.liquidityRate;
     userReserve.variableBorrowIndex = poolReserve.variableBorrowIndex;
+
+    userReserve.lifetimeDeposits = userReserve.lifetimeDeposits.plus(value);
+
     userReserve.lastUpdateTimestamp = event.block.timestamp.toI32();
 
     userReserve.save();
@@ -181,6 +186,9 @@ export function handleDebtTokenBurn(event: DebtTokenBurn): void {
 
   userReserve.liquidityRate = poolReserve.liquidityRate;
   userReserve.variableBorrowIndex = poolReserve.variableBorrowIndex;
+
+  userReserve.lifetimeRepayments = userReserve.lifetimeRepayments.plus(value);
+
   userReserve.lastUpdateTimestamp = event.block.timestamp.toI32();
   userReserve.save();
 
@@ -220,6 +228,9 @@ export function handleDebtTokenMint(event: DebtTokenMint): void {
 
   userReserve.liquidityRate = poolReserve.liquidityRate;
   userReserve.variableBorrowIndex = poolReserve.variableBorrowIndex;
+
+  userReserve.lifetimeBorrows = userReserve.lifetimeBorrows.plus(value);
+
   userReserve.lastUpdateTimestamp = event.block.timestamp.toI32();
   userReserve.save();
 

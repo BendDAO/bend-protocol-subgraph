@@ -98,6 +98,11 @@ function initUserReserve(
     userReserve.lastUpdateTimestamp = 0;
     userReserve.liquidityRate = zeroBI();
 
+    userReserve.lifetimeDeposits = zeroBI();
+    userReserve.lifetimeWithdrawals = zeroBI();
+    userReserve.lifetimeBorrows = zeroBI();
+    userReserve.lifetimeRepayments = zeroBI();
+
     let user = getOrInitUser(userAddress);
     userReserve.user = user.id;
 
