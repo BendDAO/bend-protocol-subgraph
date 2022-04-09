@@ -8,7 +8,7 @@ import { getNFTOracleId } from "../utils/id-generation";
 export function handleAssetAdded(event: AssetAdded): void {
   let assetAddress = event.params.asset;
   let priceOracle = getOrInitPriceOracle(getNFTOracleId());
-  if (priceOracle.proxyPriceProvider.equals(zeroAddress())) {
+  if (priceOracle.proxyPriceProvider.equals(event.address)==false) {
     priceOracle.proxyPriceProvider = event.address;
     priceOracle.save();
   }
