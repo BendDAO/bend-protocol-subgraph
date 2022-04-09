@@ -539,6 +539,11 @@ type UserReserve @entity {
   liquidityRate: BigInt!
   variableBorrowIndex: BigInt!
 
+  lifetimeDeposits: BigInt! # default: 0
+  lifetimeWithdrawals: BigInt! # default: 0
+  lifetimeBorrows: BigInt! # default: 0
+  lifetimeRepayments: BigInt! # default: 0
+
   """
   Amount in currency units included as fee
   """
