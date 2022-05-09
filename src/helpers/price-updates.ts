@@ -6,6 +6,7 @@ export function savePriceToHistory(oracleAsset: PriceOracleAsset, event: ethereu
   let priceHistoryItem = new PriceHistoryItem(id);
   priceHistoryItem.asset = oracleAsset.id;
   priceHistoryItem.price = oracleAsset.priceInEth;
+  priceHistoryItem.floorPrice = oracleAsset.floorPriceInEth;
   priceHistoryItem.timestamp = oracleAsset.lastUpdateTimestamp;
   priceHistoryItem.save();
 }
@@ -33,6 +34,15 @@ export function usdEthPriceUpdate(
 
 export function genericPriceUpdate(oracleAsset: PriceOracleAsset, price: BigInt, event: ethereum.Event): void {
   oracleAsset.priceInEth = price;
+  oracleAsset.lastUpdateTimestamp = event.block.timestamp.toI32();
+  oracleAsset.save();
+
+  // add new price to history
+  savePriceToHistory(oracleAsset, event);
+}
+
+export function genericFloorPriceUpdate(oracleAsset: PriceOracleAsset, price: BigInt, event: ethereum.Event): void {
+  oracleAsset.floorPriceInEth = price;
   oracleAsset.lastUpdateTimestamp = event.block.timestamp.toI32();
   oracleAsset.save();
 
