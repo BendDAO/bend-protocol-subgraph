@@ -86,6 +86,8 @@ dataSources:
           handler: handleAssetAdded
         - event: SetAssetData(indexed address,uint256,uint256,uint256)
           handler: handleSetAssetData
+        - event: SetAssetTwapPrice(indexed address,uint256,uint256)
+          handler: handleSetAssetTwapPrice
       file: src/mapping/nft-oracle.ts
   # --------------------------------------
   #       STAKE

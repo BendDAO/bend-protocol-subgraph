@@ -114,9 +114,9 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   // Check if we are minting to treasury for mainnet, rinkeby, develop
   let fromHexStr = from.toHexString().toString();
   if (
-    (fromHexStr == DEVELOP_TREASURY_ADDRESS)
-    || (fromHexStr == RINKEBY_TREASURY_ADDRESS)
-    || (fromHexStr == MAINNET_TREASURY_ADDRESS)
+    fromHexStr == DEVELOP_TREASURY_ADDRESS ||
+    fromHexStr == RINKEBY_TREASURY_ADDRESS ||
+    fromHexStr == MAINNET_TREASURY_ADDRESS
   ) {
     // mint bTokens to treasury address
     poolReserve.lifetimeReserveFactorAccrued = poolReserve.lifetimeReserveFactorAccrued.plus(value);

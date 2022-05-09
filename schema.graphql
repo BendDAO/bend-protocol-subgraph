@@ -93,6 +93,7 @@ type PriceHistoryItem @entity {
   id: ID!
   asset: PriceOracleAsset!
   price: BigInt!
+  floorPrice: BigInt!
   timestamp: Int!
 }
 
@@ -119,6 +120,7 @@ type PriceOracleAsset @entity {
   answerDecimals: Int!
   priceDecimals: Int!
   priceInEth: BigInt!
+  floorPriceInEth: BigInt!
   priceSource: Bytes!
   fallbackRequired: Boolean!
   lastUpdateTimestamp: Int!
@@ -708,6 +710,7 @@ type UserIncentive @entity {
 
   reward: BigInt!
   lifetimeRewards: BigInt!
+  lifetimeClaimed: BigInt!
 
   rewardsAccruedHistory: [RewardsAccruedHistoryItem!]! @derivedFrom(field: "userIncentive")
   rewardsClaimedHistory: [RewardsClaimedHistoryItem!]! @derivedFrom(field: "userIncentive")

@@ -74,6 +74,7 @@ export function handleRewardsClaimed(event: RewardsClaimed): void {
   let userIncentive = getOrInitUserIncentive(event.params._user, event.address);
 
   userIncentive.reward = userIncentive.reward.minus(event.params._amount);
+  userIncentive.lifetimeClaimed = userIncentive.lifetimeClaimed.plus(event.params._amount);
   userIncentive.lastUpdateTimestamp = event.block.timestamp.toI32();
   userIncentive.save();
 

@@ -178,6 +178,7 @@ export function getPriceOracleAsset(id: string, oracleId: string, save: boolean 
     priceOracleReserve.oracle = getOrInitPriceOracle(oracleId).id;
     priceOracleReserve.priceSource = zeroAddress();
     priceOracleReserve.priceInEth = zeroBI();
+    priceOracleReserve.floorPriceInEth = zeroBI();
     priceOracleReserve.answerDecimals = 18;
     priceOracleReserve.priceDecimals = 18;
     priceOracleReserve.fallbackRequired = false;
@@ -551,6 +552,7 @@ function initUserIncentive(userAddress: Address, managerAddress: Address): UserI
     userIncentive.userAsset = userAsset.id;
     userIncentive.reward = zeroBI();
     userIncentive.lifetimeRewards = zeroBI();
+    userIncentive.lifetimeClaimed = zeroBI();
 
     userIncentive.save();
   }

@@ -112,10 +112,13 @@ export function handleProxyCreated(event: ProxyCreated): void {
 export function handleAddressSet(event: AddressSet): void {
   let mappedId = "";
 
-  let addressIdHex = event.params.id.toHexString().slice(0,6);
-  if (addressIdHex=="0xadde") {
-      log.error("Address set: {} | Contract ID: {}", [event.params.newAddress.toHexString(), event.params.id.toHexString()]);
-      return;
+  let addressIdHex = event.params.id.toHexString().slice(0, 6);
+  if (addressIdHex == "0xadde") {
+    log.error("Address set: {} | Contract ID: {}", [
+      event.params.newAddress.toHexString(),
+      event.params.id.toHexString(),
+    ]);
+    return;
   }
 
   let addressId = event.params.id.toString();
@@ -150,7 +153,10 @@ export function handleAddressSet(event: AddressSet): void {
   if (mappedId != "") {
     genericAddressProviderUpdate(mappedId, event.params.newAddress, event, false);
   } else {
-    log.error("Address set: {} | Contract ID: {}", [event.params.newAddress.toHexString(), event.params.id.toHexString()]);
+    log.error("Address set: {} | Contract ID: {}", [
+      event.params.newAddress.toHexString(),
+      event.params.id.toHexString(),
+    ]);
   }
 }
 
