@@ -55,29 +55,6 @@ export function handleSetAssetTwapPrice(event: SetAssetTwapPrice): void {
     // if oracle answer is valid
     if (assetPrice.gt(zeroBI())) {
       oracleAsset.fallbackRequired = false;
-      genericFloorPriceUpdate(oracleAsset, assetPrice, event);
-    } else {
-      oracleAsset.fallbackRequired = true;
-      let proxyPriceProvider = NFTOracle.bind(priceOracle.proxyPriceProvider as Address);
-      let fallbackPrice = proxyPriceProvider.getAssetPrice(assetAddress);
-      genericFloorPriceUpdate(oracleAsset, fallbackPrice, event);
-    }
-  }
-}
-
-export function handleSetAssetTwapPrice(event: SetAssetTwapPrice): void {
-  let assetAddress = event.params.asset;
-  let assetPrice = event.params.price;
-
-  let priceOracle = getOrInitPriceOracle(getNFTOracleId());
-
-  let oracleAsset = getPriceOracleAsset(assetAddress.toHexString(), getNFTOracleId());
-
-  // if it's correct oracle for this asset
-  if (oracleAsset.priceSource.equals(event.address)) {
-    // if oracle answer is valid
-    if (assetPrice.gt(zeroBI())) {
-      oracleAsset.fallbackRequired = false;
       genericPriceUpdate(oracleAsset, assetPrice, event);
     } else {
       oracleAsset.fallbackRequired = true;
