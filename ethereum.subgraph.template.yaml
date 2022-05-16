@@ -185,8 +185,6 @@ templates:
           handler: handleLendPoolLoanUpdated
         - event: BNFTRegistryUpdated(indexed address)
           handler: handleBNFTRegistryUpdated
-        - event: LendPoolLiquidatorUpdated(indexed address)
-          handler: handleLendPoolLiquidatorUpdated
         - event: ConfigurationAdminUpdated(indexed address)
           handler: handleConfigurationAdminUpdated
         - event: EmergencyAdminUpdated(indexed address)
@@ -252,6 +250,8 @@ templates:
           handler: handleNftAuctionChanged
         - event: NftRedeemThresholdChanged(indexed address,uint256)
           handler: handleNftRedeemThresholdChanged
+        - event: NftMinBidFineChanged(indexed address,uint256)
+          handler: handleNftMinBidFineChanged
         - event: NftActivated(indexed address)
           handler: handleNftActivated
         - event: NftDeactivated(indexed address)
