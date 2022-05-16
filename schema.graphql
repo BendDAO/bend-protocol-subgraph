@@ -39,7 +39,6 @@ type PoolConfigurationHistoryItem @entity {
   lendPoolConfiguratorImpl: Bytes
   lendPoolImpl: Bytes
   lendPoolLoanImpl: Bytes
-  lendPoolLiquidator: Bytes
   reserveOracle: Bytes
   nftOracle: Bytes
   bnftRegistry: Bytes
@@ -61,7 +60,6 @@ type Pool @entity {
   lendPoolConfiguratorImpl: Bytes
   lendPoolImpl: Bytes
   lendPoolLoanImpl: Bytes
-  lendPoolLiquidator: Bytes
   reserveOracle: Bytes
   nftOracle: Bytes
   bnftRegistry: Bytes
@@ -476,6 +474,7 @@ type NFT @entity {
   auctionDuration: BigInt!
   redeemFine: BigInt!
   redeemThreshold: BigInt!
+  minBidFine: BigInt!
   bnftToken: Bytes!
   price: PriceOracleAsset!
 

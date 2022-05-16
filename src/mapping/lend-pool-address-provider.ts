@@ -8,7 +8,6 @@ import {
   ReserveOracleUpdated,
   NftOracleUpdated,
   BNFTRegistryUpdated,
-  LendPoolLiquidatorUpdated,
   ProxyCreated,
   ConfigurationAdminUpdated,
   EmergencyAdminUpdated,
@@ -33,7 +32,6 @@ let POOL_COMPONENTS = [
   "lendPoolImpl",
   "lendPoolLoan",
   "lendPoolLoanImpl",
-  "lendPoolLiquidator",
   "reserveOracle",
   "nftOracle",
   "bnftRegistry",
@@ -128,8 +126,6 @@ export function handleAddressSet(event: AddressSet): void {
     mappedId = "lendPoolConfigurator";
   } else if (addressId == "LEND_POOL_LOAN") {
     mappedId = "lendPoolLoan";
-  } else if (addressId == "LEND_POOL_LIQUIDATOR") {
-    mappedId = "lendPoolLiquidator";
   } else if (addressId == "RESERVE_ORACLE") {
     mappedId = "reserveOracle";
   } else if (addressId == "NFT_ORACLE") {
@@ -190,10 +186,6 @@ export function handleLendPoolLoanUpdated(event: LendPoolLoanUpdated): void {
 
 export function handleBNFTRegistryUpdated(event: BNFTRegistryUpdated): void {
   genericAddressProviderUpdate("bnftRegistry", event.params.newAddress, event, false);
-}
-
-export function handleLendPoolLiquidatorUpdated(event: LendPoolLiquidatorUpdated): void {
-  genericAddressProviderUpdate("lendPoolLiquidator", event.params.newAddress, event, false);
 }
 
 export function handleConfigurationAdminUpdated(event: ConfigurationAdminUpdated): void {

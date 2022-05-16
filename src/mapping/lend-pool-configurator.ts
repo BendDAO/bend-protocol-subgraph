@@ -14,6 +14,7 @@ import {
   NftConfigurationChanged,
   NftAuctionChanged,
   NftRedeemThresholdChanged,
+  NftMinBidFineChanged,
   NftActivated,
   NftDeactivated,
   BTokenUpgraded,
@@ -238,6 +239,13 @@ export function handleNftRedeemThresholdChanged(event: NftRedeemThresholdChanged
   let nft = getOrInitNft(event.params.asset, event);
 
   nft.redeemThreshold = event.params.redeemThreshold;
+  saveNft(nft, event);
+}
+
+export function handleNftMinBidFineChanged(event: NftMinBidFineChanged): void {
+  let nft = getOrInitNft(event.params.asset, event);
+
+  nft.minBidFine = event.params.minBidFine;
   saveNft(nft, event);
 }
 

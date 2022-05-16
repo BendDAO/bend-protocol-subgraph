@@ -293,7 +293,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_minimumUpdateTime",
+        "name": "_minUpdateTime",
         "type": "uint256"
       },
       {
@@ -335,7 +335,7 @@
   },
   {
     "inputs": [],
-    "name": "minimumUpdateTime",
+    "name": "minUpdateTime",
     "outputs": [
       {
         "internalType": "uint256",
@@ -499,7 +499,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_minimumUpdateTime",
+        "name": "_minUpdateTime",
         "type": "uint256"
       }
     ],
