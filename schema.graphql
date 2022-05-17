@@ -335,6 +335,11 @@ type NftConfigurationHistoryItem @entity {
   baseLTVasCollateral: BigInt!
   liquidationThreshold: BigInt!
   liquidationBonus: BigInt!
+  redeemDuration: BigInt!
+  auctionDuration: BigInt!
+  redeemFine: BigInt!
+  redeemThreshold: BigInt!
+  minBidFine: BigInt!
   timestamp: Int!
 }
 

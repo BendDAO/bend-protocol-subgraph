@@ -434,6 +434,11 @@ export function getOrInitNftConfigurationHistoryItem(id: Bytes, nft: NFT): NftCo
     nftConfigurationHistoryItem.baseLTVasCollateral = zeroBI();
     nftConfigurationHistoryItem.liquidationThreshold = zeroBI();
     nftConfigurationHistoryItem.liquidationBonus = zeroBI();
+    nftConfigurationHistoryItem.auctionDuration = zeroBI();
+    nftConfigurationHistoryItem.redeemDuration = zeroBI();
+    nftConfigurationHistoryItem.redeemFine = zeroBI();
+    nftConfigurationHistoryItem.redeemThreshold = zeroBI();
+    nftConfigurationHistoryItem.minBidFine = zeroBI();
     nftConfigurationHistoryItem.nftAsset = nft.id;
   }
   return nftConfigurationHistoryItem as NftConfigurationHistoryItem;

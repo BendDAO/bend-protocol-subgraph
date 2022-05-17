@@ -67,6 +67,11 @@ export function saveNft(nft: NFT, event: ethereum.Event): void {
   configurationHistoryItem.baseLTVasCollateral = nft.baseLTVasCollateral;
   configurationHistoryItem.liquidationThreshold = nft.liquidationThreshold;
   configurationHistoryItem.liquidationBonus = nft.liquidationBonus;
+  configurationHistoryItem.auctionDuration = nft.auctionDuration;
+  configurationHistoryItem.redeemDuration = nft.redeemDuration;
+  configurationHistoryItem.redeemFine = nft.redeemFine;
+  configurationHistoryItem.redeemThreshold = nft.redeemThreshold;
+  configurationHistoryItem.minBidFine = nft.minBidFine;
   configurationHistoryItem.timestamp = timestamp;
   configurationHistoryItem.save();
 }
