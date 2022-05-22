@@ -10,6 +10,7 @@ import {
   Withdraw,
   Repay,
   ReserveDataUpdated,
+  PausedTimeUpdated,
 } from "../../generated/templates/LendPool/LendPool";
 import {
   getOrInitReferrer,
@@ -39,6 +40,7 @@ export function handlePaused(event: Paused): void {
   let lendPool = Pool.load(poolId);
 
   lendPool.paused = true;
+  lendPool.pauseStartTime = event.block.timestamp;
   lendPool.save();
 }
 
@@ -47,6 +49,16 @@ export function handleUnpaused(event: Unpaused): void {
   let lendPool = Pool.load(poolId);
 
   lendPool.paused = false;
+  lendPool.pauseDurationTime = event.block.timestamp - lendPool.pauseStartTime;
+  lendPool.save();
+}
+
+export function handlePausedTimeUpdated(event: PausedTimeUpdated): void {
+  let poolId = getPoolByEventContract(event);
+  let lendPool = Pool.load(poolId);
+
+  lendPool.pauseStartTime = event.params.startTime;
+  lendPool.pauseDurationTime = event.params.durationTime;
   lendPool.save();
 }
 
