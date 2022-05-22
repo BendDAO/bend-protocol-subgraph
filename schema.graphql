@@ -85,6 +85,8 @@ type Pool @entity {
 
   active: Boolean!
   paused: Boolean!
+  pauseStartTime: BigInt!
+  pauseDurationTime: BigInt!
 }
 
 type PriceHistoryItem @entity {

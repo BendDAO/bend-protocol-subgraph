@@ -369,6 +369,8 @@ templates:
           handler: handleUnpaused
         - event: ReserveDataUpdated(indexed address,uint256,uint256,uint256,uint256)
           handler: handleReserveDataUpdated
+        - event: PausedTimeUpdated(uint256,uint256)
+          handler: handlePausedTimeUpdated
       file: src/mapping/lend-pool.ts
 
   - kind: ethereum/contract
