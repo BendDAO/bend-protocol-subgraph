@@ -4,7 +4,14 @@ import {
   Burn as BTokenBurn,
 } from "../../../generated/templates/BToken/BToken";
 import { Mint as DebtTokenMint, Burn as DebtTokenBurn } from "../../../generated/templates/DebtToken/DebtToken";
-import { BTokenBalanceHistoryItem, DebtTokenBalanceHistoryItem, UserReserve, Reserve } from "../../../generated/schema";
+import {
+  BTokenBalanceHistoryItem,
+  DebtTokenBalanceHistoryItem,
+  UserReserve,
+  Reserve,
+  BTokenEventHistoryItem,
+  DebtTokenEventHistoryItem,
+} from "../../../generated/schema";
 import {
   getOrInitBToken,
   getOrInitReserve,
@@ -15,12 +22,17 @@ import {
   getOrInitPriceOracle,
   getOrInitReserveParamsHistoryItem,
 } from "../../helpers/initializers";
-import { zeroBI } from "../../utils/converters";
+import { TOKEN_EVENT_BURN, TOKEN_EVENT_MINT, TOKEN_EVENT_TRANSFER, zeroAddress, zeroBI } from "../../utils/converters";
 import { calculateUtilizationRate } from "../../helpers/reserve-logic";
-import { Address, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes, ethereum, log } from "@graphprotocol/graph-ts";
 import { rayDiv, rayMul } from "../../helpers/math";
 import { getReserveOracleId } from "../../utils/id-generation";
-import { DEVELOP_TREASURY_ADDRESS, RINKEBY_TREASURY_ADDRESS, MAINNET_TREASURY_ADDRESS } from "../../utils/constants";
+import {
+  DEVELOP_TREASURY_ADDRESS,
+  RINKEBY_TREASURY_ADDRESS,
+  MAINNET_TREASURY_ADDRESS,
+  ZERO_ADDRESS,
+} from "../../utils/constants";
 
 function saveUserReserveBHistory(userReserve: UserReserve, event: ethereum.Event, index: BigInt): void {
   let bTokenBalanceHistoryItem = new BTokenBalanceHistoryItem(userReserve.id + event.transaction.hash.toHexString());
@@ -41,6 +53,40 @@ function saveUserReserveVHistory(userReserve: UserReserve, event: ethereum.Event
   dTokenBalanceHistoryItem.index = index;
   dTokenBalanceHistoryItem.timestamp = event.block.timestamp.toI32();
   dTokenBalanceHistoryItem.save();
+}
+
+function saveBTokenEventHistory(
+  userReserve: UserReserve,
+  event: ethereum.Event,
+  eventType: string,
+  amount: BigInt,
+  to: Bytes
+): void {
+  let eventHistoryItem = new BTokenEventHistoryItem(userReserve.id + event.transaction.hash.toHexString());
+  eventHistoryItem.pool = userReserve.pool;
+  eventHistoryItem.user = userReserve.user;
+  eventHistoryItem.userReserve = userReserve.id;
+  eventHistoryItem.eventType = eventType;
+  eventHistoryItem.amount = amount;
+  eventHistoryItem.to = to;
+  eventHistoryItem.timestamp = event.block.timestamp.toI32();
+  eventHistoryItem.save();
+}
+
+function saveDebtTokenEventHistory(
+  userReserve: UserReserve,
+  event: ethereum.Event,
+  eventType: string,
+  amount: BigInt
+): void {
+  let eventHistoryItem = new DebtTokenEventHistoryItem(userReserve.id + event.transaction.hash.toHexString());
+  eventHistoryItem.pool = userReserve.pool;
+  eventHistoryItem.user = userReserve.user;
+  eventHistoryItem.userReserve = userReserve.id;
+  eventHistoryItem.eventType = eventType;
+  eventHistoryItem.amount = amount;
+  eventHistoryItem.timestamp = event.block.timestamp.toI32();
+  eventHistoryItem.save();
 }
 
 function saveReserve(reserve: Reserve, event: ethereum.Event): void {
@@ -148,21 +194,32 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
 }
 
 export function handleBTokenBurn(event: BTokenBurn): void {
+  let bToken = getOrInitBToken(event.address);
+  let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
+  let userReserve = getOrInitUserReserve(event.params.from, bToken.underlyingAssetAddress as Address, event);
+
   tokenBurn(event, event.params.from, event.params.value, event.params.index);
+
+  saveBTokenEventHistory(userReserve, event, TOKEN_EVENT_BURN, event.params.value, zeroAddress());
 }
 
 export function handleBTokenMint(event: BTokenMint): void {
+  let bToken = getOrInitBToken(event.address);
+  let userReserve = getOrInitUserReserve(event.params.from, bToken.underlyingAssetAddress as Address, event);
+
   tokenMint(event, event.params.from, event.params.value, event.params.index);
+
+  saveBTokenEventHistory(userReserve, event, TOKEN_EVENT_MINT, event.params.value, event.params.from);
 }
 
 export function handleBTokenTransfer(event: ATokenTransfer): void {
+  let bToken = getOrInitBToken(event.address);
+  let userReserve = getOrInitUserReserve(event.params.from, bToken.underlyingAssetAddress as Address, event);
+
   tokenBurn(event, event.params.from, event.params.value, event.params.index);
   tokenMint(event, event.params.to, event.params.value, event.params.index);
 
-  // TODO: is this really necessary(from v1)? if we transfer aToken we are not moving the collateral (underlying token)
-  let aToken = getOrInitBToken(event.address);
-  let userFromReserve = getOrInitUserReserve(event.params.from, aToken.underlyingAssetAddress as Address, event);
-  let userToReserve = getOrInitUserReserve(event.params.to, aToken.underlyingAssetAddress as Address, event);
+  saveBTokenEventHistory(userReserve, event, TOKEN_EVENT_TRANSFER, event.params.value, event.params.to);
 }
 
 export function handleDebtTokenBurn(event: DebtTokenBurn): void {
@@ -201,6 +258,8 @@ export function handleDebtTokenBurn(event: DebtTokenBurn): void {
   }
 
   saveUserReserveVHistory(userReserve, event, index);
+
+  saveDebtTokenEventHistory(userReserve, event, TOKEN_EVENT_BURN, value);
 }
 
 export function handleDebtTokenMint(event: DebtTokenMint): void {
@@ -246,4 +305,6 @@ export function handleDebtTokenMint(event: DebtTokenMint): void {
   saveReserve(poolReserve, event);
 
   saveUserReserveVHistory(userReserve, event, index);
+
+  saveDebtTokenEventHistory(userReserve, event, TOKEN_EVENT_MINT, value);
 }

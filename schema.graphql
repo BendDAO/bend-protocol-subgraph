@@ -176,6 +176,13 @@ enum LoanState {
   Defaulted
 }
 
+enum TokenEventType {
+  None
+  Mint
+  Burn
+  Transfer
+}
+
 type Referrer @entity {
   id: ID!
   deposits: [Deposit!]! @derivedFrom(field: "referrer")
@@ -507,6 +514,20 @@ type NFT @entity {
   configurationHistory: [NftConfigurationHistoryItem!]! @derivedFrom(field: "nftAsset")
 }
 
+type BTokenEventHistoryItem @entity {
+  """
+  userReserve + txHash
+  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  id: ID!
+  pool: Pool!
+  user: User!
+  userReserve: UserReserve!
+  eventType: TokenEventType!
+  amount: BigInt!
+  to: Bytes
+  timestamp: Int!
+}
+
 type BTokenBalanceHistoryItem @entity {
   """
   userReserve + txHash
@@ -517,6 +538,19 @@ type BTokenBalanceHistoryItem @entity {
   scaledBTokenBalance: BigInt!
   currentBTokenBalance: BigInt!
   index: BigInt!
+}
+
+type DebtTokenEventHistoryItem @entity {
+  """
+  userReserve + txHash
+  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  id: ID!
+  pool: Pool!
+  user: User!
+  userReserve: UserReserve!
+  eventType: TokenEventType!
+  amount: BigInt!
+  timestamp: Int!
 }
 
 type DebtTokenBalanceHistoryItem @entity {
@@ -653,6 +687,9 @@ type User @entity {
   auctionHistory: [Auction!]! @derivedFrom(field: "user")
   redeemHistory: [Redeem!]! @derivedFrom(field: "user")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "user")
+
+  bTokenHistory: [BTokenEventHistoryItem!]! @derivedFrom(field: "user")
+  debtTokenHistory: [DebtTokenEventHistoryItem!]! @derivedFrom(field: "user")
 }
 
 type DistributionManagerUserAsset @entity {

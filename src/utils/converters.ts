@@ -73,6 +73,11 @@ export const LOAN_STATE_AUCTION = "Auction";
 export const LOAN_STATE_REPAID = "Repaid";
 export const LOAN_STATE_DEFAULTED = "Defaulted";
 
+export const TOKEN_EVENT_NONE = "None";
+export const TOKEN_EVENT_MINT = "Mint";
+export const TOKEN_EVENT_BURN = "Burn";
+export const TOKEN_EVENT_TRANSFER = "Transfer";
+
 export function byteArrayFromHex(s: string): ByteArray {
   if (s.length % 2 !== 0) {
     throw new TypeError("Hex string must have an even number of characters");
