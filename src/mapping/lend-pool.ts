@@ -31,8 +31,9 @@ import {
   Pool,
   Withdraw as WithdrawAction,
   Repay as RepayAction,
+  UserTransactionHistoryItem,
 } from "../../generated/schema";
-import { EventTypeRef, getHistoryId } from "../utils/id-generation";
+import { EventTypeRef, getHistoryEntityId, getHistoryId } from "../utils/id-generation";
 import { calculateGrowth } from "../helpers/math";
 
 export function handlePaused(event: Paused): void {
@@ -49,7 +50,7 @@ export function handleUnpaused(event: Unpaused): void {
   let lendPool = Pool.load(poolId);
 
   lendPool.paused = false;
-  lendPool.pauseDurationTime = event.block.timestamp - lendPool.pauseStartTime;
+  lendPool.pauseDurationTime = event.block.timestamp.minus(lendPool.pauseStartTime);
   lendPool.save();
 }
 
@@ -68,12 +69,22 @@ export function handleDeposit(event: Deposit): void {
   let userReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
   let depositedAmount = event.params.amount;
 
+  let userTx = new UserTransactionHistoryItem(getHistoryEntityId(event));
+  userTx.txType = "Deposit";
+  userTx.onBehalfOf = onBehalfOf.id;
+  userTx.pool = poolReserve.pool;
+  userTx.user = userReserve.user;
+  userTx.timestamp = event.block.timestamp.toI32();
+  userTx.reserve = poolReserve.id;
+  userTx.save();
+
   let id = getHistoryId(event, EventTypeRef.Deposit);
   if (DepositAction.load(id)) {
     id = id + "0";
   }
 
   let deposit = new DepositAction(id);
+  deposit.userTx = userTx.id;
   deposit.pool = poolReserve.pool;
   deposit.user = userReserve.user;
   deposit.onBehalfOf = onBehalfOf.id;
@@ -94,7 +105,17 @@ export function handleWithdraw(event: Withdraw): void {
   let userReserve = getOrInitUserReserve(event.params.user, event.params.reserve, event);
   let redeemedAmount = event.params.amount;
 
+  let userTx = new UserTransactionHistoryItem(getHistoryEntityId(event));
+  userTx.txType = "Withdraw";
+  userTx.onBehalfOf = toUser.id;
+  userTx.pool = poolReserve.pool;
+  userTx.user = userReserve.user;
+  userTx.timestamp = event.block.timestamp.toI32();
+  userTx.reserve = poolReserve.id;
+  userTx.save();
+
   let withdraw = new WithdrawAction(getHistoryId(event, EventTypeRef.Redeem));
+  withdraw.userTx = userTx.id;
   withdraw.pool = poolReserve.pool;
   withdraw.user = userReserve.user;
   withdraw.to = toUser.id;
@@ -114,7 +135,19 @@ export function handleBorrow(event: Borrow): void {
   let poolNft = getOrInitNft(event.params.nftAsset, event);
   let poolLoan = getOrInitLoan(event.params.loanId, event);
 
+  let userTx = new UserTransactionHistoryItem(getHistoryEntityId(event));
+  userTx.txType = "Borrow";
+  userTx.onBehalfOf = onBehalfOf.id;
+  userTx.pool = poolReserve.pool;
+  userTx.user = userReserve.user;
+  userTx.timestamp = event.block.timestamp.toI32();
+  userTx.nftAsset = poolNft.id;
+  userTx.nftTokenId = event.params.nftTokenId;
+  userTx.reserve = poolReserve.id;
+  userTx.save();
+
   let borrow = new BorrowAction(getHistoryId(event, EventTypeRef.Borrow));
+  borrow.userTx = userTx.id;
   borrow.pool = poolReserve.pool;
   borrow.user = userReserve.user;
   borrow.onBehalfOf = onBehalfOf.id;
@@ -147,7 +180,19 @@ export function handleRepay(event: Repay): void {
 
   poolReserve.save();
 
+  let userTx = new UserTransactionHistoryItem(getHistoryEntityId(event));
+  userTx.txType = "Repay";
+  userTx.onBehalfOf = borrower.id;
+  userTx.pool = poolReserve.pool;
+  userTx.user = userReserve.user;
+  userTx.timestamp = event.block.timestamp.toI32();
+  userTx.nftAsset = poolNft.id;
+  userTx.nftTokenId = event.params.nftTokenId;
+  userTx.reserve = poolReserve.id;
+  userTx.save();
+
   let repay = new RepayAction(getHistoryId(event, EventTypeRef.Repay));
+  repay.userTx = userTx.id;
   repay.pool = poolReserve.pool;
   repay.user = userReserve.user;
   repay.userReserve = userReserve.id;
@@ -175,7 +220,19 @@ export function handleAuction(event: Auction): void {
   let poolNft = getOrInitNft(event.params.nftAsset, event);
   let poolLoan = getOrInitLoan(event.params.loanId, event);
 
+  let userTx = new UserTransactionHistoryItem(getHistoryEntityId(event));
+  userTx.txType = "Auction";
+  userTx.onBehalfOf = onBehalfOf.id;
+  userTx.pool = poolReserve.pool;
+  userTx.user = userReserve.user;
+  userTx.timestamp = event.block.timestamp.toI32();
+  userTx.nftAsset = poolNft.id;
+  userTx.nftTokenId = event.params.nftTokenId;
+  userTx.reserve = poolReserve.id;
+  userTx.save();
+
   let auction = new AuctionAction(getHistoryId(event, EventTypeRef.Auction));
+  auction.userTx = userTx.id;
   auction.pool = poolReserve.pool;
   auction.user = userReserve.user;
   auction.userReserve = userReserve.id;
@@ -203,7 +260,19 @@ export function handleRedeem(event: Redeem): void {
   let poolNft = getOrInitNft(event.params.nftAsset, event);
   let poolLoan = getOrInitLoan(event.params.loanId, event);
 
+  let userTx = new UserTransactionHistoryItem(getHistoryEntityId(event));
+  userTx.txType = "Redeem";
+  userTx.onBehalfOf = borrower.id;
+  userTx.pool = poolReserve.pool;
+  userTx.user = userReserve.user;
+  userTx.timestamp = event.block.timestamp.toI32();
+  userTx.nftAsset = poolNft.id;
+  userTx.nftTokenId = event.params.nftTokenId;
+  userTx.reserve = poolReserve.id;
+  userTx.save();
+
   let redeem = new RedeemAction(getHistoryId(event, EventTypeRef.Redeem));
+  redeem.userTx = userTx.id;
   redeem.pool = poolReserve.pool;
   redeem.user = userReserve.user;
   redeem.userReserve = userReserve.id;
@@ -238,7 +307,19 @@ export function handleLiquidate(event: Liquidate): void {
 
   let poolLoan = getOrInitLoan(event.params.loanId, event);
 
+  let userTx = new UserTransactionHistoryItem(getHistoryEntityId(event));
+  userTx.txType = "Liquidate";
+  userTx.onBehalfOf = borrower.id;
+  userTx.pool = poolReserve.pool;
+  userTx.user = userReserve.user;
+  userTx.timestamp = event.block.timestamp.toI32();
+  userTx.nftAsset = collateralNft.id;
+  userTx.nftTokenId = event.params.nftTokenId;
+  userTx.reserve = poolReserve.id;
+  userTx.save();
+
   let liquidate = new LiquidateAction(getHistoryId(event, EventTypeRef.Liquidate));
+  liquidate.userTx = userTx.id;
   liquidate.pool = collateralNft.pool;
   liquidate.user = userReserve.user;
   liquidate.reserve = poolReserve.id;

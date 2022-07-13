@@ -29,7 +29,7 @@ type ContractToPoolMapping @entity {
 type PoolConfigurationHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   active: Boolean
   pool: Pool!
@@ -189,10 +189,35 @@ interface UserTransaction {
   timestamp: Int!
 }
 
+type UserTransactionHistoryItem implements UserTransaction @entity {
+  """
+  tx hash
+  """
+  id: ID!
+  pool: Pool!
+  user: User!
+  timestamp: Int!
+  onBehalfOf: User!
+  txType: String!
+
+  nftAsset: NFT
+  nftTokenId: BigInt
+  reserve: Reserve
+  amount: BigInt
+
+  depositHistory: [Deposit!] @derivedFrom(field: "userTx")
+  withdrawHistory: [Withdraw!] @derivedFrom(field: "userTx")
+  borrowHistory: [Borrow!] @derivedFrom(field: "userTx")
+  repayHistory: [Repay!] @derivedFrom(field: "userTx")
+  auctionHistory: [Auction!] @derivedFrom(field: "userTx")
+  redeemHistory: [Redeem!] @derivedFrom(field: "userTx")
+  liquidateHistory: [Liquidate!] @derivedFrom(field: "userTx")
+}
+
 type Deposit implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -202,12 +227,13 @@ type Deposit implements UserTransaction @entity {
   amount: BigInt!
   referrer: Referrer
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Withdraw implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -216,12 +242,13 @@ type Withdraw implements UserTransaction @entity {
   to: User!
   amount: BigInt!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Borrow implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -236,12 +263,13 @@ type Borrow implements UserTransaction @entity {
   loan: Loan!
   referrer: Referrer
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Repay implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -254,12 +282,13 @@ type Repay implements UserTransaction @entity {
   borrower: User!
   loan: Loan!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Auction implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -273,12 +302,13 @@ type Auction implements UserTransaction @entity {
   borrower: User!
   loan: Loan!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Redeem implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -292,12 +322,13 @@ type Redeem implements UserTransaction @entity {
   borrower: User!
   loan: Loan!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Liquidate implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -311,12 +342,13 @@ type Liquidate implements UserTransaction @entity {
   borrower: User!
   loan: Loan!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type ReserveConfigurationHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   reserve: Reserve!
   borrowingEnabled: Boolean!
@@ -329,7 +361,7 @@ type ReserveConfigurationHistoryItem @entity {
 type NftConfigurationHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   nftAsset: NFT!
   isActive: Boolean!
@@ -348,7 +380,7 @@ type NftConfigurationHistoryItem @entity {
 type ReserveParamsHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   reserve: Reserve!
   variableBorrowRate: BigInt!
@@ -378,7 +410,7 @@ type ReserveParamsHistoryItem @entity {
 type NftParamsHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   nftAsset: NFT!
   totalCollateral: BigInt!
@@ -522,7 +554,7 @@ type BTokenBalanceHistoryItem @entity {
 type DebtTokenBalanceHistoryItem @entity {
   """
   userReserve + txHash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   userReserve: UserReserve!
   scaledVariableDebt: BigInt!
@@ -591,7 +623,7 @@ type UserNft @entity {
 type LoanBalanceHistoryItem @entity {
   """
   loan + txHash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   loan: Loan!
   timestamp: Int!
