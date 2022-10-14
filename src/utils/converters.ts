@@ -78,6 +78,15 @@ export const TOKEN_EVENT_MINT = "Mint";
 export const TOKEN_EVENT_BURN = "Burn";
 export const TOKEN_EVENT_TRANSFER = "Transfer";
 
+export const TX_TYPE_NONE = "None";
+export const TX_TYPE_DEPOSIT = "Deposit";
+export const TX_TYPE_WITHDRAW = "Withdraw";
+export const TX_TYPE_BORROW = "Borrow";
+export const TX_TYPE_REPAY = "Repay";
+export const TX_TYPE_AUCTION = "Auction";
+export const TX_TYPE_REDEEM = "Redeem";
+export const TX_TYPE_LIQUIDATE = "Liquidate";
+
 export function byteArrayFromHex(s: string): ByteArray {
   if (s.length % 2 !== 0) {
     throw new TypeError("Hex string must have an even number of characters");

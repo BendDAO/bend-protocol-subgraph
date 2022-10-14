@@ -170,10 +170,7 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.plus(value);
   // Check if we are minting to treasury for mainnet, goerli
   let fromHexStr = from.toHexString().toString();
-  if (
-    fromHexStr == GOERLI_TREASURY_ADDRESS ||
-    fromHexStr == MAINNET_TREASURY_ADDRESS
-  ) {
+  if (fromHexStr == GOERLI_TREASURY_ADDRESS || fromHexStr == MAINNET_TREASURY_ADDRESS) {
     // mint bTokens to treasury address
     poolReserve.lifetimeReserveFactorAccrued = poolReserve.lifetimeReserveFactorAccrued.plus(value);
     saveReserve(poolReserve, event);

@@ -183,6 +183,17 @@ enum TokenEventType {
   Transfer
 }
 
+enum TxType {
+  None
+  Deposit
+  Withdraw
+  Borrow
+  Repay
+  Auction
+  Redeem
+  Liquidate
+}
+
 type Referrer @entity {
   id: ID!
   deposits: [Deposit!]! @derivedFrom(field: "referrer")
@@ -204,8 +215,8 @@ type UserTransactionHistoryItem implements UserTransaction @entity {
   pool: Pool!
   user: User!
   timestamp: Int!
+  txType: TxType!
   onBehalfOf: User!
-  txType: String!
 
   nftAsset: NFT
   nftTokenId: BigInt
