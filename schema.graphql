@@ -29,7 +29,7 @@ type ContractToPoolMapping @entity {
 type PoolConfigurationHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   active: Boolean
   pool: Pool!
@@ -176,6 +176,24 @@ enum LoanState {
   Defaulted
 }
 
+enum TokenEventType {
+  None
+  Mint
+  Burn
+  Transfer
+}
+
+enum TxType {
+  None
+  Deposit
+  Withdraw
+  Borrow
+  Repay
+  Auction
+  Redeem
+  Liquidate
+}
+
 type Referrer @entity {
   id: ID!
   deposits: [Deposit!]! @derivedFrom(field: "referrer")
@@ -189,10 +207,35 @@ interface UserTransaction {
   timestamp: Int!
 }
 
+type UserTransactionHistoryItem implements UserTransaction @entity {
+  """
+  tx hash
+  """
+  id: ID!
+  pool: Pool!
+  user: User!
+  timestamp: Int!
+  txType: TxType!
+  onBehalfOf: User!
+
+  nftAsset: NFT
+  nftTokenId: BigInt
+  reserve: Reserve
+  amount: BigInt
+
+  depositHistory: [Deposit!] @derivedFrom(field: "userTx")
+  withdrawHistory: [Withdraw!] @derivedFrom(field: "userTx")
+  borrowHistory: [Borrow!] @derivedFrom(field: "userTx")
+  repayHistory: [Repay!] @derivedFrom(field: "userTx")
+  auctionHistory: [Auction!] @derivedFrom(field: "userTx")
+  redeemHistory: [Redeem!] @derivedFrom(field: "userTx")
+  liquidateHistory: [Liquidate!] @derivedFrom(field: "userTx")
+}
+
 type Deposit implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -202,12 +245,13 @@ type Deposit implements UserTransaction @entity {
   amount: BigInt!
   referrer: Referrer
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Withdraw implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -216,12 +260,13 @@ type Withdraw implements UserTransaction @entity {
   to: User!
   amount: BigInt!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Borrow implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -236,12 +281,13 @@ type Borrow implements UserTransaction @entity {
   loan: Loan!
   referrer: Referrer
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Repay implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -254,12 +300,13 @@ type Repay implements UserTransaction @entity {
   borrower: User!
   loan: Loan!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Auction implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -273,12 +320,13 @@ type Auction implements UserTransaction @entity {
   borrower: User!
   loan: Loan!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Redeem implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -292,12 +340,13 @@ type Redeem implements UserTransaction @entity {
   borrower: User!
   loan: Loan!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type Liquidate implements UserTransaction @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   pool: Pool!
   user: User!
@@ -311,12 +360,13 @@ type Liquidate implements UserTransaction @entity {
   borrower: User!
   loan: Loan!
   timestamp: Int!
+  userTx: UserTransactionHistoryItem!
 }
 
 type ReserveConfigurationHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   reserve: Reserve!
   borrowingEnabled: Boolean!
@@ -329,7 +379,7 @@ type ReserveConfigurationHistoryItem @entity {
 type NftConfigurationHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   nftAsset: NFT!
   isActive: Boolean!
@@ -348,7 +398,7 @@ type NftConfigurationHistoryItem @entity {
 type ReserveParamsHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   reserve: Reserve!
   variableBorrowRate: BigInt!
@@ -378,7 +428,7 @@ type ReserveParamsHistoryItem @entity {
 type NftParamsHistoryItem @entity {
   """
   tx hash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   nftAsset: NFT!
   totalCollateral: BigInt!
@@ -507,6 +557,20 @@ type NFT @entity {
   configurationHistory: [NftConfigurationHistoryItem!]! @derivedFrom(field: "nftAsset")
 }
 
+type BTokenEventHistoryItem @entity {
+  """
+  userReserve + txHash
+  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  id: ID!
+  pool: Pool!
+  user: User!
+  userReserve: UserReserve!
+  eventType: TokenEventType!
+  amount: BigInt!
+  to: Bytes
+  timestamp: Int!
+}
+
 type BTokenBalanceHistoryItem @entity {
   """
   userReserve + txHash
@@ -519,10 +583,23 @@ type BTokenBalanceHistoryItem @entity {
   index: BigInt!
 }
 
-type DebtTokenBalanceHistoryItem @entity {
+type DebtTokenEventHistoryItem @entity {
   """
   userReserve + txHash
   """ # TODO: replace with blockNumber/timestamp + blockPosition
+  id: ID!
+  pool: Pool!
+  user: User!
+  userReserve: UserReserve!
+  eventType: TokenEventType!
+  amount: BigInt!
+  timestamp: Int!
+}
+
+type DebtTokenBalanceHistoryItem @entity {
+  """
+  userReserve + txHash
+  """
   id: ID!
   userReserve: UserReserve!
   scaledVariableDebt: BigInt!
@@ -591,7 +668,7 @@ type UserNft @entity {
 type LoanBalanceHistoryItem @entity {
   """
   loan + txHash
-  """ # TODO: replace with blockNumber/timestamp + blockPosition
+  """
   id: ID!
   loan: Loan!
   timestamp: Int!
@@ -653,6 +730,9 @@ type User @entity {
   auctionHistory: [Auction!]! @derivedFrom(field: "user")
   redeemHistory: [Redeem!]! @derivedFrom(field: "user")
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "user")
+
+  bTokenHistory: [BTokenEventHistoryItem!]! @derivedFrom(field: "user")
+  debtTokenHistory: [DebtTokenEventHistoryItem!]! @derivedFrom(field: "user")
 }
 
 type DistributionManagerUserAsset @entity {

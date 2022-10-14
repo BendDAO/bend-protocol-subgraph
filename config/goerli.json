@@ -1,0 +1,11 @@
+{
+  "network": "goerli",
+  "LendPoolAddressesProviderRegistryAddress": "0x5eff819a886474503004d39C64b5c057FFD6fAe2",
+  "LendPoolAddressesProviderRegistryStartBlock": 7594280,
+  "ReserveOracleAddress": "0xFFC171ff66bba4303Ea8334d08dB5779daF860a3",
+  "ReserveOracleStartBlock": 7594427,
+  "NFTOracleAddress": "0xE7E268cC1D025906fe8f6b076ecc40FF1a8dfA61",
+  "NFTOracleStartBlock": 7594524,
+  "IncentivesControllerAddress": "0x292F693048208184320C01e0C223D624268e5EE7",
+  "IncentivesControllerStartBlock": 7589466
+}

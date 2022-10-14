@@ -30,8 +30,8 @@ To be able to deploy the subgraph in any environment for any network first we wi
 - The first time you will deploy the subgraph you need to first create it in the TheGraph node:
 
 ```shell
-# For Rinkeby:
-npm run subgraph:create:self-hosted:rinkeby
+# For Goerli:
+npm run subgraph:create:self-hosted:goerli
 
 # for Mainnet
 npm run subgraph:create:self-hosted:mainnet
@@ -46,8 +46,8 @@ npm run subgraph:codegen
 - When / If the subgraph is created you can then deploy
 
 ```shell
-# For Rinkeby:
-npm run deploy:self-hosted:rinkeby
+# For Goerli:
+npm run deploy:self-hosted:goerli
 
 # For Mainnet:
 npm run deploy:self-hosted:mainnet
@@ -58,8 +58,8 @@ npm run deploy:self-hosted:mainnet
 To be able to deploy to the hosted solution you will need to create a .env file and add `ACCESS_TOKEN` environment variable. You can find this in the dashboard of the TheGraph
 
 ```shell
-# For Rinkeby:
-npm run deploy:hosted:rinkeby
+# For Goerli:
+npm run deploy:hosted:goerli
 
 # For Mainnet:
 npm run deploy:hosted:mainnet
@@ -117,15 +117,9 @@ docker-compose down; docker container prune -f; docker volume prune -f;
 # development using localhost hardhat node
 docker-compose up
 
-# or development using develop, api url can be infura or alchemy
-#export GRAPH_ETHEREUM="develop:https://rinkeby.infura.io/v3/${INFURA_KEY}"
-export GRAPH_ETHEREUM="develop:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}"
-
-docker-compose up
-
-# or development using rinkeby, api url can be infura or alchemy
-#export GRAPH_ETHEREUM="rinkeby:https://rinkeby.infura.io/v3/${INFURA_KEY}"
-export GRAPH_ETHEREUM="rinkeby:https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}"
+# or development using goerli, api url can be infura or alchemy
+#export GRAPH_ETHEREUM="goerli:https://goerli.infura.io/v3/${INFURA_KEY}"
+export GRAPH_ETHEREUM="goerli:https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_KEY}"
 
 docker-compose up
 
@@ -144,17 +138,13 @@ docker-compose up
 npm run subgraph:create:local
 
 # development using localhost config
-# Before deploying, you should fill correct contracts addresses in ./config/dev.conf.
+# Before deploying, you should fill correct contracts addresses in ./config/localhost.conf.
 # You can find addresses in bend-protocol/deployments/deployed-contracts-localhost.json.
 npm run deploy:local:localhost
 
-# or development using develop config
-# Before deploying, you should fill correct contracts addresses in ./config/develop.conf.
-npm run deploy:local:develop
-
-# or development using rinkeby config
-# Before deploying, you should fill correct contracts addresses in ./config/rinkeby.conf.
-npm run deploy:local:rinkeby
+# or development using goerli config
+# Before deploying, you should fill correct contracts addresses in ./config/goerli.conf.
+npm run deploy:local:goerli
 
 # or development using mainnet config
 # Before deploying, you should fill correct contracts addresses in ./config/mainnet.conf.
