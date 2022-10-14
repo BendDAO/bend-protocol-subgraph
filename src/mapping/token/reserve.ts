@@ -27,12 +27,7 @@ import { calculateUtilizationRate } from "../../helpers/reserve-logic";
 import { Address, BigInt, Bytes, ethereum, log } from "@graphprotocol/graph-ts";
 import { rayDiv, rayMul } from "../../helpers/math";
 import { getReserveOracleId } from "../../utils/id-generation";
-import {
-  DEVELOP_TREASURY_ADDRESS,
-  RINKEBY_TREASURY_ADDRESS,
-  MAINNET_TREASURY_ADDRESS,
-  ZERO_ADDRESS,
-} from "../../utils/constants";
+import { GOERLI_TREASURY_ADDRESS, MAINNET_TREASURY_ADDRESS } from "../../utils/constants";
 
 function saveUserReserveBHistory(userReserve: UserReserve, event: ethereum.Event, index: BigInt): void {
   let bTokenBalanceHistoryItem = new BTokenBalanceHistoryItem(userReserve.id + event.transaction.hash.toHexString());
@@ -133,15 +128,31 @@ function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: B
 
   let calculatedAmount = rayDiv(value, index);
 
-  userReserve.scaledBTokenBalance = userReserve.scaledBTokenBalance.minus(calculatedAmount);
+  if (userReserve.scaledBTokenBalance.gt(calculatedAmount)) {
+    userReserve.scaledBTokenBalance = userReserve.scaledBTokenBalance.minus(calculatedAmount);
+  } else {
+    userReserve.scaledBTokenBalance = zeroBI();
+  }
   userReserve.currentBTokenBalance = rayMul(userReserve.scaledBTokenBalance, index);
   userReserve.variableBorrowIndex = poolReserve.variableBorrowIndex;
   userReserve.liquidityRate = poolReserve.liquidityRate;
 
-  poolReserve.availableLiquidity = poolReserve.availableLiquidity.minus(value);
-  poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.minus(value);
+  if (poolReserve.availableLiquidity.gt(value)) {
+    poolReserve.availableLiquidity = poolReserve.availableLiquidity.minus(value);
+  } else {
+    poolReserve.availableLiquidity = zeroBI();
+  }
+  if (poolReserve.totalBTokenSupply.gt(value)) {
+    poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.minus(value);
+  } else {
+    poolReserve.totalBTokenSupply = zeroBI();
+  }
 
-  poolReserve.totalLiquidity = poolReserve.totalLiquidity.minus(value);
+  if (poolReserve.totalLiquidity.gt(value)) {
+    poolReserve.totalLiquidity = poolReserve.totalLiquidity.minus(value);
+  } else {
+    poolReserve.totalLiquidity = zeroBI();
+  }
   poolReserve.lifetimeWithdrawals = poolReserve.lifetimeWithdrawals.plus(value);
 
   saveReserve(poolReserve, event);
@@ -157,11 +168,10 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   let bToken = getOrInitBToken(event.address);
   let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
   poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.plus(value);
-  // Check if we are minting to treasury for mainnet, rinkeby, develop
+  // Check if we are minting to treasury for mainnet, goerli
   let fromHexStr = from.toHexString().toString();
   if (
-    fromHexStr == DEVELOP_TREASURY_ADDRESS ||
-    fromHexStr == RINKEBY_TREASURY_ADDRESS ||
+    fromHexStr == GOERLI_TREASURY_ADDRESS ||
     fromHexStr == MAINNET_TREASURY_ADDRESS
   ) {
     // mint bTokens to treasury address
@@ -231,11 +241,19 @@ export function handleDebtTokenBurn(event: DebtTokenBurn): void {
   let poolReserve = getOrInitReserve(dToken.underlyingAssetAddress as Address, event);
 
   let calculatedAmount = rayDiv(value, index);
-  userReserve.scaledVariableDebt = userReserve.scaledVariableDebt.minus(calculatedAmount);
+  if (userReserve.scaledVariableDebt.gt(calculatedAmount)) {
+    userReserve.scaledVariableDebt = userReserve.scaledVariableDebt.minus(calculatedAmount);
+  } else {
+    userReserve.scaledVariableDebt = zeroBI();
+  }
   userReserve.currentVariableDebt = rayMul(userReserve.scaledVariableDebt, index);
   userReserve.currentTotalDebt = userReserve.currentVariableDebt;
 
-  poolReserve.totalScaledVariableDebt = poolReserve.totalScaledVariableDebt.minus(calculatedAmount);
+  if (poolReserve.totalScaledVariableDebt.gt(calculatedAmount)) {
+    poolReserve.totalScaledVariableDebt = poolReserve.totalScaledVariableDebt.minus(calculatedAmount);
+  } else {
+    poolReserve.totalScaledVariableDebt = zeroBI();
+  }
   poolReserve.totalCurrentVariableDebt = rayMul(poolReserve.totalScaledVariableDebt, index);
 
   poolReserve.availableLiquidity = poolReserve.availableLiquidity.plus(value);
@@ -299,7 +317,11 @@ export function handleDebtTokenMint(event: DebtTokenMint): void {
   poolReserve.lifetimeScaledVariableDebt = poolReserve.lifetimeScaledVariableDebt.plus(calculatedAmount);
   poolReserve.lifetimeCurrentVariableDebt = rayMul(poolReserve.lifetimeScaledVariableDebt, index);
 
-  poolReserve.availableLiquidity = poolReserve.availableLiquidity.minus(value);
+  if (poolReserve.availableLiquidity.gt(value)) {
+    poolReserve.availableLiquidity = poolReserve.availableLiquidity.minus(value);
+  } else {
+    poolReserve.availableLiquidity = zeroBI();
+  }
   poolReserve.lifetimeBorrows = poolReserve.lifetimeBorrows.plus(value);
 
   saveReserve(poolReserve, event);

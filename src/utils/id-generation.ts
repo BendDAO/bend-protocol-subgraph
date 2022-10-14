@@ -4,6 +4,7 @@ import { Address } from "@graphprotocol/graph-ts/index";
 export enum EventTypeRef {
   NoType,
   Deposit,
+  Withdraw,
   Borrow,
   Repay,
   Auction,
