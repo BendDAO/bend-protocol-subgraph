@@ -220,6 +220,7 @@ type UserTransactionHistoryItem implements UserTransaction @entity {
 
   nftAsset: NFT
   nftTokenId: BigInt
+  loan: Loan
   reserve: Reserve
   amount: BigInt
 
