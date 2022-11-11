@@ -154,6 +154,7 @@ export function handleBorrow(event: Borrow): void {
   userTx.timestamp = event.block.timestamp.toI32();
   userTx.nftAsset = poolNft.id;
   userTx.nftTokenId = event.params.nftTokenId;
+  userTx.loan = poolLoan.id;
   userTx.reserve = poolReserve.id;
   userTx.amount = event.params.amount;
   userTx.save();
@@ -200,6 +201,7 @@ export function handleRepay(event: Repay): void {
   userTx.timestamp = event.block.timestamp.toI32();
   userTx.nftAsset = poolNft.id;
   userTx.nftTokenId = event.params.nftTokenId;
+  userTx.loan = poolLoan.id;
   userTx.reserve = poolReserve.id;
   userTx.amount = event.params.amount;
   userTx.save();
@@ -241,6 +243,7 @@ export function handleAuction(event: Auction): void {
   userTx.timestamp = event.block.timestamp.toI32();
   userTx.nftAsset = poolNft.id;
   userTx.nftTokenId = event.params.nftTokenId;
+  userTx.loan = poolLoan.id;
   userTx.reserve = poolReserve.id;
   userTx.amount = event.params.bidPrice;
   userTx.save();
@@ -282,6 +285,7 @@ export function handleRedeem(event: Redeem): void {
   userTx.timestamp = event.block.timestamp.toI32();
   userTx.nftAsset = poolNft.id;
   userTx.nftTokenId = event.params.nftTokenId;
+  userTx.loan = poolLoan.id;
   userTx.reserve = poolReserve.id;
   userTx.amount = event.params.borrowAmount;
   userTx.save();
@@ -330,6 +334,7 @@ export function handleLiquidate(event: Liquidate): void {
   userTx.timestamp = event.block.timestamp.toI32();
   userTx.nftAsset = collateralNft.id;
   userTx.nftTokenId = event.params.nftTokenId;
+  userTx.loan = poolLoan.id;
   userTx.reserve = poolReserve.id;
   userTx.amount = event.params.repayAmount;
   userTx.save();
