@@ -43,6 +43,7 @@ import {
   TX_TYPE_REDEEM,
   TX_TYPE_REPAY,
   TX_TYPE_WITHDRAW,
+  zeroBI,
 } from "../utils/converters";
 
 export function handlePaused(event: Paused): void {
@@ -59,7 +60,10 @@ export function handleUnpaused(event: Unpaused): void {
   let lendPool = Pool.load(poolId);
 
   lendPool.paused = false;
-  lendPool.pauseDurationTime = event.block.timestamp - lendPool.pauseStartTime;
+  lendPool.pauseDurationTime = event.block.timestamp.minus(lendPool.pauseStartTime);
+  if (lendPool.pauseDurationTime.lt(zeroBI())) {
+    lendPool.pauseDurationTime = zeroBI();
+  }
   lendPool.save();
 }
 
