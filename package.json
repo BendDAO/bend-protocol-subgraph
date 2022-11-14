@@ -4,7 +4,7 @@
   "description": "This package contains subgraph of the bend protocol",
   "scripts": {
     "prettier:abis": "prettier --write 'constant-abis/**/*.json' 'abis/**/*.json'",
-    "prettier:write": "prettier --write 'config/**/*.json' 'constant-abis/**/*.json' 'scripts/**/*.js' 'src/**/*.ts'",
+    "prettier:code": "prettier --write 'config/**/*.json' 'constant-abis/**/*.json' 'src/**/*.ts'",
     "prepare:subgraph": "mustache ./config/${NETWORK:-localhost}.json ${BLOCKCHAIN:-ethereum}.subgraph.template.yaml > subgraph.yaml && rm -rf generated && npm run subgraph:codegen",
     "subgraph:codegen": "graph codegen --output-dir ./generated",
     "subgraph:build": "graph build",
