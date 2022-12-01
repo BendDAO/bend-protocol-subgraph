@@ -298,6 +298,7 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
   let poolId = getPoolByEventContract(event);
   let loanIdInDB = getLoanId(loanId, poolId);
   let loan = Loan.load(loanIdInDB);
+  let zeroUser = getOrInitUser(zeroAddress() as Address);
 
   if (loan === null) {
     loan = new Loan(loanIdInDB);
@@ -312,7 +313,8 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
     loan.scaledAmount = zeroBI();
     loan.currentAmount = zeroBI();
     loan.bidStartTimestamp = 0;
-    loan.bidderAddress = new Bytes(1);
+    loan.bidderUser = zeroUser.id;
+    loan.bidderAddress = zeroAddress();
     loan.bidPrice = zeroBI();
     loan.bidBorrowAmount = zeroBI();
     loan.lifetimeBorrows = zeroBI();

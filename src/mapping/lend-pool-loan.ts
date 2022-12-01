@@ -154,6 +154,7 @@ export function handleLoanAuctioned(event: LoanAuctioned): void {
   let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
   let poolLoan = getOrInitLoan(event.params.loanId, event);
   let poolNft = getOrInitNft(event.params.nftAsset, event);
+  let bidderNft = getOrInitUserNft(event.params.bidder, event.params.nftAsset, event);
 
   poolLoan.currentAmount = rayMul(poolLoan.scaledAmount, event.params.borrowIndex);
 
@@ -161,6 +162,7 @@ export function handleLoanAuctioned(event: LoanAuctioned): void {
     poolLoan.state = LOAN_STATE_AUCTION; // auction at first time
     poolLoan.bidStartTimestamp = event.block.timestamp.toI32();
   }
+  poolLoan.bidderUser = bidderNft.user;
   poolLoan.bidderAddress = event.params.bidder;
   poolLoan.bidPrice = event.params.price;
   poolLoan.bidBorrowAmount = event.params.amount;

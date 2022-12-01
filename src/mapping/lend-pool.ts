@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
   Borrow,
   Deposit,
@@ -332,7 +332,7 @@ export function handleLiquidate(event: Liquidate): void {
 
   let userTx = new UserTransactionHistoryItem(getHistoryEntityId(event));
   userTx.txType = TX_TYPE_LIQUIDATE;
-  userTx.onBehalfOf = borrower.id;
+  userTx.onBehalfOf = poolLoan.bidderUser;
   userTx.pool = poolReserve.pool;
   userTx.user = userReserve.user;
   userTx.timestamp = event.block.timestamp.toI32();
