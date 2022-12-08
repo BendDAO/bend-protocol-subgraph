@@ -25,34 +25,6 @@ npm run deploy:hosted:mainnet
 
 To be able to deploy the subgraph in any environment for any network first we will need to prepare the local env.
 
-### Self-hosted
-
-- The first time you will deploy the subgraph you need to first create it in the TheGraph node:
-
-```shell
-# For Goerli:
-npm run subgraph:create:self-hosted:goerli
-
-# for Mainnet
-npm run subgraph:create:self-hosted:mainnet
-```
-
-- Before any deployment you need to generate the types and schemas:
-
-```shell
-npm run subgraph:codegen
-```
-
-- When / If the subgraph is created you can then deploy
-
-```shell
-# For Goerli:
-npm run deploy:self-hosted:goerli
-
-# For Mainnet:
-npm run deploy:self-hosted:mainnet
-```
-
 ### Hosted
 
 To be able to deploy to the hosted solution you will need to create a .env file and add `ACCESS_TOKEN` environment variable. You can find this in the dashboard of the TheGraph

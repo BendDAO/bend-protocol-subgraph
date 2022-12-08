@@ -9,19 +9,15 @@
     "subgraph:codegen": "graph codegen --output-dir ./generated",
     "subgraph:build": "graph build",
     "subgraph:create:local": "graph create bend/bend-protocol --node http://${LOCAL_IP:-localhost}:8020",
-    "subgraph:create:self-hosted:goerli": "graph create bend/bend-protocol-goerli --node https://goerli-thegraph.bend.fi",
-    "subgraph:create:self-hosted:mainnet": "graph create bend/bend-protocol --node https://thegraph.bend.fi",
+    "subgraph:remove:local": "graph remove bend/bend-protocol --node http://${LOCAL_IP:-localhost}:8020",
     "subgraph:deploy:local": "graph deploy bend/bend-protocol --ipfs http://${LOCAL_IP:-localhost}:5001 --node http://${LOCAL_IP:-localhost}:8020",
-    "subgraph:deploy:self-hosted": "graph deploy $SLUG --ipfs https://ipfs-thegraph.bend.fi --node https://goerli-thegraph.bend.fi",
     "subgraph:deploy:hosted": "graph deploy $SLUG --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --access-token $ACCESS_TOKEN",
     "deploy:local:localhost": "BLOCKCHAIN=ethereum NETWORK=localhost env-cmd npm run prepare:subgraph && env-cmd npm run subgraph:deploy:local",
     "deploy:local:develop": "BLOCKCHAIN=ethereum NETWORK=develop env-cmd npm run prepare:subgraph && env-cmd npm run subgraph:deploy:local",
     "deploy:local:goerli": "BLOCKCHAIN=ethereum NETWORK=goerli env-cmd npm run prepare:subgraph && env-cmd npm run subgraph:deploy:local",
     "deploy:local:mainnet": "BLOCKCHAIN=ethereum NETWORK=mainnet env-cmd npm run prepare:subgraph && env-cmd npm run subgraph:deploy:local",
     "deploy:hosted:goerli": "BLOCKCHAIN=ethereum NETWORK=goerli env-cmd npm run prepare:subgraph && SLUG=bend/bend-protocol-goerli env-cmd npm run subgraph:deploy:hosted",
-    "deploy:hosted:mainnet": "BLOCKCHAIN=ethereum NETWORK=mainnet env-cmd npm run prepare:subgraph && SLUG=bend/bend-protocol env-cmd npm run subgraph:deploy:hosted",
-    "deploy:self-hosted:goerli": "BLOCKCHAIN=ethereum NETWORK=goerli npm run prepare:subgraph && SLUG=bend/bend-protocol-goerli npm run subgraph:deploy:self-hosted",
-    "deploy:self-hosted:mainnet": "BLOCKCHAIN=ethereum NETWORK=mainnet npm run prepare:subgraph && SLUG=bend/bend-protocol npm run subgraph:deploy:self-hosted"
+    "deploy:hosted:mainnet": "BLOCKCHAIN=ethereum NETWORK=mainnet env-cmd npm run prepare:subgraph && SLUG=bend/bend-protocol env-cmd npm run subgraph:deploy:hosted"
   },
   "repository": {
     "type": "git",
