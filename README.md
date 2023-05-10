@@ -77,7 +77,7 @@ Remember that before runing `docker-compose up` you need to run `docker-compose 
 That is because the postgres database and ipfs data needs to not be persistant, so we need to delete the docker volumes.
 
 ```shell
-docker-compose down; docker container prune -f; docker volume prune -f;
+docker-compose down; docker container prune -f; docker volume prune -f; docker network prune -f;
 
 # or using ls and rm
 # docker volume ls

@@ -167,8 +167,6 @@ export function handleLoanAuctioned(event: LoanAuctioned): void {
   poolLoan.bidPrice = event.params.price;
   poolLoan.bidBorrowAmount = event.params.amount;
 
-  poolLoan.lifetimeRepays = poolLoan.lifetimeRepays.plus(event.params.amount);
-
   poolLoan.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolLoan.save();
   saveLoanBHistory(poolLoan, event, event.params.borrowIndex);
