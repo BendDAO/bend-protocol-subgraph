@@ -214,6 +214,7 @@ export function getOrInitReserve(underlyingAsset: Address, event: ethereum.Event
     reserve.variableRateSlope2 = zeroBI();
 
     reserve.utilizationRate = zeroBD();
+    reserve.debtUtilizationRate = zeroBD();
     reserve.totalLiquidity = zeroBI();
     reserve.totalBTokenSupply = zeroBI();
     reserve.availableLiquidity = zeroBI();
@@ -375,6 +376,7 @@ export function getOrInitReserveParamsHistoryItem(id: Bytes, reserve: Reserve): 
     reserveParamsHistoryItem.variableBorrowRate = zeroBI();
     reserveParamsHistoryItem.variableBorrowIndex = zeroBI();
     reserveParamsHistoryItem.utilizationRate = zeroBD();
+    reserveParamsHistoryItem.debtUtilizationRate = zeroBD();
     reserveParamsHistoryItem.liquidityIndex = zeroBI();
     reserveParamsHistoryItem.liquidityRate = zeroBI();
     reserveParamsHistoryItem.totalLiquidity = zeroBI();

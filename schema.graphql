@@ -405,6 +405,7 @@ type ReserveParamsHistoryItem @entity {
   variableBorrowRate: BigInt!
   variableBorrowIndex: BigInt!
   utilizationRate: BigDecimal!
+  debtUtilizationRate: BigDecimal!
   liquidityIndex: BigInt!
   liquidityRate: BigInt!
   totalLiquidity: BigInt!
@@ -478,6 +479,7 @@ type Reserve @entity {
   variableRateSlope2: BigInt!
   baseVariableBorrowRate: BigInt!
   utilizationRate: BigDecimal! # default: 0
+  debtUtilizationRate: BigDecimal!
   liquidityRate: BigInt! # depositors interest
   variableBorrowRate: BigInt!
   liquidityIndex: BigInt!

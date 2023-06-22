@@ -23,7 +23,7 @@ import {
   getOrInitReserveParamsHistoryItem,
 } from "../../helpers/initializers";
 import { TOKEN_EVENT_BURN, TOKEN_EVENT_MINT, TOKEN_EVENT_TRANSFER, zeroAddress, zeroBI } from "../../utils/converters";
-import { calculateUtilizationRate } from "../../helpers/reserve-logic";
+import { calculateUtilizationRate, calculateDebtUtilizationRate } from "../../helpers/reserve-logic";
 import { Address, BigInt, Bytes, ethereum, log } from "@graphprotocol/graph-ts";
 import { rayDiv, rayMul } from "../../helpers/math";
 import { getReserveOracleId } from "../../utils/id-generation";
@@ -86,6 +86,7 @@ function saveDebtTokenEventHistory(
 
 function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   reserve.utilizationRate = calculateUtilizationRate(reserve);
+  reserve.debtUtilizationRate = calculateDebtUtilizationRate(reserve);
   reserve.save();
 
   let reserveParamsHistoryItem = getOrInitReserveParamsHistoryItem(event.transaction.hash, reserve);
@@ -102,6 +103,7 @@ function saveReserve(reserve: Reserve, event: ethereum.Event): void {
   reserveParamsHistoryItem.availableLiquidity = reserve.availableLiquidity;
   reserveParamsHistoryItem.totalLiquidity = reserve.totalLiquidity;
   reserveParamsHistoryItem.utilizationRate = reserve.utilizationRate;
+  reserveParamsHistoryItem.debtUtilizationRate = reserve.debtUtilizationRate;
   reserveParamsHistoryItem.variableBorrowRate = reserve.variableBorrowRate;
   reserveParamsHistoryItem.variableBorrowIndex = reserve.variableBorrowIndex;
   reserveParamsHistoryItem.liquidityIndex = reserve.liquidityIndex;

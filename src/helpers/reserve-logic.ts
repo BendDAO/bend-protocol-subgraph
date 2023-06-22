@@ -37,3 +37,12 @@ export function calculateUtilizationRate(reserve: Reserve): BigDecimal {
     .minus(reserve.availableLiquidity.toBigDecimal().div(reserve.totalLiquidity.toBigDecimal()))
     .truncate(8);
 }
+
+export function calculateDebtUtilizationRate(reserve: Reserve): BigDecimal {
+  if (reserve.totalCurrentVariableDebt.equals(zeroBI())) {
+    return zeroBD();
+  }
+  let totalLiquidityWithDebt = reserve.totalCurrentVariableDebt.plus(reserve.availableLiquidity);
+  let debtUtilizationRate = reserve.totalCurrentVariableDebt.toBigDecimal().div(totalLiquidityWithDebt.toBigDecimal());
+  return debtUtilizationRate.truncate(8);
+}
