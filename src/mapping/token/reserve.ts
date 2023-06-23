@@ -1,5 +1,5 @@
 import {
-  BalanceTransfer as ATokenTransfer,
+  BalanceTransfer as BTokenTransfer,
   Mint as BTokenMint,
   Burn as BTokenBurn,
 } from "../../../generated/templates/BToken/BToken";
@@ -124,30 +124,27 @@ function saveReserve(reserve: Reserve, event: ethereum.Event): void {
 }
 
 function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: BigInt): void {
-  let aToken = getOrInitBToken(event.address);
-  let userReserve = getOrInitUserReserve(from, aToken.underlyingAssetAddress as Address, event);
-  let poolReserve = getOrInitReserve(aToken.underlyingAssetAddress as Address, event);
+  let bToken = getOrInitBToken(event.address);
+  let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
 
-  let calculatedAmount = rayDiv(value, index);
-
-  if (userReserve.scaledBTokenBalance.gt(calculatedAmount)) {
-    userReserve.scaledBTokenBalance = userReserve.scaledBTokenBalance.minus(calculatedAmount);
-  } else {
-    userReserve.scaledBTokenBalance = zeroBI();
+  // Check if we are minting to treasury for mainnet, goerli
+  let fromHexStr = from.toHexString().toString();
+  let isTreasury = false;
+  if (fromHexStr == GOERLI_TREASURY_ADDRESS || fromHexStr == MAINNET_TREASURY_ADDRESS) {
+    isTreasury = true;
   }
-  userReserve.currentBTokenBalance = rayMul(userReserve.scaledBTokenBalance, index);
-  userReserve.variableBorrowIndex = poolReserve.variableBorrowIndex;
-  userReserve.liquidityRate = poolReserve.liquidityRate;
+
+  // updating pool reserve data
+  if (poolReserve.totalBTokenSupply.gt(value)) {
+    poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.minus(value);
+  } else {
+    poolReserve.totalBTokenSupply = zeroBI();
+  }
 
   if (poolReserve.availableLiquidity.gt(value)) {
     poolReserve.availableLiquidity = poolReserve.availableLiquidity.minus(value);
   } else {
     poolReserve.availableLiquidity = zeroBI();
-  }
-  if (poolReserve.totalBTokenSupply.gt(value)) {
-    poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.minus(value);
-  } else {
-    poolReserve.totalBTokenSupply = zeroBI();
   }
 
   if (poolReserve.totalLiquidity.gt(value)) {
@@ -159,47 +156,72 @@ function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: B
 
   saveReserve(poolReserve, event);
 
+  // updating user reserve data
+  let userReserve = getOrInitUserReserve(from, bToken.underlyingAssetAddress as Address, event);
+  let calculatedAmount = rayDiv(value, index);
+
+  if (userReserve.scaledBTokenBalance.gt(calculatedAmount)) {
+    userReserve.scaledBTokenBalance = userReserve.scaledBTokenBalance.minus(calculatedAmount);
+  } else {
+    userReserve.scaledBTokenBalance = zeroBI();
+  }
+  userReserve.currentBTokenBalance = rayMul(userReserve.scaledBTokenBalance, index);
+  userReserve.variableBorrowIndex = poolReserve.variableBorrowIndex;
+  userReserve.liquidityRate = poolReserve.liquidityRate;
+
   userReserve.lifetimeWithdrawals = userReserve.lifetimeWithdrawals.plus(value);
   userReserve.lastUpdateTimestamp = event.block.timestamp.toI32();
   userReserve.save();
 
-  saveUserReserveBHistory(userReserve, event, index);
+  if (!isTreasury) {
+    saveUserReserveBHistory(userReserve, event, index);
+  }
 }
 
 function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: BigInt): void {
   let bToken = getOrInitBToken(event.address);
   let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
 
+  // updating pool reserve data
   poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.plus(value);
 
   // Check if we are minting to treasury for mainnet, goerli
   let fromHexStr = from.toHexString().toString();
+  let isTreasury = false;
   if (fromHexStr == GOERLI_TREASURY_ADDRESS || fromHexStr == MAINNET_TREASURY_ADDRESS) {
-    // mint bTokens to treasury address
-    poolReserve.lifetimeReserveFactorAccrued = poolReserve.lifetimeReserveFactorAccrued.plus(value);
+    isTreasury = true;
   }
 
+  if (isTreasury) {
+    // mint bTokens to treasury address
+    poolReserve.lifetimeReserveFactorAccrued = poolReserve.lifetimeReserveFactorAccrued.plus(value);
+
+    // no need to update availableLiquidity cos it is already added in the debt burn event
+    // poolReserve.availableLiquidity = poolReserve.availableLiquidity.plus(value);
+  } else {
+    poolReserve.availableLiquidity = poolReserve.availableLiquidity.plus(value);
+  }
+  poolReserve.totalLiquidity = poolReserve.totalLiquidity.plus(value);
+  poolReserve.lifetimeDeposits = poolReserve.lifetimeDeposits.plus(value);
+
+  saveReserve(poolReserve, event);
+
+  // updating user reserve data
   let userReserve = getOrInitUserReserve(from, bToken.underlyingAssetAddress as Address, event);
   let calculatedAmount = rayDiv(value, index);
 
   userReserve.scaledBTokenBalance = userReserve.scaledBTokenBalance.plus(calculatedAmount);
   userReserve.currentBTokenBalance = rayMul(userReserve.scaledBTokenBalance, index);
-
   userReserve.liquidityRate = poolReserve.liquidityRate;
   userReserve.variableBorrowIndex = poolReserve.variableBorrowIndex;
 
   userReserve.lifetimeDeposits = userReserve.lifetimeDeposits.plus(value);
-
   userReserve.lastUpdateTimestamp = event.block.timestamp.toI32();
-
   userReserve.save();
 
-  poolReserve.availableLiquidity = poolReserve.availableLiquidity.plus(value);
-  poolReserve.totalLiquidity = poolReserve.totalLiquidity.plus(value);
-  poolReserve.lifetimeDeposits = poolReserve.lifetimeDeposits.plus(value);
-
-  saveReserve(poolReserve, event);
-  saveUserReserveBHistory(userReserve, event, index);
+  if (!isTreasury) {
+    saveUserReserveBHistory(userReserve, event, index);
+  }
 }
 
 export function handleBTokenBurn(event: BTokenBurn): void {
@@ -221,7 +243,7 @@ export function handleBTokenMint(event: BTokenMint): void {
   saveBTokenEventHistory(userReserve, event, TOKEN_EVENT_MINT, event.params.value, event.params.from);
 }
 
-export function handleBTokenTransfer(event: ATokenTransfer): void {
+export function handleBTokenTransfer(event: BTokenTransfer): void {
   let bToken = getOrInitBToken(event.address);
   let userReserve = getOrInitUserReserve(event.params.from, bToken.underlyingAssetAddress as Address, event);
 
@@ -255,6 +277,9 @@ export function handleDebtTokenBurn(event: DebtTokenBurn): void {
   }
   poolReserve.totalCurrentVariableDebt = rayMul(poolReserve.totalScaledVariableDebt, index);
 
+  // remember the value includes the principal and interest belong to the treasury
+  // there's no way to split the value to the principal and the interest
+  // there's no way to split the interest to the treasury and the depositors
   poolReserve.availableLiquidity = poolReserve.availableLiquidity.plus(value);
   poolReserve.lifetimeRepayments = poolReserve.lifetimeRepayments.plus(value);
 
@@ -316,6 +341,7 @@ export function handleDebtTokenMint(event: DebtTokenMint): void {
   poolReserve.lifetimeScaledVariableDebt = poolReserve.lifetimeScaledVariableDebt.plus(calculatedAmount);
   poolReserve.lifetimeCurrentVariableDebt = rayMul(poolReserve.lifetimeScaledVariableDebt, index);
 
+  // the value should be principal only when user do the borrow
   if (poolReserve.availableLiquidity.gt(value)) {
     poolReserve.availableLiquidity = poolReserve.availableLiquidity.minus(value);
   } else {
