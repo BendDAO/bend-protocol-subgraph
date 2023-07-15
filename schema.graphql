@@ -490,6 +490,8 @@ type Reserve @entity {
   totalBTokenSupply: BigInt!
   totalScaledVariableDebt: BigInt! # default: 0
   totalCurrentVariableDebt: BigInt! # default: 0
+
+  createTimestamp: Int!
   lastUpdateTimestamp: Int!
 
   lifetimeScaledVariableDebt: BigInt! # default: 0
@@ -544,6 +546,8 @@ type NFT @entity {
   lifetimeAuctions: BigInt! # default: 0
   lifetimeRedeems: BigInt! # default: 0
   lifetimeLiquidated: BigInt! # default: 0
+
+  createTimestamp: Int!
   lastUpdateTimestamp: Int!
 
   userNfts: [UserNft!]! @derivedFrom(field: "nftAsset")

@@ -238,6 +238,7 @@ export function getOrInitReserve(underlyingAsset: Address, event: ethereum.Event
     reserve.lifetimeReserveFactorAccrued = zeroBI();
     reserve.lifetimeDepositorsInterestEarned = zeroBI();
 
+    reserve.createTimestamp = event.block.timestamp.toI32();
     reserve.lastUpdateTimestamp = 0;
 
     let priceOracleAsset = getPriceOracleAsset(underlyingAsset.toHexString(), getReserveOracleId());
@@ -288,6 +289,7 @@ export function getOrInitNft(underlyingAsset: Address, event: ethereum.Event): N
     }
     nft.price = priceOracleAsset.id;
 
+    nft.createTimestamp = event.block.timestamp.toI32();
     nft.lastUpdateTimestamp = 0;
 
     nft.save();
