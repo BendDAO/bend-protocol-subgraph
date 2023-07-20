@@ -2,6 +2,8 @@
   "network": "mainnet",
   "LendPoolAddressesProviderRegistryAddress": "0x2C16905Dfd953cf3BF3960c4A101c1eEBBd37E32",
   "LendPoolAddressesProviderRegistryStartBlock": 14416979,
+  "ChainlinkAggregatorHelperAddress": "0xDcdE2dBd52B493de0b2C6Ff707562eEf7C3C7706",
+  "ChainlinkAggregatorHelperStartBlock": 17733339,
   "ReserveOracleAddress": "0x16ca3e500da893cf2eebb6b401247e68ca5bc072",
   "ReserveOracleStartBlock": 14416979,
   "NFTOracleAddress": "0x7c2a19e54e48718f6c60908a9cff3396e4ea1eba",

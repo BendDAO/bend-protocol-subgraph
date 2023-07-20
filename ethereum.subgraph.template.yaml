@@ -63,6 +63,37 @@ dataSources:
           handler: handleAggregatorAdded
       file: src/mapping/reserve-oracle.ts
   - kind: ethereum/contract
+    name: ChainlinkAggregatorHelper
+    network: {{network}}
+    source:
+      address: '{{ChainlinkAggregatorHelperAddress}}'
+      startBlock: {{ChainlinkAggregatorHelperStartBlock}}
+      abi: ChainlinkAggregatorHelper
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - PriceOracle
+        - PriceOracleAsset
+      abis:
+        - name: ChainlinkAggregatorHelper
+          file: ./abis/ChainlinkAggregatorHelper.json
+        - name: ReserveOracle
+          file: ./abis/ReserveOracle.json
+        - name: IERC20Detailed
+          file: ./abis/IERC20Detailed.json
+        - name: AggregatorV2V3Interface
+          file: ./constant-abis/AggregatorV2V3Interface.json
+        - name: EACAggregatorProxy
+          file: ./constant-abis/EACAggregatorProxy.json
+      eventHandlers:
+        - event: ReserveAggregatorUpdated(indexed address,indexed address)
+          handler: handleReserveAggregatorUpdated
+        - event: ReserveAggregatorRemoved(indexed address,indexed address)
+          handler: handleReserveAggregatorRemoved
+      file: src/mapping/reserve-oracle.ts
+  - kind: ethereum/contract
     name: NFTOracle
     network: {{network}}
     source:

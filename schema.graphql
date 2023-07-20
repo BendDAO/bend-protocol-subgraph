@@ -110,6 +110,7 @@ type ChainlinkAggregator @entity {
   id: ID!
   oracleAsset: PriceOracleAsset!
   answerDecimals: Int!
+  createTimestamp: Int!
 }
 
 type PriceOracleAsset @entity {

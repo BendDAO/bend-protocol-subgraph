@@ -10,6 +10,7 @@ import { AnswerUpdated } from "../../generated/templates/ChainlinkAggregator/Agg
 import { getNFTOracleId, getReserveOracleId } from "../utils/id-generation";
 import { EACAggregatorProxy } from "../../generated/templates/ChainlinkAggregator/EACAggregatorProxy";
 import { ChainlinkAggregator as ChainlinkAggregatorContract } from "../../generated/templates";
+import { ReserveAggregatorUpdated } from "../../generated/ChainlinkAggregatorHelper/ChainlinkAggregatorHelper";
 
 export function handleAggregatorAdded(event: AggregatorAdded): void {
   let assetAddress = event.params.currencyKey;
@@ -46,6 +47,81 @@ export function handleChainlinkAnswerUpdated(event: AnswerUpdated): void {
 
     genericHandleChainlinkUSDETHPrice(event.params.current, event, priceOracle, proxyPriceProvider);
   }
+}
+
+// Event that gets triggered when an aggregator of chainlink change gets triggered
+// updates the ens entity with new aggregator address
+// updates price on priceOracleAsset of underlying
+// creates aggregator listener for latestAnswer event on new aggregator
+export function handleReserveAggregatorUpdated(event: ReserveAggregatorUpdated): void {
+  let oracleAssetAddress = event.params.reserve;
+  let oracleAssetAddressHexStr = oracleAssetAddress.toHexString();
+  let newPriceSource = event.params.aggregator;
+  let newPriceSourceHexStr = newPriceSource.toHexString();
+
+  let assetOracle = getPriceOracleAsset(oracleAssetAddressHexStr, getReserveOracleId());
+  if (assetOracle.priceSource.equals(newPriceSource)) {
+    log.warning(`Reserve same aggregator: {}`, [oracleAssetAddressHexStr]);
+    //return;
+  }
+
+  let oldChainlinkAggregator = getChainlinkAggregator(assetOracle.priceSource.toHexString());
+
+  assetOracle.priceSource = newPriceSource;
+  assetOracle.save();
+
+  // create chainlinkAggregator entity with new aggregator to be able to match asset and oracle after
+  let chainlinkAggregator = getChainlinkAggregator(newPriceSourceHexStr);
+  // create new instance only if it doesn't exist
+  if (chainlinkAggregator.createTimestamp == 0) {
+    // start listening to events from new price source
+    ChainlinkAggregatorContract.create(newPriceSource);
+    chainlinkAggregator.createTimestamp = event.block.timestamp.toI32();
+  }
+  chainlinkAggregator.oracleAsset = oracleAssetAddressHexStr;
+  chainlinkAggregator.answerDecimals = oldChainlinkAggregator.answerDecimals;
+  chainlinkAggregator.save();
+
+  // update the price from latestAnswer of new aggregator
+  let priceAggregatorInstance = AggregatorV2V3Interface.bind(newPriceSource);
+  let latestAnswerCall = priceAggregatorInstance.try_latestAnswer();
+  if (!latestAnswerCall.reverted && latestAnswerCall.value.gt(zeroBI())) {
+    let priceFromOracle = latestAnswerCall.value;
+
+    genericPriceUpdate(assetOracle, priceFromOracle, event);
+
+    // update usd
+    if (oracleAssetAddress.toHexString() == MOCK_USD_ADDRESS) {
+      let formatPrice = formatUsdEthPrice(priceFromOracle);
+
+      let priceOracle = getOrInitPriceOracle(getReserveOracleId());
+      priceOracle.usdPriceEthFallbackRequired = assetOracle.fallbackRequired;
+      priceOracle.usdPriceEthMainSource = newPriceSource;
+      usdEthPriceUpdate(priceOracle, priceFromOracle, formatPrice, event);
+
+      // update usd price in nft oracle
+      let nftOracle = getOrInitPriceOracle(getNFTOracleId());
+      nftOracle.usdPriceEthFallbackRequired = assetOracle.fallbackRequired;
+      nftOracle.usdPriceEthMainSource = newPriceSource;
+      usdEthPriceUpdate(nftOracle, priceFromOracle, formatPrice, event);
+    }
+  } else {
+    log.error(`Latest answer call failed on aggregator:: {}`, [newPriceSourceHexStr]);
+    return;
+  }
+
+  log.warning("Reserve aggregator updated: {}", [oracleAssetAddressHexStr]);
+}
+
+export function handleReserveAggregatorRemoved(event: ReserveAggregatorUpdated): void {
+  let newPriceSource = event.params.aggregator;
+  let newPriceSourceHexStr = newPriceSource.toHexString();
+
+  let chainlinkAggregator = getChainlinkAggregator(newPriceSourceHexStr);
+  chainlinkAggregator.oracleAsset = zeroAddress().toHexString();
+  chainlinkAggregator.save();
+
+  log.warning("Reserve aggregator removed: {}", [newPriceSourceHexStr]);
 }
 
 export function priceFeedUpdated(
@@ -129,6 +205,7 @@ export function priceFeedUpdated(
     let chainlinkAggregator = getChainlinkAggregator(aggregatorAddress.toHexString());
     chainlinkAggregator.oracleAsset = assetAddress.toHexString();
     chainlinkAggregator.answerDecimals = priceOracleAsset.answerDecimals;
+    chainlinkAggregator.createTimestamp = event.block.timestamp.toI32();
     chainlinkAggregator.save();
   } else {
     log.error("registry of asset: {} | oracle: {} | price: {}", [
