@@ -2,6 +2,8 @@
   "network": "development",
   "LendPoolAddressesProviderRegistryAddress": "0x17624D935b72A4d765d7A69a68E7C0725A38d5bc",
   "LendPoolAddressesProviderRegistryStartBlock": 0,
+  "ChainlinkAggregatorHelperAddress": "0x0000000000000000000000000000000000000000",
+  "ChainlinkAggregatorHelperStartBlock": 0,
   "ReserveOracleAddress": "0xd81cfDb25C4a27795c17A893F7813590614f2A90",
   "ReserveOracleStartBlock": 0,
   "NFTOracleAddress": "0x9718F7A661C0137d13EB4f0659dA5E8697075492",

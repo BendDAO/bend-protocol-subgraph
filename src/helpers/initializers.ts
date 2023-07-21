@@ -336,6 +336,7 @@ export function getChainlinkAggregator(id: string): ChainlinkAggregator {
     chainlinkAggregator = new ChainlinkAggregator(id);
     chainlinkAggregator.oracleAsset = "";
     chainlinkAggregator.answerDecimals = 18;
+    chainlinkAggregator.createTimestamp = 0;
   }
   return chainlinkAggregator as ChainlinkAggregator;
 }
