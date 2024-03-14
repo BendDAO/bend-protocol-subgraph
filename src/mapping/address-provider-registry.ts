@@ -13,6 +13,11 @@ export function handleAddressesProviderRegistered(event: AddressesProviderRegist
   let address = event.params.newAddress.toHexString();
   if (Pool.load(address) == null) {
     let pool = new Pool(address);
+
+    if (pool == null) {
+      return
+    }
+
     pool.protocol = protocol.id;
     pool.active = true;
     pool.paused = false;
@@ -27,6 +32,11 @@ export function handleAddressesProviderRegistered(event: AddressesProviderRegist
 
 export function handleAddressesProviderUnregistered(event: AddressesProviderUnregistered): void {
   let pool = Pool.load(event.params.newAddress.toHexString());
+
+  if (pool == null) {
+    return
+  }
+
   pool.active = false;
   pool.save();
 }

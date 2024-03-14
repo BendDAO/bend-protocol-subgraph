@@ -49,6 +49,7 @@ import {
 export function handlePaused(event: Paused): void {
   let poolId = getPoolByEventContract(event);
   let lendPool = Pool.load(poolId);
+  if (lendPool == null) return;
 
   lendPool.paused = true;
   lendPool.pauseStartTime = event.block.timestamp;
@@ -57,9 +58,9 @@ export function handlePaused(event: Paused): void {
 
 export function handleUnpaused(event: Unpaused): void {
   let poolId = getPoolByEventContract(event);
-  let lendPool = Pool.load(poolId);
+  let lendPool = Pool.load(poolId)!;
+  if (lendPool == null) return;
 
-  lendPool.paused = false;
   lendPool.pauseDurationTime = event.block.timestamp.minus(lendPool.pauseStartTime);
   if (lendPool.pauseDurationTime.lt(zeroBI())) {
     lendPool.pauseDurationTime = zeroBI();
@@ -70,6 +71,9 @@ export function handleUnpaused(event: Unpaused): void {
 export function handlePausedTimeUpdated(event: PausedTimeUpdated): void {
   let poolId = getPoolByEventContract(event);
   let lendPool = Pool.load(poolId);
+  if (lendPool == null) return; 
+
+  lendPool.paused = false;
 
   lendPool.pauseStartTime = event.params.startTime;
   lendPool.pauseDurationTime = event.params.durationTime;
