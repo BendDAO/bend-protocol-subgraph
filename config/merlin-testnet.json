@@ -3,11 +3,11 @@
   "LendPoolAddressesProviderRegistryAddress": "0xDF4CBb9A9dDE9Baf21f66E174989bd065d7B4152",
   "LendPoolAddressesProviderRegistryStartBlock": 3543094,
   "ChainlinkAggregatorHelperAddress": "0x0000000000000000000000000000000000000000",
-  "ChainlinkAggregatorHelperStartBlock": 0,
+  "ChainlinkAggregatorHelperStartBlock": 3543094,
   "ReserveOracleAddress": "0xA92Ec9aC100d8386f9944FB49d2C8c0c3e96d80B",
   "ReserveOracleStartBlock": 3562055,
   "NFTOracleAddress": "0x3902910dFE01Dc9A9f1Cf1686702928048A10DDf",
   "NFTOracleStartBlock": 3567018,
   "IncentivesControllerAddress": "0x0000000000000000000000000000000000000000",
-  "IncentivesControllerStartBlock": 0
+  "IncentivesControllerStartBlock": 3543094
 }
