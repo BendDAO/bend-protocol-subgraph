@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Bytes, Address, ethereum } from "@graphprotocol/graph-ts";
+import { Bytes, Address, ethereum, log } from "@graphprotocol/graph-ts";
 
 import {
   ReserveInitialized,
@@ -154,7 +154,7 @@ export function handleNftInitialized(event: NftInitialized): void {
 }
 
 export function updateInterestRateStrategy(reserve: Reserve, strategy: Bytes, init: boolean = false): void {
-  let interestRateStrategyContract = InterestRate.bind(strategy as Address);
+  let interestRateStrategyContract = InterestRate.bind(Address.fromBytes(strategy));
 
   reserve.reserveInterestRateStrategy = strategy;
   reserve.baseVariableBorrowRate = interestRateStrategyContract.baseVariableBorrowRate();

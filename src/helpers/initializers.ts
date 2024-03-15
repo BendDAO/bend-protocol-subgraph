@@ -301,7 +301,7 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
   let poolId = getPoolByEventContract(event);
   let loanIdInDB = getLoanId(loanId, poolId);
   let loan = Loan.load(loanIdInDB);
-  let zeroUser = getOrInitUser(zeroAddress() as Address);
+  let zeroUser = getOrInitUser(Address.fromBytes(zeroAddress()));
 
   if (loan === null) {
     loan = new Loan(loanIdInDB);

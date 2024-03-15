@@ -43,7 +43,7 @@ export function handleChainlinkAnswerUpdated(event: AnswerUpdated): void {
 
   // setting price in oracle for ETH-USD asset
   if (priceOracle.usdPriceEthMainSource.equals(event.address)) {
-    let proxyPriceProvider = ReserveOracle.bind(priceOracle.proxyPriceProvider as Address);
+    let proxyPriceProvider = ReserveOracle.bind(Address.fromBytes(priceOracle.proxyPriceProvider));
 
     genericHandleChainlinkUSDETHPrice(event.params.current, event, priceOracle, proxyPriceProvider);
   }
@@ -255,7 +255,7 @@ export function genericHandleChainlinkUSDETHPrice(
   } else {
     priceOracle.usdPriceEthFallbackRequired = true;
     let formatPrice = formatUsdEthPrice(
-      proxyPriceProvider.getAssetPrice(Bytes.fromHexString(MOCK_USD_ADDRESS) as Address)
+      proxyPriceProvider.getAssetPrice(Address.fromBytes(Bytes.fromHexString(MOCK_USD_ADDRESS)))
     );
     usdEthPriceUpdate(priceOracle, price, formatPrice, event);
 

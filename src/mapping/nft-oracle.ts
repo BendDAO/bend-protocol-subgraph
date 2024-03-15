@@ -34,7 +34,7 @@ export function handleSetAssetData(event: SetAssetData): void {
       genericFloorPriceUpdate(oracleAsset, assetPrice, event);
     } else {
       oracleAsset.fallbackRequired = true;
-      let proxyPriceProvider = NFTOracle.bind(priceOracle.proxyPriceProvider as Address);
+      let proxyPriceProvider = NFTOracle.bind(Address.fromBytes(priceOracle.proxyPriceProvider));
       let fallbackPrice = proxyPriceProvider.getAssetPrice(assetAddress);
       genericFloorPriceUpdate(oracleAsset, fallbackPrice, event);
     }
@@ -57,7 +57,7 @@ export function handleSetAssetTwapPrice(event: SetAssetTwapPrice): void {
       genericPriceUpdate(oracleAsset, assetPrice, event);
     } else {
       oracleAsset.fallbackRequired = true;
-      let proxyPriceProvider = NFTOracle.bind(priceOracle.proxyPriceProvider as Address);
+      let proxyPriceProvider = NFTOracle.bind(Address.fromBytes(priceOracle.proxyPriceProvider));
       let fallbackPrice = proxyPriceProvider.getAssetPrice(assetAddress);
       genericPriceUpdate(oracleAsset, fallbackPrice, event);
     }
