@@ -8,7 +8,7 @@
 cp .env.test .env
 
 # install project dependencies
-npm i
+yarn // or npm i
 
 # fetch current contracts as submodule
 npm run prepare:subgraph
@@ -30,8 +30,8 @@ To be able to deploy the subgraph in any environment for any network first we wi
 To be able to deploy to the hosted solution you will need to create a .env file and add `ACCESS_TOKEN` environment variable. You can find this in the dashboard of the TheGraph
 
 ```shell
-# For Goerli:
-npm run deploy:hosted:goerli
+# For Sepolia:
+npm run deploy:hosted:sepolia
 
 # For Mainnet:
 npm run deploy:hosted:mainnet
@@ -44,12 +44,12 @@ If you want to use mainnet or testnet, or already started hardhat node, jump to 
 ```shell
 ################################################################################
 # clone bend protocol repo
-git clone https://github.com/bendfinance/bend-protocol
+git clone https://github.com/benddao/bend-lending-protocol
 
-cd bend-protocol
+cd bend-lending-protocol
 
 # install project dependencies
-npm i --force
+yarn # or npm i --force
 
 ################################################################################
 # In first terminal, start localhost node
@@ -89,15 +89,15 @@ docker-compose down; docker container prune -f; docker volume prune -f; docker n
 # development using localhost hardhat node
 docker-compose up
 
-# or development using goerli, api url can be infura or alchemy
-#export GRAPH_ETHEREUM="goerli:https://goerli.infura.io/v3/${INFURA_KEY}"
-export GRAPH_ETHEREUM="goerli:https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_KEY}"
+# or development using sepolia, api url can be infura or alchemy
+#export GRAPH_ETHEREUM="sepolia:https://sepolia.infura.io/v3/${INFURA_KEY}"
+export GRAPH_ETHEREUM="sepolia:https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}"
 
 docker-compose up
 
 # or development using mainnet, api url can be infura or alchemy
 #export GRAPH_ETHEREUM="mainnet:https://mainnet.infura.io/v3/${INFURA_KEY}"
-export GRAPH_ETHEREUM="mainnet:https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}"
+export GRAPH_ETHEREUM="mainnet:https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}"
 
 docker-compose up
 
@@ -114,9 +114,9 @@ npm run subgraph:create:local
 # You can find addresses in bend-protocol/deployments/deployed-contracts-localhost.json.
 npm run deploy:local:localhost
 
-# or development using goerli config
-# Before deploying, you should fill correct contracts addresses in ./config/goerli.conf.
-npm run deploy:local:goerli
+# or development using sepolia config
+# Before deploying, you should fill correct contracts addresses in ./config/sepolia.conf.
+npm run deploy:local:sepolia
 
 # or development using mainnet config
 # Before deploying, you should fill correct contracts addresses in ./config/mainnet.conf.

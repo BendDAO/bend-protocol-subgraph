@@ -27,7 +27,7 @@ import { calculateUtilizationRate, calculateDebtUtilizationRate } from "../../he
 import { Address, BigInt, Bytes, ethereum, log } from "@graphprotocol/graph-ts";
 import { rayDiv, rayMul } from "../../helpers/math";
 import { getReserveOracleId } from "../../utils/id-generation";
-import { GOERLI_TREASURY_ADDRESS, MAINNET_TREASURY_ADDRESS } from "../../utils/constants";
+import { GOERLI_TREASURY_ADDRESS, MAINNET_TREASURY_ADDRESS, SEPOLIA_TREASURY_ADDRESS } from "../../utils/constants";
 
 function saveUserReserveBHistory(userReserve: UserReserve, event: ethereum.Event, index: BigInt): void {
   let bTokenBalanceHistoryItem = new BTokenBalanceHistoryItem(userReserve.id + event.transaction.hash.toHexString());
@@ -127,10 +127,10 @@ function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: B
   let bToken = getOrInitBToken(event.address);
   let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
 
-  // Check if we are minting to treasury for mainnet, goerli
+  // Check if we are minting to treasury for mainnet, goerli, sepolia
   let fromHexStr = from.toHexString().toString();
   let isTreasury = false;
-  if (fromHexStr == GOERLI_TREASURY_ADDRESS || fromHexStr == MAINNET_TREASURY_ADDRESS) {
+  if (fromHexStr == GOERLI_TREASURY_ADDRESS || fromHexStr == MAINNET_TREASURY_ADDRESS || fromHexStr == SEPOLIA_TREASURY_ADDRESS) {
     isTreasury = true;
   }
 
@@ -185,10 +185,10 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   // updating pool reserve data
   poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.plus(value);
 
-  // Check if we are minting to treasury for mainnet, goerli
+  // Check if we are minting to treasury for mainnet, goerli, sepolia
   let fromHexStr = from.toHexString().toString();
   let isTreasury = false;
-  if (fromHexStr == GOERLI_TREASURY_ADDRESS || fromHexStr == MAINNET_TREASURY_ADDRESS) {
+  if (fromHexStr == GOERLI_TREASURY_ADDRESS || fromHexStr == MAINNET_TREASURY_ADDRESS || fromHexStr == SEPOLIA_TREASURY_ADDRESS) {
     isTreasury = true;
   }
 
