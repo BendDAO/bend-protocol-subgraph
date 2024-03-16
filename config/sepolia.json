@@ -1,0 +1,13 @@
+{
+  "network": "sepolia",
+  "LendPoolAddressesProviderRegistryAddress": "0x4e762Cd5695F9217E04c77df98BA9DcDadb6Cc33",
+  "LendPoolAddressesProviderRegistryStartBlock": 5475610,
+  "ChainlinkAggregatorHelperAddress": "0x1f7915Ed7A71275DF5A99646C1aab4b241d3f693",
+  "ChainlinkAggregatorHelperStartBlock": 5475610,
+  "ReserveOracleAddress": "0x0EBbD387769f012a3Bbf65eaCb4Ec3db3c7693f6",
+  "ReserveOracleStartBlock": 5475610,
+  "NFTOracleAddress": "0xF143144Fb2703C8aeefD0c4D06d29F5Bb0a9C60A",
+  "NFTOracleStartBlock": 5475610,
+  "IncentivesControllerAddress": "0x06A13f172ADce6fdE761c9A2Ff2d0ad50e9e38d0",
+  "IncentivesControllerStartBlock": 5475610
+}

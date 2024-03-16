@@ -322,11 +322,8 @@ export function handleLiquidate(event: Liquidate): void {
   let userNft = getOrInitUserNft(event.params.user, event.params.nftAsset, event);
 
   let debtReserve = getOrInitReserve(event.params.reserve, event);
-  debtReserve.save();
 
   let collateralNft = getOrInitNft(event.params.nftAsset, event);
-  collateralNft.lifetimeLiquidated = collateralNft.lifetimeLiquidated.plus(event.params.repayAmount);
-  collateralNft.save();
 
   let poolLoan = getOrInitLoan(event.params.loanId, event);
 
