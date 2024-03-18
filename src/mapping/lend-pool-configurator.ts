@@ -116,7 +116,7 @@ export function handleReserveInitialized(event: ReserveInitialized): void {
   dToken.pool = reserve.pool;
   dToken.save();
 
-  if (reserve.symbol == "WETH" || reserve.symbol == "ETH") {
+  if (reserve.symbol === "WBTC" || reserve.symbol === "BTC") {
     let priceOracleAsset = getPriceOracleAsset(reserve.underlyingAsset.toHexString(), getReserveOracleId());
     priceOracleAsset.priceInEth = oneEther();
     priceOracleAsset.save();
