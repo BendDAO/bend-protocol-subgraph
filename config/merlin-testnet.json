@@ -1,13 +1,13 @@
 {
   "network": "merlin-testnet",
-  "LendPoolAddressesProviderRegistryAddress": "0xDF4CBb9A9dDE9Baf21f66E174989bd065d7B4152",
-  "LendPoolAddressesProviderRegistryStartBlock": 3543094,
+  "LendPoolAddressesProviderRegistryAddress": "0x8bfA98262bdc3dBf6bbE535f67bAE2FA51ca723f",
+  "LendPoolAddressesProviderRegistryStartBlock": 7329677,
   "ChainlinkAggregatorHelperAddress": "0x0000000000000000000000000000000000000000",
-  "ChainlinkAggregatorHelperStartBlock": 3543094,
-  "ReserveOracleAddress": "0xA92Ec9aC100d8386f9944FB49d2C8c0c3e96d80B",
-  "ReserveOracleStartBlock": 3562055,
-  "NFTOracleAddress": "0x3902910dFE01Dc9A9f1Cf1686702928048A10DDf",
-  "NFTOracleStartBlock": 3567018,
+  "ChainlinkAggregatorHelperStartBlock": 7329677,
+  "ReserveOracleAddress": "0x09BE1F3DCEFb2F2eDf23FD55d23b99D6dE09b6C5",
+  "ReserveOracleStartBlock": 7330334,
+  "NFTOracleAddress": "0x4773f0f7A6cC44b59CEc3b1c065Fd15d5bf18A4F",
+  "NFTOracleStartBlock": 7330394,
   "IncentivesControllerAddress": "0x0000000000000000000000000000000000000000",
-  "IncentivesControllerStartBlock": 3543094
+  "IncentivesControllerStartBlock": 7329677
 }
