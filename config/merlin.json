@@ -1,0 +1,13 @@
+{
+  "network": "merlin",
+  "LendPoolAddressesProviderRegistryAddress": "0xf1615d5EA49E14c28B27C2BD1ceDFB90C1568F06",
+  "LendPoolAddressesProviderRegistryStartBlock": 10583435,
+  "ChainlinkAggregatorHelperAddress": "0x0000000000000000000000000000000000000000",
+  "ChainlinkAggregatorHelperStartBlock": 10583435,
+  "ReserveOracleAddress": "0x05863b4e080aAa09C8fF787655d266dBC9B84147",
+  "ReserveOracleStartBlock": 10586011,
+  "NFTOracleAddress": "0xe627457f60E51584E253dDF3164EcF18393bdF47",
+  "NFTOracleStartBlock": 10586402,
+  "IncentivesControllerAddress": "0x0000000000000000000000000000000000000000",
+  "IncentivesControllerStartBlock": 10583435
+}

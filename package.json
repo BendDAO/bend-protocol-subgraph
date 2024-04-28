@@ -17,6 +17,7 @@
     "deploy:local:goerli": "BLOCKCHAIN=ethereum NETWORK=goerli env-cmd npm run prepare:subgraph && env-cmd npm run subgraph:deploy:local",
     "deploy:local:mainnet": "BLOCKCHAIN=ethereum NETWORK=mainnet env-cmd npm run prepare:subgraph && env-cmd npm run subgraph:deploy:local",
     "deploy:local:merlin-testnet": "BLOCKCHAIN=ethereum NETWORK=merlin-testnet env-cmd npm run prepare:subgraph && env-cmd npm run subgraph:deploy:local",
+    "deploy:local:merlin": "BLOCKCHAIN=ethereum NETWORK=merlin env-cmd npm run prepare:subgraph && env-cmd npm run subgraph:deploy:local",
     "deploy:hosted:goerli": "BLOCKCHAIN=ethereum NETWORK=goerli env-cmd npm run prepare:subgraph && SLUG=bend/bend-protocol-goerli env-cmd npm run subgraph:deploy:hosted",
     "deploy:hosted:mainnet": "BLOCKCHAIN=ethereum NETWORK=mainnet env-cmd npm run prepare:subgraph && SLUG=bend/bend-protocol env-cmd npm run subgraph:deploy:hosted"
   },
