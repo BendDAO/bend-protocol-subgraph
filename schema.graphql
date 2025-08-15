@@ -13,20 +13,20 @@ type _Schema_
     ]
   )
 
-type Protocol @entity {
+type Protocol @entity(immutable: false) {
   # just 1 for now
   id: ID!
   pools: [Pool!]! @derivedFrom(field: "protocol")
 }
 
 # service entity, when we receiving an event we should wknow which pool is it
-type ContractToPoolMapping @entity {
+type ContractToPoolMapping @entity(immutable: false) {
   # contract address
   id: ID!
   pool: Pool!
 }
 
-type PoolConfigurationHistoryItem @entity {
+type PoolConfigurationHistoryItem @entity(immutable: false) {
   """
   tx hash
   """
@@ -51,7 +51,7 @@ type PoolConfigurationHistoryItem @entity {
   timestamp: Int!
 }
 
-type Pool @entity {
+type Pool @entity(immutable: false) {
   id: ID!
   protocol: Protocol!
   lendPoolConfigurator: Bytes
@@ -89,7 +89,7 @@ type Pool @entity {
   pauseDurationTime: BigInt!
 }
 
-type PriceHistoryItem @entity {
+type PriceHistoryItem @entity(immutable: false) {
   id: ID!
   asset: PriceOracleAsset!
   price: BigInt!
@@ -97,7 +97,7 @@ type PriceHistoryItem @entity {
   timestamp: Int!
 }
 
-type UsdEthPriceHistoryItem @entity {
+type UsdEthPriceHistoryItem @entity(immutable: false) {
   id: ID!
   oracle: PriceOracle!
   price: BigInt!
@@ -105,7 +105,7 @@ type UsdEthPriceHistoryItem @entity {
   timestamp: Int!
 }
 
-type ChainlinkAggregator @entity {
+type ChainlinkAggregator @entity(immutable: false) {
   # aggregator address
   id: ID!
   oracleAsset: PriceOracleAsset!
@@ -113,7 +113,7 @@ type ChainlinkAggregator @entity {
   createTimestamp: Int!
 }
 
-type PriceOracleAsset @entity {
+type PriceOracleAsset @entity(immutable: false) {
   # underlying asset address
   id: ID!
   oracle: PriceOracle!
@@ -129,7 +129,7 @@ type PriceOracleAsset @entity {
   priceHistory: [PriceHistoryItem!]! @derivedFrom(field: "asset")
 }
 
-type PriceOracle @entity {
+type PriceOracle @entity(immutable: false) {
   id: ID!
   proxyPriceProvider: Bytes!
 
@@ -146,7 +146,7 @@ type PriceOracle @entity {
   usdPriceEthHistory: [UsdEthPriceHistoryItem!]! @derivedFrom(field: "oracle")
 }
 
-type BToken @entity {
+type BToken @entity(immutable: false) {
   """
   BToken address
   """
@@ -157,7 +157,7 @@ type BToken @entity {
   tokenContractImpl: Bytes!
 }
 
-type DebtToken @entity {
+type DebtToken @entity(immutable: false) {
   """
   DebtToken address
   """
@@ -195,7 +195,7 @@ enum TxType {
   Liquidate
 }
 
-type Referrer @entity {
+type Referrer @entity(immutable: false) {
   id: ID!
   deposits: [Deposit!]! @derivedFrom(field: "referrer")
   borrows: [Borrow!]! @derivedFrom(field: "referrer")
@@ -208,7 +208,7 @@ interface UserTransaction {
   timestamp: Int!
 }
 
-type UserTransactionHistoryItem implements UserTransaction @entity {
+type UserTransactionHistoryItem implements UserTransaction @entity(immutable: false) {
   """
   tx hash
   """
@@ -234,7 +234,7 @@ type UserTransactionHistoryItem implements UserTransaction @entity {
   liquidateHistory: [Liquidate!] @derivedFrom(field: "userTx")
 }
 
-type Deposit implements UserTransaction @entity {
+type Deposit implements UserTransaction @entity(immutable: false) {
   """
   tx hash
   """
@@ -250,7 +250,7 @@ type Deposit implements UserTransaction @entity {
   userTx: UserTransactionHistoryItem!
 }
 
-type Withdraw implements UserTransaction @entity {
+type Withdraw implements UserTransaction @entity(immutable: false) {
   """
   tx hash
   """
@@ -265,7 +265,7 @@ type Withdraw implements UserTransaction @entity {
   userTx: UserTransactionHistoryItem!
 }
 
-type Borrow implements UserTransaction @entity {
+type Borrow implements UserTransaction @entity(immutable: false) {
   """
   tx hash
   """
@@ -286,7 +286,7 @@ type Borrow implements UserTransaction @entity {
   userTx: UserTransactionHistoryItem!
 }
 
-type Repay implements UserTransaction @entity {
+type Repay implements UserTransaction @entity(immutable: false) {
   """
   tx hash
   """
@@ -305,7 +305,7 @@ type Repay implements UserTransaction @entity {
   userTx: UserTransactionHistoryItem!
 }
 
-type Auction implements UserTransaction @entity {
+type Auction implements UserTransaction @entity(immutable: false) {
   """
   tx hash
   """
@@ -325,7 +325,7 @@ type Auction implements UserTransaction @entity {
   userTx: UserTransactionHistoryItem!
 }
 
-type Redeem implements UserTransaction @entity {
+type Redeem implements UserTransaction @entity(immutable: false) {
   """
   tx hash
   """
@@ -345,7 +345,7 @@ type Redeem implements UserTransaction @entity {
   userTx: UserTransactionHistoryItem!
 }
 
-type Liquidate implements UserTransaction @entity {
+type Liquidate implements UserTransaction @entity(immutable: false) {
   """
   tx hash
   """
@@ -365,7 +365,7 @@ type Liquidate implements UserTransaction @entity {
   userTx: UserTransactionHistoryItem!
 }
 
-type ReserveConfigurationHistoryItem @entity {
+type ReserveConfigurationHistoryItem @entity(immutable: false) {
   """
   tx hash
   """
@@ -378,7 +378,7 @@ type ReserveConfigurationHistoryItem @entity {
   timestamp: Int!
 }
 
-type NftConfigurationHistoryItem @entity {
+type NftConfigurationHistoryItem @entity(immutable: false) {
   """
   tx hash
   """
@@ -397,7 +397,7 @@ type NftConfigurationHistoryItem @entity {
   timestamp: Int!
 }
 
-type ReserveParamsHistoryItem @entity {
+type ReserveParamsHistoryItem @entity(immutable: false) {
   """
   tx hash
   """
@@ -428,7 +428,7 @@ type ReserveParamsHistoryItem @entity {
   lifetimeDepositorsInterestEarned: BigInt!
 }
 
-type NftParamsHistoryItem @entity {
+type NftParamsHistoryItem @entity(immutable: false) {
   """
   tx hash
   """
@@ -446,7 +446,7 @@ type NftParamsHistoryItem @entity {
   lifetimeLiquidated: BigInt! # default: 0
 }
 
-type MapAssetPool @entity {
+type MapAssetPool @entity(immutable: false) {
   """
   address of a /s /v token
   """
@@ -455,7 +455,7 @@ type MapAssetPool @entity {
   underlyingAsset: Bytes!
 }
 
-type Reserve @entity {
+type Reserve @entity(immutable: false) {
   """
   Reserve address
   """
@@ -519,7 +519,7 @@ type Reserve @entity {
   configurationHistory: [ReserveConfigurationHistoryItem!]! @derivedFrom(field: "reserve")
 }
 
-type NFT @entity {
+type NFT @entity(immutable: false) {
   """
   NFT address
   """
@@ -565,7 +565,7 @@ type NFT @entity {
   configurationHistory: [NftConfigurationHistoryItem!]! @derivedFrom(field: "nftAsset")
 }
 
-type BTokenEventHistoryItem @entity {
+type BTokenEventHistoryItem @entity(immutable: false) {
   """
   userReserve + txHash
   """ # TODO: replace with blockNumber/timestamp + blockPosition
@@ -579,7 +579,7 @@ type BTokenEventHistoryItem @entity {
   timestamp: Int!
 }
 
-type BTokenBalanceHistoryItem @entity {
+type BTokenBalanceHistoryItem @entity(immutable: false) {
   """
   userReserve + txHash
   """ # TODO: replace with blockNumber/timestamp + blockPosition
@@ -591,7 +591,7 @@ type BTokenBalanceHistoryItem @entity {
   index: BigInt!
 }
 
-type DebtTokenEventHistoryItem @entity {
+type DebtTokenEventHistoryItem @entity(immutable: false) {
   """
   userReserve + txHash
   """ # TODO: replace with blockNumber/timestamp + blockPosition
@@ -604,7 +604,7 @@ type DebtTokenEventHistoryItem @entity {
   timestamp: Int!
 }
 
-type DebtTokenBalanceHistoryItem @entity {
+type DebtTokenBalanceHistoryItem @entity(immutable: false) {
   """
   userReserve + txHash
   """
@@ -616,7 +616,7 @@ type DebtTokenBalanceHistoryItem @entity {
   index: BigInt!
 }
 
-type UserReserve @entity {
+type UserReserve @entity(immutable: false) {
   """
   user address + reserve address
   """
@@ -653,7 +653,7 @@ type UserReserve @entity {
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "userReserve")
 }
 
-type UserNft @entity {
+type UserNft @entity(immutable: false) {
   """
   user address + nft collection address
   """
@@ -673,7 +673,7 @@ type UserNft @entity {
   liquidateHistory: [Liquidate!]! @derivedFrom(field: "userNft")
 }
 
-type LoanBalanceHistoryItem @entity {
+type LoanBalanceHistoryItem @entity(immutable: false) {
   """
   loan + txHash
   """
@@ -685,7 +685,7 @@ type LoanBalanceHistoryItem @entity {
   index: BigInt!
 }
 
-type Loan @entity {
+type Loan @entity(immutable: false) {
   """
   loan id
   """
@@ -719,7 +719,7 @@ type Loan @entity {
   loanBalanceHistory: [LoanBalanceHistoryItem!]! @derivedFrom(field: "loan")
 }
 
-type User @entity {
+type User @entity(immutable: false) {
   """
   user address
   """
@@ -744,7 +744,7 @@ type User @entity {
   debtTokenHistory: [DebtTokenEventHistoryItem!]! @derivedFrom(field: "user")
 }
 
-type DistributionManagerUserAsset @entity {
+type DistributionManagerUserAsset @entity(immutable: false) {
   id: ID!
   lastUpdateTimestamp: Int!
 
@@ -755,7 +755,7 @@ type DistributionManagerUserAsset @entity {
   assetAddress: Bytes!
 }
 
-type DistributionManagerAsset @entity {
+type DistributionManagerAsset @entity(immutable: false) {
   id: ID!
   lastUpdateTimestamp: Int!
 
@@ -768,7 +768,7 @@ type DistributionManagerAsset @entity {
   users: [DistributionManagerUserAsset!]! @derivedFrom(field: "asset")
 }
 
-type DistributionManager @entity {
+type DistributionManager @entity(immutable: false) {
   id: ID!
   lastUpdateTimestamp: Int!
 
@@ -778,7 +778,7 @@ type DistributionManager @entity {
   userAssets: [DistributionManagerUserAsset!]! @derivedFrom(field: "distributionManager")
 }
 
-type RewardsAccruedHistoryItem @entity {
+type RewardsAccruedHistoryItem @entity(immutable: false) {
   id: ID!
   timestamp: Int!
 
@@ -786,7 +786,7 @@ type RewardsAccruedHistoryItem @entity {
   amount: BigInt!
 }
 
-type RewardsClaimedHistoryItem @entity {
+type RewardsClaimedHistoryItem @entity(immutable: false) {
   id: ID!
   timestamp: Int!
 
@@ -794,7 +794,7 @@ type RewardsClaimedHistoryItem @entity {
   amount: BigInt!
 }
 
-type UserIncentive @entity {
+type UserIncentive @entity(immutable: false) {
   id: ID!
   lastUpdateTimestamp: Int!
 

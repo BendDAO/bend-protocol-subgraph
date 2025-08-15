@@ -13,10 +13,11 @@ x-graph-pg-base: &graph-pg-base
   postgres_user: graph-node
   postgres_pass: let-me-in
   postgres_db: graph-node
+  POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
 
 services:
   graph-node:
-    image: graphprotocol/graph-node
+    image: graphprotocol/graph-node:v0.38.0
     depends_on:
       - graph-postgres
       - graph-ipfs
@@ -30,14 +31,15 @@ services:
       <<: *graph-pg-base
       postgres_host: 'graph-postgres'
       ipfs: 'graph-ipfs:5001'
-      GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 'y'
+      GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 'true'
+      #GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 'y'
       #ethereum: 'mainnet:https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}'
       #ethereum: 'sepolia:https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}'
       ethereum: '${GRAPH_ETHEREUM:-localhost:http://host.docker.internal:8545}'
       RUST_LOG: 'warn'
 
   graph-ipfs:
-    image: ipfs/go-ipfs:v0.4.23
+    image: ipfs/kubo:v0.34.1
     restart: always
     volumes:
       - type: volume
@@ -47,7 +49,7 @@ services:
       - '5001:5001'
 
   graph-postgres:
-    image: postgres
+    image: postgres:16.8
     command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
     environment:
       <<: *graph-pg-base

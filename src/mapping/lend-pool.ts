@@ -21,6 +21,7 @@ import {
   getOrInitUserNft,
   getOrInitLoan,
   getPoolByEventContract,
+  getOrInitPoolById,
 } from "../helpers/initializers";
 import {
   Borrow as BorrowAction,
@@ -48,7 +49,7 @@ import {
 
 export function handlePaused(event: Paused): void {
   let poolId = getPoolByEventContract(event);
-  let lendPool = Pool.load(poolId);
+  let lendPool = getOrInitPoolById(poolId);
 
   lendPool.paused = true;
   lendPool.pauseStartTime = event.block.timestamp;
@@ -57,7 +58,7 @@ export function handlePaused(event: Paused): void {
 
 export function handleUnpaused(event: Unpaused): void {
   let poolId = getPoolByEventContract(event);
-  let lendPool = Pool.load(poolId);
+  let lendPool = getOrInitPoolById(poolId);
 
   lendPool.paused = false;
   lendPool.pauseDurationTime = event.block.timestamp.minus(lendPool.pauseStartTime);
@@ -69,7 +70,7 @@ export function handleUnpaused(event: Unpaused): void {
 
 export function handlePausedTimeUpdated(event: PausedTimeUpdated): void {
   let poolId = getPoolByEventContract(event);
-  let lendPool = Pool.load(poolId);
+  let lendPool = getOrInitPoolById(poolId);
 
   lendPool.pauseStartTime = event.params.startTime;
   lendPool.pauseDurationTime = event.params.durationTime;

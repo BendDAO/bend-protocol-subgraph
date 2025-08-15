@@ -28,6 +28,10 @@ function createIncentivesController(
   }
 
   let poolAddressProvider = ContractToPoolMapping.load(pool.toHexString());
+  if (poolAddressProvider == null) {
+    log.error("contract {} is not registered in the protocol", [pool.toHexString()]);
+    return;
+  }
   // save asset pool mapping
   let mapAssetPool = new MapAssetPool(asset.toHexString());
   mapAssetPool.pool = poolAddressProvider.pool;

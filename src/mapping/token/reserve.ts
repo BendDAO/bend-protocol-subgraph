@@ -125,7 +125,8 @@ function saveReserve(reserve: Reserve, event: ethereum.Event): void {
 
 function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: BigInt): void {
   let bToken = getOrInitBToken(event.address);
-  let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
+  let underlyingAddr: Address = Address.fromBytes(bToken.underlyingAssetAddress);
+  let poolReserve = getOrInitReserve(underlyingAddr, event);
 
   // Check if we are minting to treasury for mainnet, goerli, sepolia
   let fromHexStr = from.toHexString().toString();
@@ -157,7 +158,7 @@ function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: B
   saveReserve(poolReserve, event);
 
   // updating user reserve data
-  let userReserve = getOrInitUserReserve(from, bToken.underlyingAssetAddress as Address, event);
+  let userReserve = getOrInitUserReserve(from, underlyingAddr, event);
   let calculatedAmount = rayDiv(value, index);
 
   if (userReserve.scaledBTokenBalance.gt(calculatedAmount)) {
@@ -180,7 +181,8 @@ function tokenBurn(event: ethereum.Event, from: Address, value: BigInt, index: B
 
 function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: BigInt): void {
   let bToken = getOrInitBToken(event.address);
-  let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
+  let underlyingAddr: Address = Address.fromBytes(bToken.underlyingAssetAddress);
+  let poolReserve = getOrInitReserve(underlyingAddr, event);
 
   // updating pool reserve data
   poolReserve.totalBTokenSupply = poolReserve.totalBTokenSupply.plus(value);
@@ -207,7 +209,7 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
   saveReserve(poolReserve, event);
 
   // updating user reserve data
-  let userReserve = getOrInitUserReserve(from, bToken.underlyingAssetAddress as Address, event);
+  let userReserve = getOrInitUserReserve(from, underlyingAddr, event);
   let calculatedAmount = rayDiv(value, index);
 
   userReserve.scaledBTokenBalance = userReserve.scaledBTokenBalance.plus(calculatedAmount);
@@ -226,8 +228,9 @@ function tokenMint(event: ethereum.Event, from: Address, value: BigInt, index: B
 
 export function handleBTokenBurn(event: BTokenBurn): void {
   let bToken = getOrInitBToken(event.address);
-  let poolReserve = getOrInitReserve(bToken.underlyingAssetAddress as Address, event);
-  let userReserve = getOrInitUserReserve(event.params.from, bToken.underlyingAssetAddress as Address, event);
+  let underlyingAddr: Address = Address.fromBytes(bToken.underlyingAssetAddress);
+  let poolReserve = getOrInitReserve(underlyingAddr, event);
+  let userReserve = getOrInitUserReserve(event.params.from, underlyingAddr, event);
 
   tokenBurn(event, event.params.from, event.params.value, event.params.index);
 
@@ -236,7 +239,8 @@ export function handleBTokenBurn(event: BTokenBurn): void {
 
 export function handleBTokenMint(event: BTokenMint): void {
   let bToken = getOrInitBToken(event.address);
-  let userReserve = getOrInitUserReserve(event.params.from, bToken.underlyingAssetAddress as Address, event);
+  let underlyingAddr: Address = Address.fromBytes(bToken.underlyingAssetAddress);
+  let userReserve = getOrInitUserReserve(event.params.from, underlyingAddr, event);
 
   tokenMint(event, event.params.from, event.params.value, event.params.index);
 
@@ -245,7 +249,8 @@ export function handleBTokenMint(event: BTokenMint): void {
 
 export function handleBTokenTransfer(event: BTokenTransfer): void {
   let bToken = getOrInitBToken(event.address);
-  let userReserve = getOrInitUserReserve(event.params.from, bToken.underlyingAssetAddress as Address, event);
+  let underlyingAddr: Address = Address.fromBytes(bToken.underlyingAssetAddress);
+  let userReserve = getOrInitUserReserve(event.params.from, underlyingAddr, event);
 
   tokenBurn(event, event.params.from, event.params.value, event.params.index);
   tokenMint(event, event.params.to, event.params.value, event.params.index);
@@ -255,11 +260,12 @@ export function handleBTokenTransfer(event: BTokenTransfer): void {
 
 export function handleDebtTokenBurn(event: DebtTokenBurn): void {
   let dToken = getOrInitDebtToken(event.address);
+  let underlyingAddr: Address = Address.fromBytes(dToken.underlyingAssetAddress);
   let from = event.params.user;
   let value = event.params.amount;
   let index = event.params.index;
-  let userReserve = getOrInitUserReserve(from, dToken.underlyingAssetAddress as Address, event);
-  let poolReserve = getOrInitReserve(dToken.underlyingAssetAddress as Address, event);
+  let userReserve = getOrInitUserReserve(from, underlyingAddr, event);
+  let poolReserve = getOrInitReserve(underlyingAddr, event);
 
   let calculatedAmount = rayDiv(value, index);
   if (userReserve.scaledVariableDebt.gt(calculatedAmount)) {
@@ -306,14 +312,15 @@ export function handleDebtTokenBurn(event: DebtTokenBurn): void {
 
 export function handleDebtTokenMint(event: DebtTokenMint): void {
   let dToken = getOrInitDebtToken(event.address);
-  let poolReserve = getOrInitReserve(dToken.underlyingAssetAddress as Address, event);
+  let underlyingAddr: Address = Address.fromBytes(dToken.underlyingAssetAddress);
+  let poolReserve = getOrInitReserve(underlyingAddr, event);
 
   let from = event.params.from;
 
   let value = event.params.value;
   let index = event.params.index;
 
-  let userReserve = getOrInitUserReserve(from, dToken.underlyingAssetAddress as Address, event);
+  let userReserve = getOrInitUserReserve(from, underlyingAddr, event);
 
   let user = getOrInitUser(event.params.from);
   if (userReserve.scaledVariableDebt.equals(zeroBI())) {

@@ -22,6 +22,7 @@ import {
   UserIncentive,
   DistributionManagerAsset,
   DistributionManagerUserAsset,
+  Pool,
 } from "../../generated/schema";
 import { LOAN_STATE_NONE, zeroAddress, zeroBD, zeroBI } from "../utils/converters";
 import {
@@ -65,6 +66,26 @@ export function getPoolByAddress(underlyingAssetAddress: Address): string {
     throw new Error(contractAddress + "is not registered in ContractToPoolMapping");
   }
   return contractToPoolMapping.pool;
+}
+
+export function getOrInitPoolById(id: string): Pool {
+  let pool = Pool.load(id);
+  if (!pool) {
+    let protocol = getProtocol();
+    pool = new Pool(id);
+    pool.protocol = protocol.id;
+    pool.active = true;
+    pool.paused = false;
+    pool.pauseStartTime = zeroBI();
+    pool.pauseDurationTime = zeroBI();
+    pool.lastUpdateTimestamp = 0;
+    pool.save();
+  }
+  return pool as Pool;
+}
+
+export function getOrInitPoolByAddress(address: Address): Pool {
+  return getOrInitPoolById(address.toHexString());
 }
 
 export function getOrInitUser(address: Address): User {
@@ -301,7 +322,7 @@ export function getOrInitLoan(loanId: BigInt, event: ethereum.Event): Loan {
   let poolId = getPoolByEventContract(event);
   let loanIdInDB = getLoanId(loanId, poolId);
   let loan = Loan.load(loanIdInDB);
-  let zeroUser = getOrInitUser(zeroAddress() as Address);
+  let zeroUser = getOrInitUser(changetype<Address>(zeroAddress()));
 
   if (loan === null) {
     loan = new Loan(loanIdInDB);

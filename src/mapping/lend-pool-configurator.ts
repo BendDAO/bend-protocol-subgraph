@@ -153,8 +153,8 @@ export function handleNftInitialized(event: NftInitialized): void {
   saveNft(nft, event);
 }
 
-export function updateInterestRateStrategy(reserve: Reserve, strategy: Bytes, init: boolean = false): void {
-  let interestRateStrategyContract = InterestRate.bind(strategy as Address);
+export function updateInterestRateStrategy(reserve: Reserve, strategy: Address, init: boolean = false): void {
+  let interestRateStrategyContract = InterestRate.bind(strategy);
 
   reserve.reserveInterestRateStrategy = strategy;
   reserve.baseVariableBorrowRate = interestRateStrategyContract.baseVariableBorrowRate();

@@ -1,4 +1,6 @@
-specVersion: 0.0.1
+specVersion: 0.0.6
+features:
+  - fullTextSearch
 description: Bend Protocol subgraph
 repository: https://github.com/BendDAO/bend-protocol-subgraph
 schema:
@@ -19,7 +21,7 @@ dataSources:
       startBlock: {{LendPoolAddressesProviderRegistryStartBlock}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - LendPoolAddressesProvider
@@ -44,7 +46,7 @@ dataSources:
       abi: ReserveOracle
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - PriceOracle
@@ -71,7 +73,7 @@ dataSources:
       abi: ChainlinkAggregatorHelper
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - PriceOracle
@@ -102,7 +104,7 @@ dataSources:
       abi: NFTOracle
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - PriceOracle
@@ -132,7 +134,7 @@ dataSources:
       abi: IncentivesController
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - DistributionManager
@@ -168,7 +170,7 @@ templates:
       abi: AggregatorV2V3Interface
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - PriceOracle
@@ -194,7 +196,7 @@ templates:
       abi: LendPoolAddressesProvider
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - LendPoolAddressesProvider
@@ -239,7 +241,7 @@ templates:
       abi: LendPoolConfigurator
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - Reserve
@@ -307,7 +309,7 @@ templates:
       abi: BToken
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - BToken
@@ -337,7 +339,7 @@ templates:
       abi: DebtToken
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - DebtToken
@@ -368,7 +370,7 @@ templates:
       abi: LendPool
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - ReserveOperation
@@ -411,7 +413,7 @@ templates:
       abi: LendPoolLoan
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.1
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - ReserveOperation
